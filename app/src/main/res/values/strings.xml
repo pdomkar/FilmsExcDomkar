@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FilmsExcDomkar</string>
+    <string name="movieAPIKey">9abf76a6b9a507feb496c4d4bc7cb670</string>
 </resources>
