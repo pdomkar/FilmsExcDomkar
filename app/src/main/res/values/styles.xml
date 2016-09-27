@@ -7,5 +7,18 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <!-- My primary theme -->
+    <style name="MyPrimaryTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/myColorPrimary</item>
+        <item name="colorPrimaryDark">@color/myColorPrimaryDark</item>
+        <item name="colorAccent">@color/myColorAccent</item>
+    </style>
+
+    <!-- My secondary theme -->
+    <style name="MySecondaryTheme" parent="MyPrimaryTheme">
+        <item name="colorPrimary">@color/mySecondaryColorPrimary</item>
+        <item name="colorPrimaryDark">@color/mySecondaryColorPrimaryDark</item>
+        <item name="colorAccent">@color/mySecondaryColorAccent</item>
+    </style>
 
 </resources>
