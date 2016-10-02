@@ -20,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
 
         //change theme
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        boolean highScore = sharedPref.getBoolean("themePrimary", true);
-        if(highScore == true) {
+        boolean themePrimary = sharedPref.getBoolean("themePrimary", true);
+        if(themePrimary == true) {
             setTheme(R.style.MyPrimaryTheme);
         } else {
             setTheme(R.style.MySecondaryTheme);
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-                boolean themePrimary = sharedPref.getBoolean("themePrimary", new Boolean(true));
+                boolean themePrimary = sharedPref.getBoolean("themePrimary", true);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putBoolean("themePrimary",  !themePrimary);
                 editor.commit();
