@@ -21,6 +21,8 @@ public class MainActivity extends FragmentActivity implements OnFilmSelectListen
         add(new Film(2674464, "Path", "Harry poter", "sdf", 4.6f));
         add(new Film(2362464, "Path", "Hyrry troter", "sdf", 4.7f));
         add(new Film(2362464, "Path", "Pán velký", "sdf", 4.3f));
+        add(new Film(2362464, "Padth", "Pánd velký", "sddf", 4.3f));
+        add(new Film(2362464, "Padtdgh", "Pánd dfgvelký", "sgddf", 4.3f));
     }};
 
     @Override
