@@ -20,6 +20,7 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
  */
 
 public class FilmDetailFragment extends Fragment {
+    public static final String TAG = FilmDetailFragment.class.getSimpleName();
     public static final String SELECTED_FILM = "selected_film";
     final static String KEY_POSITION = "position";
     int mCurrentPosition = -1;
@@ -43,7 +44,7 @@ public class FilmDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i("FD", "onCreateView");
-        //activity is recreated -> restore saveInstance state
+        //activity is re    created -> restore saveInstance state
         if (savedInstanceState != null){
             Log.i("FD", "onReCreated");
             mCurrentPosition = savedInstanceState.getInt(KEY_POSITION);
@@ -76,7 +77,7 @@ public class FilmDetailFragment extends Fragment {
             setFilmDetail(film);
         } else if(mCurrentPosition != -1){
             // Set Film based on savedInstanceState defined during onCreateView()
-            setFilmDetail(MainActivity.mFilmList.get(mCurrentPosition));
+            setFilmDetail((Film)MainActivity.mFilmList.get(mCurrentPosition));
         } else {
             mPlusFAB.hide();
         }
