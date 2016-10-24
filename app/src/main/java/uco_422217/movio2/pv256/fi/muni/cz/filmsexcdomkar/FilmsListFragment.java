@@ -13,7 +13,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
-
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters.FilmAdapter;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.listeners.OnFilmSelectListener;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
@@ -45,12 +44,14 @@ public class FilmsListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+
         mListener = null;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mContext = getActivity().getApplicationContext();
     }
 
@@ -63,12 +64,16 @@ public class FilmsListFragment extends Fragment {
         TextView emptyTV = (TextView) view.findViewById(R.id.empty_list_item);
 
         ArrayList<Object> list;
-
-             list = MainActivity.mFilmList;
+        if(!Connectivity.isConnected(getActivity().getApplicationContext())) {
+            list = new ArrayList<>();
+            //list = MainActivity.mFilmList; odkomentova pro zobrazeni dat offline
+            emptyTV.setText("Žádné připojení");
+        } else {
+            list = MainActivity.mFilmList;
             if(list.size() == 0) {
-                emptyTV.setText("Žádné data");
+                emptyTV.setText("Žádná data");
             }
-
+        }
 
         FilmAdapter filmAdapter = new FilmAdapter(list, getContext());
         filmsLV.setAdapter(filmAdapter);
@@ -93,12 +98,17 @@ public class FilmsListFragment extends Fragment {
             }
         });
 
+
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
+
             if (mPosition != ListView.INVALID_POSITION) {
                 mListView.smoothScrollToPosition(mPosition);
             }
         }
+
         return view;
     }
+
+
 }
