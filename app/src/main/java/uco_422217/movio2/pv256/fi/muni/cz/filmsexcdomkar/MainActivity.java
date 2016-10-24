@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -12,9 +11,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
-
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters.DrawerNavigationAdapter;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.listeners.OnFilmSelectListener;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
@@ -42,9 +39,11 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
     public static ArrayList<Genre> mGenreList = new ArrayList<Genre>(){{
         add(new Genre("Akční", true));
         add(new Genre("Dobrudružný", false));
-        add(new Genre("romanick", true));
+        add(new Genre("romantičký", true));
         add(new Genre("komedie", false));
-        add(new Genre("dokumenttist", true));
+        add(new Genre("dokumentární", true));
+        add(new Genre("Scifi", true));
+        add(new Genre("Fantasy", false));
     }};
 
     @Override
@@ -53,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
         setContentView(R.layout.activity_main);
         Log.i("activita", "onCreate");
         getSupportActionBar().hide();
-
 
         //if mobile add fragment
         if (findViewById(R.id.film_detail_container) != null){
@@ -95,14 +93,12 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
                 fm.beginTransaction()
                         .replace(R.id.film_detail_container, fragment, FilmDetailFragment.TAG)
                         .commit();
-
             } else {
                 Intent intent = new Intent(this, DetailActivity.class);
                 intent.putExtra(DetailActivity.EXTRA_FILM, (Film) film);
                 startActivity(intent);
             }
         }
-
     }
 
     @Override

@@ -30,17 +30,13 @@
                   tools:layout="@android:layout/list_content" />
     </LinearLayout>
 
-
     <ListView
         android:id="@+id/genresLV"
         android:layout_width="320dp"
         android:layout_height="match_parent"
         android:layout_gravity="left"
-
         android:background="#ffffff"
         android:scrollbars="vertical">
-
     </ListView>
 
-
-    </android.support.v4.widget.DrawerLayout>
+</android.support.v4.widget.DrawerLayout>

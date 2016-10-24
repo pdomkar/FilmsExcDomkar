@@ -89,7 +89,8 @@
         android:src="@drawable/ic_plus"
         app:backgroundTint="@color/myColorAccent"
         app:layout_anchor="@id/headImageLL"
-        app:layout_anchorGravity="bottom|right|end" />
+        app:layout_anchorGravity="bottom|right|end"
+        android:visibility="invisible"/>
 
 </android.support.design.widget.CoordinatorLayout>
 

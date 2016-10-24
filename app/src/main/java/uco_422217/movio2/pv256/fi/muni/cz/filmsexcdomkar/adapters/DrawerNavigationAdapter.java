@@ -23,7 +23,11 @@ public class DrawerNavigationAdapter extends BaseAdapter {
         private Context mContext;
 
         public DrawerNavigationAdapter(ArrayList<Genre> list, Context context){
-            mGenresArrayList = list;
+            if(list != null) {
+                mGenresArrayList = list;
+            } else {
+                mGenresArrayList = new ArrayList<>();
+            }
             mContext = context;
         }
 
@@ -58,7 +62,7 @@ public class DrawerNavigationAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         int rowType = getItemViewType(position);
         if (convertView == null) {
-            Log.i("INF", "new");
+            Log.i("inf", "new view");
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             switch (rowType) {
                 case HEADER:
@@ -74,7 +78,7 @@ public class DrawerNavigationAdapter extends BaseAdapter {
                     break;
             }
         }
-        Log.i("INF", "change");
+        Log.i("inf", "change view");
 
         switch (rowType) {
             case HEADER:

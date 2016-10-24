@@ -35,9 +35,12 @@ public class FilmAdapter extends BaseAdapter {
 
     public FilmAdapter(ArrayList<Object> filmArrayList, Context context) {
         mAppContext = context.getApplicationContext();
-        mFilmArrayList = filmArrayList;
+        if(filmArrayList != null) {
+            mFilmArrayList = filmArrayList;
+        } else {
+            mFilmArrayList = new ArrayList<>();
+        }
     }
-
 
     @Override
     public int getCount() {
@@ -68,7 +71,7 @@ public class FilmAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         int rowType = getItemViewType(position);
         if (convertView == null) {
-            Log.i("INF", "new");
+            Log.i("inf", "new view");
             LayoutInflater inflater = (LayoutInflater) mAppContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             switch (rowType) {
                 case CATEGORY:
@@ -83,7 +86,7 @@ public class FilmAdapter extends BaseAdapter {
                     break;
             }
         }
-        Log.i("INF", "change");
+        Log.i("inf", "change view");
         switch (rowType) {
             case CATEGORY:
                 CategoryViewHolder categoryViewHolder = (CategoryViewHolder) convertView.getTag(R.layout.view_holder_category);
@@ -94,6 +97,7 @@ public class FilmAdapter extends BaseAdapter {
                 filmViewHolder.setPoster(Uri.EMPTY);
                 filmViewHolder.setTitle(((Film) mFilmArrayList.get(position)).getTitle());
                 filmViewHolder.setRating( Float.toString( ((Film) mFilmArrayList.get(position)).getPopularity() ) );
+
                 Bitmap image = BitmapFactory.decodeResource(mAppContext.getResources(), R.drawable.tmpimage);
                 Palette.from(image).generate(new Palette.PaletteAsyncListener() {
                     public void onGenerated(Palette palette) {

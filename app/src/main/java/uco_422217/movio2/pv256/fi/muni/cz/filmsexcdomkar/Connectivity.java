@@ -5,18 +5,16 @@ package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar;
  */
 
 
-        import android.content.Context;
-        import android.net.ConnectivityManager;
-        import android.net.NetworkInfo;
-        import android.telephony.TelephonyManager;
+    import android.content.Context;
+    import android.net.ConnectivityManager;
+    import android.net.NetworkInfo;
+    import android.telephony.TelephonyManager;
 
 
 public class Connectivity {
 
     /**
      * Get the network info
-     * @param context
-     * @return
      */
     public static NetworkInfo getNetworkInfo(Context context){
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -25,8 +23,6 @@ public class Connectivity {
 
     /**
      * Check if there is any connectivity
-     * @param context
-     * @return
      */
     public static boolean isConnected(Context context){
         NetworkInfo info = Connectivity.getNetworkInfo(context);
@@ -35,8 +31,6 @@ public class Connectivity {
 
     /**
      * Check if there is any connectivity to a Wifi network
-     * @param context
-     * @return
      */
     public static boolean isConnectedWifi(Context context){
         NetworkInfo info = Connectivity.getNetworkInfo(context);
@@ -45,8 +39,6 @@ public class Connectivity {
 
     /**
      * Check if there is any connectivity to a mobile network
-     * @param context
-     * @return
      */
     public static boolean isConnectedMobile(Context context){
         NetworkInfo info = Connectivity.getNetworkInfo(context);
@@ -55,8 +47,6 @@ public class Connectivity {
 
     /**
      * Check if there is fast connectivity
-     * @param context
-     * @return
      */
     public static boolean isConnectedFast(Context context){
         NetworkInfo info = Connectivity.getNetworkInfo(context);

@@ -65,8 +65,6 @@ public class FilmDetailFragment extends Fragment {
             backdropTV.setText(mFilm.getBackdrop());
             plusFAB.show();
         }
-
         return view;
     }
-
 }
