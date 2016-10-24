@@ -30,16 +30,12 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 
 public class FilmAdapter extends BaseAdapter {
     private Context mAppContext;
-    private boolean mTwoPane;
-    private FragmentManager mFragmentManager;
     private ArrayList<Object> mFilmArrayList;
     private static final int CATEGORY = 0, FILM = 1;
 
-    public FilmAdapter(ArrayList<Object> filmArrayList, Context context, boolean twoPane, FragmentManager fragmentManager) {
+    public FilmAdapter(ArrayList<Object> filmArrayList, Context context) {
         mAppContext = context.getApplicationContext();
-        mTwoPane = twoPane;
         mFilmArrayList = filmArrayList;
-        mFragmentManager = fragmentManager;
     }
 
 
@@ -82,7 +78,7 @@ public class FilmAdapter extends BaseAdapter {
                     break;
                 case FILM:
                     convertView = inflater.inflate(R.layout.view_holder_film, parent, false);
-                    FilmViewHolder filmViewHolder = new FilmViewHolder(convertView, mTwoPane, position, mFragmentManager);
+                    FilmViewHolder filmViewHolder = new FilmViewHolder(convertView);
                     convertView.setTag(R.layout.view_holder_film, filmViewHolder);
                     break;
             }
@@ -118,25 +114,17 @@ public class FilmAdapter extends BaseAdapter {
     }
 
 
-    private static class FilmViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    private static class FilmViewHolder {
         private RelativeLayout mButtonBarRL;
         private ImageView mPosterIV;
         private TextView mTitleTV;
         private TextView mRatingTV;
-        private boolean mTwoPane;
-        private int mPosition;
-        private FragmentManager mFragmentManager;
 
-        public FilmViewHolder(View itemView, boolean twoPane, int position, FragmentManager fragmentManager) {
+        public FilmViewHolder(View itemView) {
             mButtonBarRL = (RelativeLayout) itemView.findViewById(R.id.bottomBar);
             mPosterIV = (ImageView)itemView.findViewById(R.id.posterIV);
             mTitleTV = (TextView)itemView.findViewById(R.id.titleTV);
             mRatingTV = (TextView)itemView.findViewById(R.id.ratingTV);
-            mTwoPane = twoPane;
-            mPosition = position;
-            mFragmentManager = fragmentManager;
-            itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
         }
 
         public RelativeLayout getBottomBar() {
@@ -165,33 +153,6 @@ public class FilmAdapter extends BaseAdapter {
 
         public void setRating(String rating) {
             mRatingTV.setText(rating);
-        }
-
-        @Override
-        public void onClick(View view) {
-            Log.i("sd", "click");
-            FilmDetailFragment filmDetailFragment = new FilmDetailFragment();
-            Bundle args = new Bundle();
-            args.putParcelable(FilmDetailFragment.SELECTED_FILM, (Film)MainActivity.mFilmList.get(mPosition));
-            filmDetailFragment.setArguments(args);
-
-            //change fragment
-            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            if (mTwoPane) {
-                fragmentTransaction.replace(R.id.film_detail_fragment, filmDetailFragment);
-                fragmentTransaction.commit();
-            } else {
-                fragmentTransaction.replace(R.id.fragment_container, filmDetailFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-            }
-        }
-
-        @Override
-        public boolean onLongClick(View view) {
-            TextView tv = (TextView) view.findViewById(R.id.titleTV);
-            tv.setVisibility(View.VISIBLE);
-            return true;
         }
     }
 

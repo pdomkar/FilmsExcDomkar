@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters.FilmAdapter;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.listeners.OnFilmSelectListener;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 
 /**
@@ -28,65 +30,112 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 
 public class FilmsListFragment extends Fragment {
     private static final String TAG = FilmsListFragment.class.getName();
-    private boolean mTwoPane;
+    private static final String SELECTED_KEY = "selected_position";
 
-    public FilmsListFragment() {
-        Log.i("sdfsfasfdsafasf", "sdfsaf");
-    }
-
-    public static FilmsListFragment newInstance(boolean twoPane) {
-        FilmsListFragment f = new FilmsListFragment();
-        f.mTwoPane = twoPane;
-        return f;
-    }
+    private int mPosition = ListView.INVALID_POSITION;
+    private OnFilmSelectListener mListener;
+    private Context mContext;
+    private ListView mListView;
 
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
-        Log.i("FL", "onAttach");
 
+        try {
+            mListener = (OnFilmSelectListener) activity;
+        } catch (ClassCastException e) {
+            Log.e(TAG, "Activity must implement OnMovieSelectListener", e);
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        Log.i("FL", "onDetatch");
 
+        mListener = null; //Avoid leaking the Activity
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("FL", "onCrate");
+
+        mContext = getActivity().getApplicationContext();
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView: ");
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_film_list_layout, container, false);
-        if (view.findViewById(R.id.film_detail_fragment) != null) {
-            Log.i("qwwwwww", "yes");
-        }
-Log.i("qwwwwww", (view.findViewById(R.id.fragment_container) != null) + "");
-        ListView listView = (ListView) view.findViewById(R.id.filmsLV);
-        listView.setEmptyView(view.findViewById(R.id.empty_list_item));
+        ListView filmsLV = (ListView) view.findViewById(R.id.filmsLV);
+        filmsLV.setEmptyView(view.findViewById(R.id.empty_list_item));
 
         ArrayList<Object> list;
         if(!Connectivity.isConnected(getActivity().getApplicationContext())) {
-            list = new ArrayList<>();
+            //list = new ArrayList<>(); vymenit
+            list = MainActivity.mFilmList;
             TextView emptyTV = (TextView) view.findViewById(R.id.empty_list_item);
             emptyTV.setText("Žádné připojení");
         } else {
-          // list = MainActivity.mFilmList;
+             list = MainActivity.mFilmList;
         }
-        list = MainActivity.mFilmList;// todo ZDE SMAzat
-Log.i("twooo", ""+ mTwoPane);
 
-        FilmAdapter filmAdapter = new FilmAdapter(list, getContext(), mTwoPane, getActivity().getSupportFragmentManager());
-        listView.setAdapter(filmAdapter);
+        FilmAdapter filmAdapter = new FilmAdapter(list, getContext());
+        filmsLV.setAdapter(filmAdapter);
+
+        filmsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mPosition = position;
+                mListener.onFilmSelect(MainActivity.mFilmList.get(position));
+            }
+        });
+
+        filmsLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if(MainActivity.mFilmList.get(position) instanceof Film) {
+                    Film f = (Film)MainActivity.mFilmList.get(position);
+                    Toast.makeText(mContext, f.getTitle(), Toast.LENGTH_SHORT)
+                            .show();
+                }
+                return true;
+            }
+        });
+
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+
+            if (mPosition != ListView.INVALID_POSITION) {
+                mListView.smoothScrollToPosition(mPosition);
+            }
+        }
+
         return view;
     }
+
+//
+//    @Nullable
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+//        View view = inflater.inflate(R.layout.fragment_film_list_layout, container, false);
+//        ListView listView = (ListView) view.findViewById(R.id.filmsLV);
+//        listView.setEmptyView(view.findViewById(R.id.empty_list_item));
+//
+//        ArrayList<Object> list;
+//        if(!Connectivity.isConnected(getActivity().getApplicationContext())) {
+//            list = new ArrayList<>();
+//            TextView emptyTV = (TextView) view.findViewById(R.id.empty_list_item);
+//            emptyTV.setText("Žádné připojení");
+//        } else {
+//          // list = MainActivity.mFilmList;
+//        }
+//        list = MainActivity.mFilmList;// todo ZDE SMAzat
+//
+//
+//        FilmAdapter filmAdapter = new FilmAdapter(list, getContext(), mTwoPane, getActivity().getSupportFragmentManager());
+//        listView.setAdapter(filmAdapter);
+//        return view;
+//    }
 
 }
