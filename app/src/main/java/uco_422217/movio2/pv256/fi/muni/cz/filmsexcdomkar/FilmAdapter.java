@@ -22,7 +22,11 @@ public class FilmAdapter extends BaseAdapter {
     private ArrayList<Film> mFilmArrayList;
 
     public FilmAdapter(ArrayList<Film> filmArrayList, Context context) {
-        mFilmArrayList = filmArrayList;
+        if(filmArrayList != null) {
+            mFilmArrayList = filmArrayList;
+        } else {
+            mFilmArrayList = new ArrayList<>();
+        }
         mAppContext = context.getApplicationContext();
     }
 
@@ -33,7 +37,11 @@ public class FilmAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return mFilmArrayList.get(position);
+        if(position >= 0 && position < mFilmArrayList.size()) {
+            return mFilmArrayList.get(position);
+        } else {
+            throw new IllegalArgumentException("position out of bounds");
+        }
     }
 
     @Override
@@ -64,7 +72,6 @@ public class FilmAdapter extends BaseAdapter {
         public void bindView(Context context, Film film) {
             if (film == null)  return;
             mTitle.setText(film.getTitle());
-
         }
 
     }
