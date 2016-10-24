@@ -14,14 +14,20 @@
             android:id="@+id/headImageLL"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.8"
+            android:layout_weight="1.6"
             android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/posterDetailIV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/tmpimage"/>
         </LinearLayout>
         <RelativeLayout
             android:id="@+id/headContentLL"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.2"
+            android:layout_weight="1.4"
             android:orientation="horizontal"
             android:background="@color/myColorPrimary"
             android:weightSum="1">

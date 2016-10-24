@@ -1,41 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/main_container"
+<android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/myColorPrimaryDark">
+    android:elevation="7dp">
 
-    <include
-        layout="@layout/toolbar_main"
+    <LinearLayout
+        android:id="@+id/main_container"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/myColorPrimaryDark">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/myColorPrimaryDark"
-              android:baselineAligned="false">
-        <fragment
-            android:id="@+id/films_list_fragment"
-            android:name="uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmsListFragment"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
-        <!--<fragment-->
-            <!--android:id="@+id/film_detail_fragment"-->
-            <!--android:name="uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmDetailFragment"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="2" />-->
-        <FrameLayout
-            android:id="@+id/movie_detail_container"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="4" />
+        <include
+            layout="@layout/toolbar_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:orientation="horizontal"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:background="@color/myColorPrimaryDark"
+                  android:baselineAligned="false">
+            <fragment
+                android:id="@+id/films_list_fragment"
+                android:name="uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmsListFragment"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                />
+
+
+            <FrameLayout
+                android:id="@+id/film_detail_fragment"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3" />
+        </LinearLayout>
+
     </LinearLayout>
 
-</LinearLayout>
+    <ListView
+        android:id="@+id/genresLV"
+        android:layout_width="320dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+
+        android:background="#ffffff"
+        android:scrollbars="vertical">
+
+    </ListView>
+
+
+</android.support.v4.widget.DrawerLayout>

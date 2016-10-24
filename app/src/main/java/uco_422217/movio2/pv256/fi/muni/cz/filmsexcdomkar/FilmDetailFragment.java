@@ -53,6 +53,7 @@ public class FilmDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_film_detail_layout, container, false);
 
         this.mTtile = (TextView) view.findViewById(R.id.titleDetailTV);
+        Log.i("sdfq", (mTtile == null) + "");
         this.mReleaseDate = (TextView) view.findViewById(R.id.releaseDateDetailTV);
         this.mBackdrop = (TextView) view.findViewById(R.id.backdropDetailTV);
         this.mPlusFAB = (FloatingActionButton) view.findViewById(R.id.plusFAB);
@@ -87,6 +88,8 @@ public class FilmDetailFragment extends Fragment {
     public void setFilmDetail(Film film) {
         if(film != null) {
             this.mFilm = film;
+            Log.i("qwer",( this.mTtile == null) + "");
+
             this.mTtile.setText(film.getTitle());
             this.mBackdrop.setText(film.getBackdrop());
             Date date = new Date(film.getReleaseDate());
@@ -94,7 +97,6 @@ public class FilmDetailFragment extends Fragment {
             cal.setTime(date);
             int year = cal.get(Calendar.YEAR);
             this.mReleaseDate.setText(year + "");
-            this.mTtile.setText(film.getTitle());
             mPlusFAB.show();
         }
     }
