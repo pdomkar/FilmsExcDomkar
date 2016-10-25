@@ -9,8 +9,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -52,17 +55,26 @@ public class FilmDetailFragment extends Fragment {
 
         TextView titleTV = (TextView) view.findViewById(R.id.titleDetailTV);
         TextView releaseDateTV = (TextView) view.findViewById(R.id.releaseDateDetailTV);
-        TextView backdropTV = (TextView) view.findViewById(R.id.backdropDetailTV);
+        ImageView backdropIV = (ImageView) view.findViewById(R.id.backdropDetailIV);
+        ImageView posterIV = (ImageView) view.findViewById(R.id.posterDetailIV);
+        TextView overviewContentTV = (TextView) view.findViewById(R.id.overviewContentTV);
         FloatingActionButton plusFAB = (FloatingActionButton) view.findViewById(R.id.plusFAB);
 
         if (mFilm != null) {
             titleTV.setText(mFilm.getTitle());
-            Date date = new Date(mFilm.getReleaseDate());
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            int year = cal.get(Calendar.YEAR);
-            releaseDateTV.setText(year + "");
-            backdropTV.setText(mFilm.getBackdrop());
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = null;
+            String year = "";
+            try {
+                date = format.parse(mFilm.getReleaseDate());
+                SimpleDateFormat df = new SimpleDateFormat("yyyy");
+                year = df.format(date);
+            } catch (ParseException e) {
+                Log.i(TAG, "parse exception", e);
+            }
+            releaseDateTV.setText(year);
+            overviewContentTV.setText(mFilm.getOverview());
+            //foto
             plusFAB.show();
         }
         return view;

@@ -3,30 +3,52 @@ package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by Petr on 6. 10. 2016.
+ *
+ * https://www.themoviedb.org/documentation/api/discover
+ * https://www.themoviedb.org/account/domki9/api
+ * https://developers.themoviedb.org/3/discover
  */
 
 public class Film implements Parcelable{
-    private long mReleaseDate;
-    private String mCoverPath;
-    private String mTitle;
-    private String mBackdrop;
-    private float mPopularity;
 
-    public Film(long releaseDate, String coverPath, String title, String backdrop, float popularity) {
+    @SerializedName("id")
+    private long mId;
+    @SerializedName("original_title")
+    private String mTitle;
+    @SerializedName("release_date")
+    private String mReleaseDate;
+    @SerializedName("poster_path")
+    private String mCoverPath;
+    @SerializedName("backdrop_path")
+    private String mBackdropPath;
+    @SerializedName("vote_average")
+    private float mVoteAverage;
+    @SerializedName("overview")
+    private String mOverview;
+
+    public Film(long id, String title, String releaseDate, String coverPath, String backdropPath, float voteAverage, String overview) {
+        mId = id;
+        mTitle = title;
         mReleaseDate = releaseDate;
         mCoverPath = coverPath;
-        mTitle = title;
-        mBackdrop = backdrop;
-        mPopularity = popularity;
+        mBackdropPath = backdropPath;
+        mVoteAverage = voteAverage;
+        mOverview = overview;
     }
 
-    public long getReleaseDate() {
+    public long getId() {
+        return mId;
+    }
+
+    public String getReleaseDate() {
         return mReleaseDate;
     }
 
-    public void setReleaseDate(long releaseDate) {
+    public void setReleaseDate(String releaseDate) {
         mReleaseDate = releaseDate;
     }
 
@@ -46,20 +68,28 @@ public class Film implements Parcelable{
         mTitle = title;
     }
 
-    public String getBackdrop() {
-        return mBackdrop;
+    public String getBackdropPath() {
+        return mBackdropPath;
     }
 
-    public void setBackdrop(String backdrop) {
-        mBackdrop = backdrop;
+    public void setBackdropPath(String backdropPath) {
+        mBackdropPath = backdropPath;
     }
 
-    public float getPopularity() {
-        return mPopularity;
+    public float getVoteAverage() {
+        return mVoteAverage;
     }
 
-    public void setPopularity(float popularity) {
-        mPopularity = popularity;
+    public void setVoteAverage(float voteAverage) {
+        mVoteAverage = voteAverage;
+    }
+
+    public String getOverview() {
+        return mOverview;
+    }
+
+    public void setOverview(String overview) {
+        mOverview = overview;
     }
 
     @Override
@@ -69,22 +99,26 @@ public class Film implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(this.mReleaseDate);
+        dest.writeLong(this.mId);
+        dest.writeString(this.mReleaseDate);
         dest.writeString(this.mCoverPath);
         dest.writeString(this.mTitle);
-        dest.writeString(this.mBackdrop);
-        dest.writeFloat(this.mPopularity);
+        dest.writeString(this.mBackdropPath);
+        dest.writeFloat(this.mVoteAverage);
+        dest.writeString(this.mOverview);
     }
 
     public Film() {
     }
 
     protected Film(Parcel in) {
-        this.mReleaseDate = in.readLong();
+        this.mId = in.readLong();
+        this.mReleaseDate = in.readString();
         this.mCoverPath = in.readString();
         this.mTitle = in.readString();
-        this.mBackdrop = in.readString();
-        this.mPopularity = in.readFloat();
+        this.mBackdropPath = in.readString();
+        this.mVoteAverage = in.readFloat();
+        this.mOverview = in.readString();
     }
 
     public static final Creator<Film> CREATOR = new Creator<Film>() {
@@ -98,4 +132,9 @@ public class Film implements Parcelable{
             return new Film[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return super.toString() + "Film: id: " + mId + ", title: "+mTitle+", VoteAverage: " + mVoteAverage + ", Reease date: " + mReleaseDate + ", Overview: " + mOverview;
+    }
 }

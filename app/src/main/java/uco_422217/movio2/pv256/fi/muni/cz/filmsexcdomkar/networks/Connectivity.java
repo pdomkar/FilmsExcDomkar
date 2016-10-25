@@ -1,4 +1,4 @@
-package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar;
+package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks;
 
 /**
  * Created by Petr on 23. 10. 2016.

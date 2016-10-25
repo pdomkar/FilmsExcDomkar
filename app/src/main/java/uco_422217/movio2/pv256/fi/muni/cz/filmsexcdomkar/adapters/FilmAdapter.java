@@ -17,7 +17,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmDetailFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.MainActivity;
@@ -30,10 +33,11 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 
 public class FilmAdapter extends BaseAdapter {
     private Context mAppContext;
-    private ArrayList<Object> mFilmArrayList;
+    private List<Object> mFilmArrayList;
     private static final int CATEGORY = 0, FILM = 1;
 
-    public FilmAdapter(ArrayList<Object> filmArrayList, Context context) {
+
+    public FilmAdapter(List<Object> filmArrayList, Context context) {
         mAppContext = context.getApplicationContext();
         if(filmArrayList != null) {
             mFilmArrayList = filmArrayList;
@@ -41,6 +45,15 @@ public class FilmAdapter extends BaseAdapter {
             mFilmArrayList = new ArrayList<>();
         }
     }
+
+
+    public void setList(List<Object> list)
+    {
+        if(list !=  null ) {
+            mFilmArrayList = list;
+        }
+    }
+
 
     @Override
     public int getCount() {
@@ -94,9 +107,9 @@ public class FilmAdapter extends BaseAdapter {
                 break;
             case FILM:
                 final FilmViewHolder filmViewHolder = (FilmViewHolder) convertView.getTag(R.layout.view_holder_film);
-                filmViewHolder.setPoster(Uri.EMPTY);
+                filmViewHolder.setBackdrop(Uri.EMPTY);
                 filmViewHolder.setTitle(((Film) mFilmArrayList.get(position)).getTitle());
-                filmViewHolder.setRating( Float.toString( ((Film) mFilmArrayList.get(position)).getPopularity() ) );
+                filmViewHolder.setVoteAverage( ((Film) mFilmArrayList.get(position)).getVoteAverage() );
 
                 Bitmap image = BitmapFactory.decodeResource(mAppContext.getResources(), R.drawable.tmpimage);
                 Palette.from(image).generate(new Palette.PaletteAsyncListener() {
@@ -120,27 +133,27 @@ public class FilmAdapter extends BaseAdapter {
 
     private static class FilmViewHolder {
         private RelativeLayout mButtonBarRL;
-        private ImageView mPosterIV;
+        private ImageView mBackdropIV;
         private TextView mTitleTV;
-        private TextView mRatingTV;
+        private TextView mVoteAverageTV;
 
         public FilmViewHolder(View itemView) {
             mButtonBarRL = (RelativeLayout) itemView.findViewById(R.id.bottomBar);
-            mPosterIV = (ImageView)itemView.findViewById(R.id.posterIV);
+            mBackdropIV = (ImageView)itemView.findViewById(R.id.backdropIV);
             mTitleTV = (TextView)itemView.findViewById(R.id.titleTV);
-            mRatingTV = (TextView)itemView.findViewById(R.id.ratingTV);
+            mVoteAverageTV = (TextView)itemView.findViewById(R.id.voteAverageTV);
         }
 
         public RelativeLayout getBottomBar() {
             return mButtonBarRL;
         }
 
-        public ImageView getPoster() {
-            return mPosterIV;
+        public ImageView getBackdrop() {
+            return mBackdropIV;
         }
 
-        public void setPoster(Uri poster) {
-            mPosterIV.setImageResource(R.drawable.tmpimage);
+        public void setBackdrop(Uri backdrop) {
+            mBackdropIV.setImageResource(R.drawable.tmpimage);
         }
 
         public TextView getTitle() {
@@ -151,12 +164,12 @@ public class FilmAdapter extends BaseAdapter {
             mTitleTV.setText(title);
         }
 
-        public TextView getRating() {
-            return mRatingTV;
+        public TextView getVoteAverage() {
+            return mVoteAverageTV;
         }
 
-        public void setRating(String rating) {
-            mRatingTV.setText(rating);
+        public void setVoteAverage(Float voteAverage) {
+            mVoteAverageTV.setText(new DecimalFormat("#.#").format(voteAverage));
         }
     }
 

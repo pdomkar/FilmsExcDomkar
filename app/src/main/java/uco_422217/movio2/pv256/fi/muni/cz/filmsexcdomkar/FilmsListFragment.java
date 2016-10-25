@@ -13,9 +13,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.List;
+
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters.FilmAdapter;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.listeners.OnFilmSelectListener;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadManager;
 
 /**
  * Created by Petr on 6. 10. 2016.
@@ -28,12 +32,16 @@ public class FilmsListFragment extends Fragment {
     private int mPosition = ListView.INVALID_POSITION;
     private OnFilmSelectListener mListener;
     private Context mContext;
-    private ListView mListView;
+    private DownloadManager mDownloadManager;
+    private FilmAdapter filmAdapter;
+    private ListView mFilmsLV;
+    private TextView mEmptyTV;
 
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
-
+        mDownloadManager = new DownloadManager(this);
+        mDownloadManager.startFilmsTask();
         try {
             mListener = (OnFilmSelectListener) activity;
         } catch (ClassCastException e) {
@@ -41,12 +49,7 @@ public class FilmsListFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
 
-        mListener = null;
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,38 +62,33 @@ public class FilmsListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_film_list_layout, container, false);
-        ListView filmsLV = (ListView) view.findViewById(R.id.filmsLV);
-        filmsLV.setEmptyView(view.findViewById(R.id.empty_list_item));
-        TextView emptyTV = (TextView) view.findViewById(R.id.empty_list_item);
+        mFilmsLV = (ListView) view.findViewById(R.id.filmsLV);
+        mFilmsLV.setEmptyView(view.findViewById(R.id.empty_list_item));
+        mEmptyTV = (TextView) view.findViewById(R.id.empty_list_item);
 
-        ArrayList<Object> list;
+        ArrayList<Object> list = new ArrayList<>();
         if(!Connectivity.isConnected(getActivity().getApplicationContext())) {
-            list = new ArrayList<>();
-            //list = MainActivity.mFilmList; odkomentova pro zobrazeni dat offline
-            emptyTV.setText("Žádné připojení");
+            mEmptyTV.setText("Žádné připojení");
         } else {
-            list = MainActivity.mFilmList;
-            if(list.size() == 0) {
-                emptyTV.setText("Žádná data");
-            }
+            mEmptyTV.setText("Načítání dat . . .");
         }
 
-        FilmAdapter filmAdapter = new FilmAdapter(list, getContext());
-        filmsLV.setAdapter(filmAdapter);
+        filmAdapter = new FilmAdapter(list, getContext());
+        mFilmsLV.setAdapter(filmAdapter);
 
-        filmsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mFilmsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mPosition = position;
-                mListener.onFilmSelect(MainActivity.mFilmList.get(position));
+                mListener.onFilmSelect(filmAdapter.getItem(position));
             }
         });
 
-        filmsLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        mFilmsLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if(MainActivity.mFilmList.get(position) instanceof Film) {
-                    Film f = (Film)MainActivity.mFilmList.get(position);
+                if(filmAdapter.getItem(position) instanceof Film) {
+                    Film f = (Film) filmAdapter.getItem(position);
                     Toast.makeText(mContext, f.getTitle(), Toast.LENGTH_SHORT)
                             .show();
                 }
@@ -98,17 +96,34 @@ public class FilmsListFragment extends Fragment {
             }
         });
 
-
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
 
             if (mPosition != ListView.INVALID_POSITION) {
-                mListView.smoothScrollToPosition(mPosition);
+                mFilmsLV.smoothScrollToPosition(mPosition);
             }
         }
 
         return view;
     }
 
+
+
+
+    public void setList(List<Object> list) {
+        filmAdapter.setList(list);
+        mFilmsLV.setAdapter(filmAdapter);
+        if(list.size() == 0) {
+            mEmptyTV.setText("Žádná data");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mDownloadManager.cancelFilmsTask();
+        mDownloadManager = null;
+        mListener = null;
+    }
 
 }
