@@ -9,6 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.List;
+
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.R;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
 
@@ -19,26 +21,33 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
 public class DrawerNavigationAdapter extends BaseAdapter {
 
         private static final int HEADER = 0, GENRE_ITEM = 1;
-        private ArrayList<Genre> mGenresArrayList;
+    private List<Genre> mGenreList;
         private Context mContext;
 
-        public DrawerNavigationAdapter(ArrayList<Genre> list, Context context){
+    public DrawerNavigationAdapter(List<Genre> list, Context context) {
             if(list != null) {
-                mGenresArrayList = list;
+                mGenreList = list;
             } else {
-                mGenresArrayList = new ArrayList<>();
+                mGenreList = new ArrayList<>();
             }
             mContext = context;
         }
 
+
+    public void setList(List<Genre> list) {
+        if (list != null) {
+            mGenreList = list;
+        }
+    }
+
         @Override
         public int getCount() {
-            return mGenresArrayList.size();
+            return mGenreList.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return mGenresArrayList.get(i);
+            return mGenreList.get(i);
         }
 
         @Override
@@ -87,13 +96,13 @@ public class DrawerNavigationAdapter extends BaseAdapter {
                 break;
             case GENRE_ITEM:
                 final  DrawerNavigationAdapter.GenreItemViewHolder genreItemViewHolder = ( DrawerNavigationAdapter.GenreItemViewHolder) convertView.getTag(R.layout.view_holder_navigation_drawer);
-                genreItemViewHolder.getGenreTV().setText(((Genre) mGenresArrayList.get(position)).getName());
-                genreItemViewHolder.getShowGenre().setChecked(((Genre) mGenresArrayList.get(position)).isShow());
+                genreItemViewHolder.getGenreTV().setText(mGenreList.get(position).getName());
+                genreItemViewHolder.getShowGenre().setChecked(mGenreList.get(position).isShow());
                 convertView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mGenresArrayList.get(position).setShow(!mGenresArrayList.get(position).isShow());
-                        genreItemViewHolder.getShowGenre().setChecked(((Genre) mGenresArrayList.get(position)).isShow());
+                        mGenreList.get(position).setShow(!mGenreList.get(position).isShow());
+                        genreItemViewHolder.getShowGenre().setChecked(mGenreList.get(position).isShow());
                     }
                 });
                 break;
@@ -105,15 +114,16 @@ public class DrawerNavigationAdapter extends BaseAdapter {
         private TextView mGenreTV;
         private CheckBox mShowGenreCB;
 
-        public GenreItemViewHolder(View itemView) {
+        GenreItemViewHolder(View itemView) {
             mGenreTV = (TextView)itemView.findViewById(R.id.genreTV);
             mShowGenreCB = (CheckBox) itemView.findViewById(R.id.showGenreCB);
         }
 
-        public TextView getGenreTV() {
+        TextView getGenreTV() {
             return mGenreTV;
         }
-        public CheckBox getShowGenre() {
+
+        CheckBox getShowGenre() {
             return mShowGenreCB;
         }
     }
@@ -122,11 +132,11 @@ public class DrawerNavigationAdapter extends BaseAdapter {
     private static class HeaderViewHolder {
         private TextView mNameTV;
 
-        public HeaderViewHolder(View itemView) {
+        HeaderViewHolder(View itemView) {
             mNameTV = (TextView)itemView.findViewById(R.id.nameTV);
         }
 
-        public TextView getNameTV() {
+        TextView getNameTV() {
             return mNameTV;
         }
     }

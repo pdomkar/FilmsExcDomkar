@@ -1,6 +1,9 @@
 package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,7 +22,7 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters.FilmAdapter;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.listeners.OnFilmSelectListener;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadManager;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmListManager;
 
 /**
  * Created by Petr on 6. 10. 2016.
@@ -32,7 +35,7 @@ public class FilmsListFragment extends Fragment {
     private int mPosition = ListView.INVALID_POSITION;
     private OnFilmSelectListener mListener;
     private Context mContext;
-    private DownloadManager mDownloadManager;
+    private DownloadFilmListManager mDownloadFilmListManager;
     private FilmAdapter filmAdapter;
     private ListView mFilmsLV;
     private TextView mEmptyTV;
@@ -40,8 +43,8 @@ public class FilmsListFragment extends Fragment {
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
-        mDownloadManager = new DownloadManager(this);
-        mDownloadManager.startFilmsTask();
+        mDownloadFilmListManager = new DownloadFilmListManager(this);
+        mDownloadFilmListManager.startFilmsTask();
         try {
             mListener = (OnFilmSelectListener) activity;
         } catch (ClassCastException e) {
@@ -49,14 +52,20 @@ public class FilmsListFragment extends Fragment {
         }
     }
 
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mContext = getActivity().getApplicationContext();
+        mContext.registerReceiver(broadcastReceiver, new IntentFilter("INTERNET_CHANGE"));
     }
+
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mDownloadFilmListManager.cancelFilmsTask();
+            mDownloadFilmListManager.startFilmsTask();
+        }
+    };
 
     @Nullable
     @Override
@@ -107,23 +116,29 @@ public class FilmsListFragment extends Fragment {
         return view;
     }
 
-
-
-
     public void setList(List<Object> list) {
         filmAdapter.setList(list);
         mFilmsLV.setAdapter(filmAdapter);
         if(list.size() == 0) {
-            mEmptyTV.setText("Žádná data");
+            if (!Connectivity.isConnected(getActivity().getApplicationContext())) {
+                mEmptyTV.setText("Žádné připojení");
+            } else {
+                mEmptyTV.setText("Žádná data");
+            }
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mDownloadManager.cancelFilmsTask();
-        mDownloadManager = null;
+        mDownloadFilmListManager.cancelFilmsTask();
+        mDownloadFilmListManager = null;
         mListener = null;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mContext.unregisterReceiver(broadcastReceiver);
+    }
 }

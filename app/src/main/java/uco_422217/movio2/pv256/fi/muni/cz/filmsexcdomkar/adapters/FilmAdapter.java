@@ -3,6 +3,8 @@ package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,10 +20,19 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
+import com.squareup.picasso.Target;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmDetailFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.MainActivity;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.R;
@@ -35,6 +46,7 @@ public class FilmAdapter extends BaseAdapter {
     private Context mAppContext;
     private List<Object> mFilmArrayList;
     private static final int CATEGORY = 0, FILM = 1;
+    private static final String IMAGE_BASE_PATH = "https://image.tmdb.org/t/p/w500";
 
 
     public FilmAdapter(List<Object> filmArrayList, Context context) {
@@ -94,7 +106,7 @@ public class FilmAdapter extends BaseAdapter {
                     break;
                 case FILM:
                     convertView = inflater.inflate(R.layout.view_holder_film, parent, false);
-                    FilmViewHolder filmViewHolder = new FilmViewHolder(convertView);
+                    FilmViewHolder filmViewHolder = new FilmViewHolder(convertView, mAppContext);
                     convertView.setTag(R.layout.view_holder_film, filmViewHolder);
                     break;
             }
@@ -107,24 +119,10 @@ public class FilmAdapter extends BaseAdapter {
                 break;
             case FILM:
                 final FilmViewHolder filmViewHolder = (FilmViewHolder) convertView.getTag(R.layout.view_holder_film);
-                filmViewHolder.setBackdrop(Uri.EMPTY);
                 filmViewHolder.setTitle(((Film) mFilmArrayList.get(position)).getTitle());
                 filmViewHolder.setVoteAverage( ((Film) mFilmArrayList.get(position)).getVoteAverage() );
-
-                Bitmap image = BitmapFactory.decodeResource(mAppContext.getResources(), R.drawable.tmpimage);
-                Palette.from(image).generate(new Palette.PaletteAsyncListener() {
-                    public void onGenerated(Palette palette) {
-                        Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
-                        if (vibrantSwatch != null) {
-                            int alpha = (vibrantSwatch.getRgb() & 0x00ffffff) | (128 << 24);
-                            GradientDrawable gradient = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,
-                                    new int[] {alpha, vibrantSwatch.getRgb()});
-
-                            filmViewHolder.getTitle().setTextColor(vibrantSwatch.getTitleTextColor());
-                            filmViewHolder.getBottomBar().setBackgroundDrawable(gradient);
-                        }
-                    }
-                });
+                String imagePath = IMAGE_BASE_PATH + ((Film) mFilmArrayList.get(position)).getBackdropPath();
+                filmViewHolder.setBackdrop(imagePath);
                 break;
         }
         return convertView;
@@ -136,15 +134,17 @@ public class FilmAdapter extends BaseAdapter {
         private ImageView mBackdropIV;
         private TextView mTitleTV;
         private TextView mVoteAverageTV;
+        private Context mAppContext;
 
-        public FilmViewHolder(View itemView) {
+        FilmViewHolder(View itemView, Context context) {
             mButtonBarRL = (RelativeLayout) itemView.findViewById(R.id.bottomBar);
             mBackdropIV = (ImageView)itemView.findViewById(R.id.backdropIV);
             mTitleTV = (TextView)itemView.findViewById(R.id.titleTV);
             mVoteAverageTV = (TextView)itemView.findViewById(R.id.voteAverageTV);
+            mAppContext = context;
         }
 
-        public RelativeLayout getBottomBar() {
+        RelativeLayout getBottomBar() {
             return mButtonBarRL;
         }
 
@@ -152,15 +152,43 @@ public class FilmAdapter extends BaseAdapter {
             return mBackdropIV;
         }
 
-        public void setBackdrop(Uri backdrop) {
-            mBackdropIV.setImageResource(R.drawable.tmpimage);
+        void setBackdrop(String backdropPath) {
+//                Picasso.with(mAppContext).setIndicatorsEnabled(true);
+//                Picasso.with(mAppContext).setLoggingEnabled(true);
+            final RequestCreator requestCreator = Picasso.with(mAppContext).load(backdropPath);
+            requestCreator.placeholder(R.drawable.image_not_found).into(mBackdropIV);
+            requestCreator.placeholder(R.drawable.image_not_found).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                        public void onGenerated(Palette palette) {
+                            Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
+                            if (vibrantSwatch != null) {
+                                int alpha = (vibrantSwatch.getRgb() & 0x00ffffff) | (128 << 24);
+                                GradientDrawable gradient = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,
+                                        new int[]{alpha, vibrantSwatch.getRgb()});
+                                getTitle().setTextColor(vibrantSwatch.getTitleTextColor());
+                                getBottomBar().setBackgroundDrawable(gradient);
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
+            });
         }
 
-        public TextView getTitle() {
+        TextView getTitle() {
             return mTitleTV;
         }
 
-        public void setTitle(String title) {
+        void setTitle(String title) {
             mTitleTV.setText(title);
         }
 
@@ -168,7 +196,7 @@ public class FilmAdapter extends BaseAdapter {
             return mVoteAverageTV;
         }
 
-        public void setVoteAverage(Float voteAverage) {
+        void setVoteAverage(Float voteAverage) {
             mVoteAverageTV.setText(new DecimalFormat("#.#").format(voteAverage));
         }
     }
@@ -176,7 +204,7 @@ public class FilmAdapter extends BaseAdapter {
     private static class CategoryViewHolder {
         private TextView mCategoryTV;
 
-        public CategoryViewHolder(View itemView) {
+        CategoryViewHolder(View itemView) {
             mCategoryTV = (TextView)itemView.findViewById(R.id.categoryTV);
         }
 
@@ -184,7 +212,7 @@ public class FilmAdapter extends BaseAdapter {
             return mCategoryTV;
         }
 
-        public void setCategory(String category) {
+        void setCategory(String category) {
             mCategoryTV.setText(category);
         }
 

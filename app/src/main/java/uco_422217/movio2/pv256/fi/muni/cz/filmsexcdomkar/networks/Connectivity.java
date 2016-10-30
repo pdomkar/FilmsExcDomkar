@@ -16,7 +16,7 @@ public class Connectivity {
     /**
      * Get the network info
      */
-    public static NetworkInfo getNetworkInfo(Context context){
+    private static NetworkInfo getNetworkInfo(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo();
     }
@@ -54,11 +54,8 @@ public class Connectivity {
     }
     /**
      * Check if the connection is fast
-     * @param type
-     * @param subType
-     * @return
      */
-    public static boolean isConnectionFast(int type, int subType){
+    private static boolean isConnectionFast(int type, int subType) {
         if(type==ConnectivityManager.TYPE_WIFI){
             return true;
         }else if(type==ConnectivityManager.TYPE_MOBILE){

@@ -16,7 +16,7 @@ import com.google.gson.annotations.SerializedName;
 public class Film implements Parcelable{
 
     @SerializedName("id")
-    private long mId;
+    private Long mId;
     @SerializedName("original_title")
     private String mTitle;
     @SerializedName("release_date")
@@ -29,6 +29,8 @@ public class Film implements Parcelable{
     private float mVoteAverage;
     @SerializedName("overview")
     private String mOverview;
+
+    private Credits mCredits = null;
 
     public Film(long id, String title, String releaseDate, String coverPath, String backdropPath, float voteAverage, String overview) {
         mId = id;
@@ -90,6 +92,14 @@ public class Film implements Parcelable{
 
     public void setOverview(String overview) {
         mOverview = overview;
+    }
+
+    public Credits getCredits() {
+        return mCredits;
+    }
+
+    public void setCredits(Credits credits) {
+        mCredits = credits;
     }
 
     @Override

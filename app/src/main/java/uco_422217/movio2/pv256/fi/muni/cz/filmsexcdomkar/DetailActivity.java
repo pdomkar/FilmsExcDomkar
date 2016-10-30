@@ -9,23 +9,35 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters.DrawerNavigationAdapter;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadGenreListManager;
 
 public class DetailActivity extends AppCompatActivity {
     public static final String EXTRA_FILM = "extra_film";
-    ListView genresLV;
+    private ListView genresLV;
+    private TextView mEmptyGenresTV;
+    private DrawerNavigationAdapter mDrawerNavigationAdapter;
+    private DownloadGenreListManager mDownloadGenreListManager;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mDownloadGenreListManager = new DownloadGenreListManager(this);
+        mDownloadGenreListManager.startGenresTask();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         getSupportActionBar().hide();
-
 
         if(savedInstanceState == null){
             Film film = getIntent().getParcelableExtra(EXTRA_FILM);
@@ -41,7 +53,7 @@ public class DetailActivity extends AppCompatActivity {
         }
 
 
-        //navitagion drawer
+        //navitagion drawer - prepare for next ukol
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         ImageButton menuIB = (ImageButton)findViewById(R.id.menuIB);
         menuIB.setOnClickListener(new View.OnClickListener() {
@@ -51,10 +63,29 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
         genresLV = (ListView) findViewById(R.id.genresLV);
+        genresLV.setEmptyView(findViewById(R.id.empty_genres_list_item));
+        mEmptyGenresTV = (TextView) findViewById(R.id.empty_genres_list_item);
 
-        DrawerNavigationAdapter drawerNavigationAdapter = new DrawerNavigationAdapter(MainActivity.mGenreList, getApplicationContext());
-        genresLV.setAdapter(drawerNavigationAdapter);
+        mDrawerNavigationAdapter = new DrawerNavigationAdapter(MainActivity.mGenreList, getApplicationContext());
+        genresLV.setAdapter(mDrawerNavigationAdapter);
     }
 
+    public void setListGenre(List<Genre> list) {
+        for (Genre genre : list) {
+            genre.setShow(true);
+        }
+        mDrawerNavigationAdapter.setList(list);
+        genresLV.setAdapter(mDrawerNavigationAdapter);
+        if (list.size() == 0) {
+            mEmptyGenresTV.setText("Žádná data");
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mDownloadGenreListManager.cancelGenresTask();
+        mDownloadGenreListManager = null;
+    }
 
 }

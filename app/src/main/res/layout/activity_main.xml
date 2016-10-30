@@ -39,4 +39,16 @@
         android:scrollbars="vertical">
     </ListView>
 
+    <TextView
+        android:id="@+id/empty_genres_list_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:textColor="@android:color/black"
+        android:padding="10dp"
+        android:textSize="20sp"
+        android:gravity="center_horizontal"
+        android:scrollbars="vertical">
+    </TextView>
+
 </android.support.v4.widget.DrawerLayout>

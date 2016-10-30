@@ -1,6 +1,9 @@
 package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -12,36 +15,38 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.List;
+
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters.DrawerNavigationAdapter;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.listeners.OnFilmSelectListener;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmListManager;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadGenreListManager;
 
 public class MainActivity extends AppCompatActivity implements OnFilmSelectListener {
     private boolean mTwoPane;
-    ListView genresLV;
+    private ListView genresLV;
+    private TextView mEmptyGenresTV;
+    private DrawerNavigationAdapter mDrawerNavigationAdapter;
+    private DownloadGenreListManager mDownloadGenreListManager;
 
     public static ArrayList<Genre> mGenreList = new ArrayList<Genre>(){{
-        add(new Genre("Akční", true));
-        add(new Genre("Dobrudružný", false));
-        add(new Genre("romantičký", true));
-        add(new Genre("komedie", false));
-        add(new Genre("dokumentární", true));
-        add(new Genre("Scifi", true));
-        add(new Genre("Fantasy", false));
+        add(new Genre(0L, "Zobrazované žánry", false));
     }};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.i("activita", "onCreate");
         getSupportActionBar().hide();
+
+        getApplicationContext().registerReceiver(broadcastReceiver, new IntentFilter("INTERNET_CHANGE"));
 
         //if mobile add fragment
         if (findViewById(R.id.film_detail_container) != null){
             mTwoPane = true;
-
 
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
@@ -53,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
             getSupportActionBar().setElevation(0f);
         }
 
-        //navitagion drawer
+        //navitagion drawer- prepare for next ukol
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         ImageButton menuIB = (ImageButton)findViewById(R.id.menuIB);
         menuIB.setOnClickListener(new View.OnClickListener() {
@@ -63,9 +68,54 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
             }
         });
         genresLV = (ListView) findViewById(R.id.genresLV);
+        genresLV.setEmptyView(findViewById(R.id.empty_genres_list_item));
+        mEmptyGenresTV = (TextView) findViewById(R.id.empty_genres_list_item);
 
-        DrawerNavigationAdapter drawerNavigationAdapter = new DrawerNavigationAdapter(mGenreList, getApplicationContext());
-        genresLV.setAdapter(drawerNavigationAdapter);
+        mDrawerNavigationAdapter = new DrawerNavigationAdapter(mGenreList, getApplicationContext());
+        genresLV.setAdapter(mDrawerNavigationAdapter);
+    }
+
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mDownloadGenreListManager.cancelGenresTask();
+            mDownloadGenreListManager.startGenresTask();
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mDownloadGenreListManager = new DownloadGenreListManager(this);
+        mDownloadGenreListManager.startGenresTask();
+    }
+
+    public void setListGenre(List<Genre> list) {
+        for (Genre genre : list) {
+            genre.setShow(true);
+        }
+        mDrawerNavigationAdapter.setList(list);
+        genresLV.setAdapter(mDrawerNavigationAdapter);
+        if (list.size() == 0) {
+            if (!Connectivity.isConnected(getApplicationContext())) {
+                mEmptyGenresTV.setText("Žádné připojení");
+            } else {
+                mEmptyGenresTV.setText("Žádná data");
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mDownloadGenreListManager.cancelGenresTask();
+        mDownloadGenreListManager = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getApplicationContext().unregisterReceiver(broadcastReceiver);
     }
 
     @Override
