@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by Petr on 6. 10. 2016.
  */
 
-public class Genre {
+public class Genre implements Parcelable {
     @SerializedName("id")
     private Long mId;
     @SerializedName("name")
@@ -50,5 +50,36 @@ public class Genre {
     public void setShow(boolean show) {
         mShow = show;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.mId);
+        dest.writeString(this.mName);
+    }
+
+    public Genre() {
+    }
+
+    protected Genre(Parcel in) {
+        this.mId = in.readLong();
+        this.mName = in.readString();
+    }
+
+    public static final Creator<Genre> CREATOR = new Creator<Genre>() {
+        @Override
+        public Genre createFromParcel(Parcel source) {
+            return new Genre(source);
+        }
+
+        @Override
+        public Genre[] newArray(int size) {
+            return new Genre[size];
+        }
+    };
 
 }

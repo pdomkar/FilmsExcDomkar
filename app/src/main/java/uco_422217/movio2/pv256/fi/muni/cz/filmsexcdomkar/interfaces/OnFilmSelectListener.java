@@ -1,8 +1,6 @@
-package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.listeners;
+package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces;
 
 import android.view.View;
-
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 
 /**
  * Created by Petr on 24. 10. 2016.

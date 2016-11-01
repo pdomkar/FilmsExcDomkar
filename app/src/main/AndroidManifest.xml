@@ -29,6 +29,22 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".networks.DownloadFilmListService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+        <service
+            android:name=".networks.DownloadFilmDetailService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+        <service
+            android:name=".networks.DownloadGenreListService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

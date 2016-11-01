@@ -53,38 +53,38 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:id="@+id/titleDetailTV"
-                        android:layout_centerVertical="true"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:id="@+id/releaseDateDetailTV"
-                        android:layout_centerVertical="true"
-                        android:textColor="@android:color/white"
-                        android:layout_below="@+id/titleDetailTV"
-                        android:textSize="13sp"
-                        android:gravity="end"
-                        android:paddingRight="15dp"
-                        android:paddingEnd="15dp"
-                        android:layout_alignLeft="@+id/titleDetailTV"
-                        android:layout_alignStart="@+id/titleDetailTV"/>
+                        android:textSize="18sp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:id="@+id/directorTV"
-                        android:layout_centerVertical="true"
                         android:textColor="@android:color/white"
-                        android:layout_below="@+id/releaseDateDetailTV"
                         android:textSize="15sp"
                         android:paddingLeft="10dp"
                         android:paddingStart="10dp"
-                        android:layout_alignLeft="@+id/releaseDateDetailTV"
-                        android:layout_alignStart="@+id/releaseDateDetailTV"/>
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:id="@+id/releaseDateDetailTV"
+                        android:textColor="@android:color/white"
+                        android:textSize="13sp"
+                        android:gravity="end"
+                        android:paddingRight="15dp"
+                        android:paddingEnd="15dp"
+                        android:layout_above="@+id/directorTV"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"/>
                 </RelativeLayout>
             </LinearLayout>
         </RelativeLayout>
