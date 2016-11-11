@@ -66,7 +66,7 @@ public class DownloadFilmListService extends IntentService {
             cal.add(Calendar.DAY_OF_YEAR, +14);
             Date endDate = cal.getTime();
             callRequest(filmRetrofitInterface.findFilmsPopularInYear(yearFormat.format(cal.getTime()), "vote_average.desc", MOVIE_API_KEY), POPULAR_IN_YEAR + String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
-            callRequest(filmRetrofitInterface.findFilmsInTheatre(ymdFormat.format(startDate), ymdFormat.format(endDate), MOVIE_API_KEY), IN_THEATRE);
+            callRequest(filmRetrofitInterface.findFilmsInTheatre(ymdFormat.format(startDate), ymdFormat.format(endDate), "vote_average.desc", MOVIE_API_KEY), IN_THEATRE);
         } else {
             mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification("Not internet connection").build());
         }
@@ -86,6 +86,7 @@ public class DownloadFilmListService extends IntentService {
             public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
                 if (response.isSuccessful()) {
                     mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);
+                    mNotificationManager.cancel(NOTIFICATION_ERROR);
                     mNotificationManager.notify(NOTIFICATION_DONE, getDownloadDoneNotification().build());
 
                     Intent intent = new Intent(FilmsListFragment.ACTION_SEND_RESULTS);
@@ -95,8 +96,12 @@ public class DownloadFilmListService extends IntentService {
                     LocalBroadcastManager.getInstance(DownloadFilmListService.this).sendBroadcast(intent);
                 } else {
                     if (response.code() == 404) {
+                        mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);
+                        mNotificationManager.cancel(NOTIFICATION_DONE);
                         mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification("Not found resource").build());
                     } else {
+                        mNotificationManager.cancel(NOTIFICATION_DONE);
+                        mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);
                         mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(response.code())).build());
                     }
                 }
@@ -105,6 +110,7 @@ public class DownloadFilmListService extends IntentService {
             @Override
             public void onFailure(Call<FilmResponse> call, Throwable t) {
                 Log.d(TAG, t.getMessage());
+                mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);
                 mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(t.getMessage())).build());
             }
         });

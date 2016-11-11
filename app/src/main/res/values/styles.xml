@@ -6,12 +6,16 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
     <!-- My primary theme -->
     <style name="MyPrimaryTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/myColorPrimary</item>
         <item name="colorPrimaryDark">@color/myColorPrimaryDark</item>
         <item name="colorAccent">@color/myColorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <!-- My secondary theme -->
@@ -19,6 +23,8 @@
         <item name="colorPrimary">@color/mySecondaryColorPrimary</item>
         <item name="colorPrimaryDark">@color/mySecondaryColorPrimaryDark</item>
         <item name="colorAccent">@color/mySecondaryColorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
 </resources>

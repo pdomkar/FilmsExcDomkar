@@ -15,7 +15,7 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.GenreResponse;
 
 public interface FilmRetrofitInterface {
     @GET("discover/movie/")
-    Call<FilmResponse> findFilmsInTheatre(@Query("primary_release_date.gte") String startDate, @Query("primary_release_date.lte") String endDate, @Query("api_key") String apiKey);
+    Call<FilmResponse> findFilmsInTheatre(@Query("primary_release_date.gte") String startDate, @Query("primary_release_date.lte") String endDate, @Query("sort_by") String sortBy, @Query("api_key") String apiKey);
 
     @GET("discover/movie/")
     Call<FilmResponse> findFilmsPopularInYear(@Query("primary_release_year.gte") String year, @Query("sort_by") String sortBy, @Query("api_key") String apiKey);

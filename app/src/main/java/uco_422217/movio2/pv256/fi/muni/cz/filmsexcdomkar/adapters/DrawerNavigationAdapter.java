@@ -1,6 +1,11 @@
 package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +16,16 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.DetailActivity;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.MainActivity;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.R;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.GenreCreateLoader;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.GenreFindAllLoader;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.OnFilmSelectListener;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.OnGenreSelectListener;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadGenreListService;
 
 /**
  * Created by Petr on 23. 10. 2016.
@@ -20,18 +33,29 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
 
 public class DrawerNavigationAdapter extends BaseAdapter {
 
-        private static final int HEADER = 0, GENRE_ITEM = 1;
+    private static final int HEADER = 0, GENRE_ITEM = 1;
     private List<Genre> mGenreList;
-        private Context mContext;
+    private Context mContext;
+    private OnGenreSelectListener mListener;
 
-    public DrawerNavigationAdapter(List<Genre> list, Context context) {
-            if(list != null) {
-                mGenreList = list;
-            } else {
-                mGenreList = new ArrayList<>();
-            }
-            mContext = context;
+    public DrawerNavigationAdapter(List<Genre> list, Context context, AppCompatActivity activity) {
+        if (list != null) {
+            mGenreList = list;
+        } else {
+            mGenreList = new ArrayList<>();
         }
+        mContext = context;
+        try {
+            if (activity instanceof MainActivity) {
+                mListener = (OnGenreSelectListener) ((MainActivity) activity);
+            } else {
+                mListener = (OnGenreSelectListener) ((DetailActivity) activity);
+            }
+        } catch (ClassCastException e) {
+            Log.e("DrawerNavAdapter", "Adapter must implement OnGenreSelectListener", e);
+        }
+
+    }
 
 
     public void setList(List<Genre> list) {
@@ -103,6 +127,15 @@ public class DrawerNavigationAdapter extends BaseAdapter {
                     public void onClick(View v) {
                         mGenreList.get(position).setShow(!mGenreList.get(position).isShow());
                         genreItemViewHolder.getShowGenre().setChecked(mGenreList.get(position).isShow());
+                        mListener.onGenreClick(mGenreList.get(position));
+                    }
+                });
+                genreItemViewHolder.getShowGenre().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mGenreList.get(position).setShow(!mGenreList.get(position).isShow());
+                        genreItemViewHolder.getShowGenre().setChecked(mGenreList.get(position).isShow());
+                        mListener.onGenreClick(mGenreList.get(position));
                     }
                 });
                 break;
@@ -140,4 +173,6 @@ public class DrawerNavigationAdapter extends BaseAdapter {
             return mNameTV;
         }
     }
+
+
 }

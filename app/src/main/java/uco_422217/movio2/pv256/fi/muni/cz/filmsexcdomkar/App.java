@@ -4,6 +4,8 @@ import android.app.Application;
 import android.os.Build;
 import android.os.StrictMode;
 
+import com.facebook.stetho.Stetho;
+
 /**
  * Created by Petr on 20. 9. 2016.
  */
@@ -17,6 +19,7 @@ public class App extends Application {
         if (BuildConfig.DEBUG) {
             initStrictMode();
         }
+        Stetho.initializeWithDefaults(this);
     }
 
     private void initStrictMode() {

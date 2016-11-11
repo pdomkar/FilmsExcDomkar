@@ -45,6 +45,11 @@
             android:enabled="true"
             android:exported="true">
         </service>
+
+        <provider
+            android:name=".database.FilmProvider"
+            android:authorities="cz.muni.fi.pv256.movio2.uco_422217"
+            android:exported="false"/>
     </application>
 
 </manifest>

@@ -29,10 +29,12 @@ public class Film implements Parcelable{
     private float mVoteAverage;
     @SerializedName("overview")
     private String mOverview;
+    @SerializedName("genre_ids")
+    private int[] mGenres;
 
     private Credits mCredits = null;
 
-    public Film(long id, String title, String releaseDate, String coverPath, String backdropPath, float voteAverage, String overview) {
+    public Film(long id, String title, String releaseDate, String coverPath, String backdropPath, float voteAverage, String overview, int[] genres) {
         mId = id;
         mTitle = title;
         mReleaseDate = releaseDate;
@@ -40,10 +42,15 @@ public class Film implements Parcelable{
         mBackdropPath = backdropPath;
         mVoteAverage = voteAverage;
         mOverview = overview;
+        mGenres = genres;
     }
 
-    public long getId() {
+    public Long getId() {
         return mId;
+    }
+
+    public void setId(Long id) {
+        mId = id;
     }
 
     public String getReleaseDate() {
@@ -94,6 +101,14 @@ public class Film implements Parcelable{
         mOverview = overview;
     }
 
+    public int[] getGenres() {
+        return mGenres;
+    }
+
+    public void setGenres(int[] genres) {
+        mGenres = genres;
+    }
+
     public Credits getCredits() {
         return mCredits;
     }
@@ -116,6 +131,7 @@ public class Film implements Parcelable{
         dest.writeString(this.mBackdropPath);
         dest.writeFloat(this.mVoteAverage);
         dest.writeString(this.mOverview);
+        dest.writeIntArray(this.mGenres);
     }
 
     public Film() {
@@ -129,6 +145,7 @@ public class Film implements Parcelable{
         this.mBackdropPath = in.readString();
         this.mVoteAverage = in.readFloat();
         this.mOverview = in.readString();
+        this.mGenres = in.createIntArray();
     }
 
     public static final Creator<Film> CREATOR = new Creator<Film>() {
@@ -145,6 +162,6 @@ public class Film implements Parcelable{
 
     @Override
     public String toString() {
-        return super.toString() + "Film: id: " + mId + ", title: "+mTitle+", VoteAverage: " + mVoteAverage + ", Reease date: " + mReleaseDate + ", Overview: " + mOverview;
+        return super.toString() + "Film: id: " + mId + ", title: " + mTitle + ", VoteAverage: " + mVoteAverage + ", Reease date: " + mReleaseDate + ", Overview: " + mOverview + ", Genres: " + mGenres.toString();
     }
 }
