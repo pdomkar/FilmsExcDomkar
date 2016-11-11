@@ -20,21 +20,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
-import com.squareup.picasso.Target;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmDetailFragment;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.MainActivity;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.R;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 
@@ -153,14 +144,12 @@ public class FilmAdapter extends BaseAdapter {
         }
 
         void setBackdrop(String backdropPath) {
-//                Picasso.with(mAppContext).setIndicatorsEnabled(true);
-//                Picasso.with(mAppContext).setLoggingEnabled(true);
-            final RequestCreator requestCreator = Picasso.with(mAppContext).load(backdropPath);
-            requestCreator.placeholder(R.drawable.image_not_found).into(mBackdropIV);
-            requestCreator.placeholder(R.drawable.image_not_found).into(new Target() {
+            ImageLoader imageLoader = ImageLoader.getInstance();
+            imageLoader.loadImage(backdropPath, new SimpleImageLoadingListener() {
                 @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    mBackdropIV.setImageBitmap(loadedImage);
+                    Palette.from(loadedImage).generate(new Palette.PaletteAsyncListener() {
                         public void onGenerated(Palette palette) {
                             Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
                             if (vibrantSwatch != null) {
@@ -172,14 +161,6 @@ public class FilmAdapter extends BaseAdapter {
                             }
                         }
                     });
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
                 }
             });
         }

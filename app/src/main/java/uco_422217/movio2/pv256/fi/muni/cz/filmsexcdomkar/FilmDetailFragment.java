@@ -18,17 +18,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +40,6 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.Direct
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmCreateLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmDeleteLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmFindLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.OnFilmSelectListener;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Cast;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Credits;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Crew;
@@ -154,8 +151,9 @@ public class FilmDetailFragment extends Fragment {
             releaseDateTV.setText(year);
             overviewContentTV.setText(mFilm.getOverview());
             //foto
-            Picasso.with(mContext).load(IMAGE_BASE_PATH + mFilm.getBackdropPath()).placeholder(R.drawable.image_not_found).into(backdropIV);
-            Picasso.with(mContext).load(IMAGE_BASE_PATH + mFilm.getCoverPath()).placeholder(R.drawable.image_not_found_poster).into(posterIV);
+            ImageLoader imageLoader = ImageLoader.getInstance();
+            imageLoader.displayImage(IMAGE_BASE_PATH + mFilm.getBackdropPath(), backdropIV);
+            imageLoader.displayImage(IMAGE_BASE_PATH + mFilm.getCoverPath(), posterIV);
             overviewTitleTV.setVisibility(View.VISIBLE);
             castTitleTV.setVisibility(View.VISIBLE);
             if (mFilmManager.findFilmsById(mFilm.getId()).size() == 0) {
@@ -230,7 +228,8 @@ public class FilmDetailFragment extends Fragment {
                                 castNameTV = (TextView) view.findViewById(R.id.cast2NameTV);
                             }
                             if (castProfileIV != null) {
-                                Picasso.with(mContext).load(IMAGE_BASE_PATH + cast.getProfilePath()).placeholder(R.drawable.image_not_found).into(castProfileIV);
+                                ImageLoader imageLoader = ImageLoader.getInstance();
+                                imageLoader.displayImage(IMAGE_BASE_PATH + cast.getProfilePath(), castProfileIV);
                             }
                             if (castNameTV != null) {
                                 castNameTV.setText(cast.getName());
@@ -457,7 +456,8 @@ public class FilmDetailFragment extends Fragment {
                                     castNameTV = (TextView) view.findViewById(R.id.cast2NameTV);
                                 }
                                 if (castProfileIV != null) {
-                                    Picasso.with(mContext).load(IMAGE_BASE_PATH + cast.getProfilePath()).placeholder(R.drawable.image_not_found).into(castProfileIV);
+                                    ImageLoader imageLoader = ImageLoader.getInstance();
+                                    imageLoader.displayImage(IMAGE_BASE_PATH + cast.getProfilePath(), castProfileIV);
                                 }
                                 if (castNameTV != null) {
                                     castNameTV.setText(cast.getName());
