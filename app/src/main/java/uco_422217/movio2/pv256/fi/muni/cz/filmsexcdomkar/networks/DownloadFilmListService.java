@@ -81,6 +81,7 @@ public class DownloadFilmListService extends IntentService {
     }
 
     private void callRequest(final Call<FilmResponse> films, final String title) {
+        Log.i("aaaa", title);
         films.enqueue(new Callback<FilmResponse>() {
             @Override
             public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {

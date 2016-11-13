@@ -143,7 +143,7 @@ public class FilmDetailFragment extends Fragment {
             String year = "";
             try {
                 date = format.parse(mFilm.getReleaseDate());
-                SimpleDateFormat df = new SimpleDateFormat("yyyy");
+                SimpleDateFormat df = new SimpleDateFormat("dd. MM. yyyy");
                 year = df.format(date);
             } catch (ParseException e) {
                 Log.i(TAG, "parse exception", e);

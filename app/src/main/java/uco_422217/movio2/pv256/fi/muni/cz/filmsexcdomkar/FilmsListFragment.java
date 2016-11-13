@@ -205,6 +205,7 @@ public class FilmsListFragment extends Fragment {
                 ArrayList<Film> data = intent.getParcelableArrayListExtra(DownloadFilmListService.RESULT_VALUE);
                 String title = intent.getStringExtra(DownloadFilmListService.RESULT_VALUE_TITLE);
                 setList(data, title);
+                Log.i("eeee", title);
             } else if (intent.getAction().equals(FilmsListFragment.ACTION_INTERNET_CHANGE)) {
                 intent = new Intent(getActivity(), DownloadFilmListService.class);
                 getActivity().startService(intent);
@@ -277,6 +278,7 @@ public class FilmsListFragment extends Fragment {
             Log.i(TAG, "+++ onLoadFinished() called! +++");
 
             if (filmsGenresBlock != null) {
+                Log.i("sdfsfsf", filmsGenresBlock.getTitle());
                 List<Film> films = filmsGenresBlock.getFilms();
                 List<Genre> genresShow = filmsGenresBlock.getGenresShow();
                 String title = filmsGenresBlock.getTitle();
