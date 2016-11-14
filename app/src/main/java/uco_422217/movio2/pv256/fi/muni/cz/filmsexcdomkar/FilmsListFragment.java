@@ -32,10 +32,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters.FilmAdapter;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.FilmCotract;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.FilmManager;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.FilmProvider;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.MyGenreObserver;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmFindAllLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmFindLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.GenreFindByShowLoader;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.ContentObserverGenreCallback;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.OnFilmSelectListener;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Cast;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
@@ -51,7 +55,7 @@ import static android.R.attr.key;
  * Created by Petr on 6. 10. 2016.
  */
 
-public class FilmsListFragment extends Fragment {
+public class FilmsListFragment extends Fragment implements ContentObserverGenreCallback {
     private static final String TAG = FilmsListFragment.class.getName();
     private static final String SELECTED_KEY = "selected_position";
     public static final String ACTION_SEND_RESULTS = "SEND_RESULTS";
@@ -68,13 +72,14 @@ public class FilmsListFragment extends Fragment {
     private TextView mEmptyTV;
     private LocalBroadcastManager mBroadcastManager;
     private ArrayList<Object> mAdapterArrayList;
-
+    private MyGenreObserver myGenreObserver;
     private FilmManager mFilmManager;
 
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
         Intent intent = new Intent(getActivity(), DownloadFilmListService.class);
+        intent.putExtra("order", 0);
         getActivity().startService(intent);
         mBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         mFilmManager = new FilmManager(getActivity().getApplicationContext());
@@ -159,6 +164,7 @@ public class FilmsListFragment extends Fragment {
                         filmAdapter.setList(mAdapterArrayList);
                         mFilmsLV.setAdapter(filmAdapter);
                         Intent intent = new Intent(getActivity(), DownloadFilmListService.class);
+                        intent.putExtra("order", 0);
                         getActivity().startService(intent);
                     }
                 }
@@ -170,6 +176,18 @@ public class FilmsListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: ");
+
+        if (myGenreObserver == null) {
+            myGenreObserver = new MyGenreObserver(this);
+        }
+
+        // register ContentObserver in onResume
+        getActivity().getContentResolver().
+                registerContentObserver(
+                        FilmCotract.GenreEntry.CONTENT_URI,
+                        true,
+                        myGenreObserver);
+
         mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_SEND_RESULTS));
     }
 
@@ -177,6 +195,7 @@ public class FilmsListFragment extends Fragment {
     public void onPause() {
         super.onPause();
         Log.d(TAG, "onPause: ");
+        getActivity().getContentResolver().unregisterContentObserver(myGenreObserver);
         mBroadcastManager.unregisterReceiver(mBroadcastReceiver);
     }
 
@@ -205,7 +224,6 @@ public class FilmsListFragment extends Fragment {
                 ArrayList<Film> data = intent.getParcelableArrayListExtra(DownloadFilmListService.RESULT_VALUE);
                 String title = intent.getStringExtra(DownloadFilmListService.RESULT_VALUE_TITLE);
                 setList(data, title);
-                Log.i("eeee", title);
             } else if (intent.getAction().equals(FilmsListFragment.ACTION_INTERNET_CHANGE)) {
                 intent = new Intent(getActivity(), DownloadFilmListService.class);
                 getActivity().startService(intent);
@@ -278,18 +296,20 @@ public class FilmsListFragment extends Fragment {
             Log.i(TAG, "+++ onLoadFinished() called! +++");
 
             if (filmsGenresBlock != null) {
-                Log.i("sdfsfsf", filmsGenresBlock.getTitle());
                 List<Film> films = filmsGenresBlock.getFilms();
                 List<Genre> genresShow = filmsGenresBlock.getGenresShow();
                 String title = filmsGenresBlock.getTitle();
 
-                ArrayList<Integer> genresIdShow = new ArrayList<>();
-                for (Genre genre : genresShow) {
-                    genresIdShow.add(Integer.valueOf((int) (long) genre.getId()));
+                if (title.equals(DownloadFilmListService.IN_THEATRE)) {
+                    //clear
+                    mAdapterArrayList.clear();
                 }
 
+                ArrayList<Integer> genresIdShow = new ArrayList<>();
+                for (Genre genre : genresShow) {
+                    genresIdShow.add((int) (long) genre.getId());
+                }
                 ArrayList<Film> filmsToShow = new ArrayList<>();
-
                 for (Film film : films) {
                     if (isAnyValueInAray(film.getGenres(), genresIdShow)) {
                         filmsToShow.add(film);
@@ -299,9 +319,9 @@ public class FilmsListFragment extends Fragment {
                 if (filmsToShow.size() > 0) {
                     mAdapterArrayList.add(title);
                     mAdapterArrayList.addAll(filmsToShow);
-                    filmAdapter.setList(mAdapterArrayList);
-                    mFilmsLV.setAdapter(filmAdapter);
                 }
+                filmAdapter.setList(mAdapterArrayList);
+                mFilmsLV.setAdapter(filmAdapter);
                 if (mAdapterArrayList.size() == 0) {
                     if (!Connectivity.isConnected(getActivity().getApplicationContext())) {
                         mEmptyTV.setText("Žádné připojení");
@@ -310,6 +330,11 @@ public class FilmsListFragment extends Fragment {
                     }
                 }
 
+                if (title.equals(DownloadFilmListService.IN_THEATRE)) {
+                    Intent intent = new Intent(getActivity(), DownloadFilmListService.class);
+                    intent.putExtra("order", 1);
+                    getActivity().startService(intent);
+                }
 
             } else {
                 if (!Connectivity.isConnected(getActivity().getApplicationContext())) {
@@ -338,4 +363,10 @@ public class FilmsListFragment extends Fragment {
         return result;
     }
 
+    @Override
+    public void updateFilmsList() {
+        Intent intent = new Intent(getActivity(), DownloadFilmListService.class);
+        intent.putExtra("order", 0);
+        getActivity().startService(intent);
+    }
 }

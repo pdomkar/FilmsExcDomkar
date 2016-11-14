@@ -113,7 +113,9 @@ public class FilmAdapter extends BaseAdapter {
                 filmViewHolder.setTitle(((Film) mFilmArrayList.get(position)).getTitle());
                 filmViewHolder.setVoteAverage( ((Film) mFilmArrayList.get(position)).getVoteAverage() );
                 String imagePath = IMAGE_BASE_PATH + ((Film) mFilmArrayList.get(position)).getBackdropPath();
-                filmViewHolder.setBackdrop(imagePath);
+                if (((Film) mFilmArrayList.get(position)).getBackdropPath() != null) {
+                    filmViewHolder.setBackdrop(imagePath);
+                }
                 break;
         }
         return convertView;

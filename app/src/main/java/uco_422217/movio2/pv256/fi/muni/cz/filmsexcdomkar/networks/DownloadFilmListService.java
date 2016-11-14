@@ -29,7 +29,7 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.FilmResponse;
 
 public class DownloadFilmListService extends IntentService {
     private static final String TAG = DownloadFilmListService.class.getName();
-    private static final String IN_THEATRE = "Právě v kině", POPULAR_IN_YEAR = "Populární v ";
+    public static final String IN_THEATRE = "Právě v kině", POPULAR_IN_YEAR = "Populární v ";
     private final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/";
     private final String MOVIE_API_KEY = "9abf76a6b9a507feb496c4d4bc7cb670";
     public static final String RESULT_CODE = "resultCode";
@@ -65,8 +65,12 @@ public class DownloadFilmListService extends IntentService {
             Date startDate = cal.getTime();
             cal.add(Calendar.DAY_OF_YEAR, +14);
             Date endDate = cal.getTime();
-            callRequest(filmRetrofitInterface.findFilmsPopularInYear(yearFormat.format(cal.getTime()), "vote_average.desc", MOVIE_API_KEY), POPULAR_IN_YEAR + String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
-            callRequest(filmRetrofitInterface.findFilmsInTheatre(ymdFormat.format(startDate), ymdFormat.format(endDate), "vote_average.desc", MOVIE_API_KEY), IN_THEATRE);
+
+            if (intent.getIntExtra("order", 0) == 0) {
+                callRequest(filmRetrofitInterface.findFilmsInTheatre(ymdFormat.format(startDate), ymdFormat.format(endDate), "vote_average.desc", MOVIE_API_KEY), IN_THEATRE);
+            } else {
+                callRequest(filmRetrofitInterface.findFilmsPopularInYear(yearFormat.format(cal.getTime()), "vote_average.desc", MOVIE_API_KEY), POPULAR_IN_YEAR + String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+            }
         } else {
             mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification("Not internet connection").build());
         }

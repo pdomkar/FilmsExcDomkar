@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -125,14 +126,15 @@ public class FilmDetailFragment extends Fragment {
         TextView castTitleTV = (TextView) view.findViewById(R.id.castTitleTV);
         TextView overviewContentTV = (TextView) view.findViewById(R.id.overviewContentTV);
         final FloatingActionButton plusFAB = (FloatingActionButton) view.findViewById(R.id.plusFAB);
+        RelativeLayout contentLL = (RelativeLayout) view.findViewById(R.id.contentLL);
 
-        final RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.headContentLL);
-        ViewTreeObserver viewTreeObserver = relativeLayout.getViewTreeObserver();
+        final RelativeLayout headContentLL = (RelativeLayout) view.findViewById(R.id.headContentLL);
+        ViewTreeObserver viewTreeObserver = headContentLL.getViewTreeObserver();
         viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                relativeLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                posterIV.getLayoutParams().height = relativeLayout.getMeasuredHeight();
+                headContentLL.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                posterIV.getLayoutParams().height = headContentLL.getMeasuredHeight();
             }
         });
 
@@ -152,8 +154,12 @@ public class FilmDetailFragment extends Fragment {
             overviewContentTV.setText(mFilm.getOverview());
             //foto
             ImageLoader imageLoader = ImageLoader.getInstance();
-            imageLoader.displayImage(IMAGE_BASE_PATH + mFilm.getBackdropPath(), backdropIV);
-            imageLoader.displayImage(IMAGE_BASE_PATH + mFilm.getCoverPath(), posterIV);
+            if (mFilm.getBackdropPath() != null) {
+                imageLoader.displayImage(IMAGE_BASE_PATH + mFilm.getBackdropPath(), backdropIV);
+            }
+            if (mFilm.getCoverPath() != null) {
+                imageLoader.displayImage(IMAGE_BASE_PATH + mFilm.getCoverPath(), posterIV);
+            }
             overviewTitleTV.setVisibility(View.VISIBLE);
             castTitleTV.setVisibility(View.VISIBLE);
             if (mFilmManager.findFilmsById(mFilm.getId()).size() == 0) {
@@ -170,6 +176,10 @@ public class FilmDetailFragment extends Fragment {
                     getLoaderManager().initLoader(LOADER_FILM_FIND_ID, args, new FilmCallback(getActivity().getApplicationContext())).forceLoad();
                 }
             });
+            contentLL.setVisibility(View.VISIBLE);
+            headContentLL.setVisibility(View.VISIBLE);
+            backdropIV.setVisibility(View.VISIBLE);
+            posterIV.setVisibility(View.VISIBLE);
 
             //director
 
@@ -195,11 +205,11 @@ public class FilmDetailFragment extends Fragment {
         super.onStart();
         Log.d(TAG, "onStart: ");
 
-        Toolbar toolbar = ((DetailActivity) getActivity()).getToolbar();
-        if (toolbar != null) {
-            Switch savedS = (Switch) ((DetailActivity) getActivity()).getToolbar().findViewById(R.id.savedS);
-            savedS.setVisibility(View.INVISIBLE);
-        }
+//        Toolbar toolbar = ((DetailActivity) getActivity()).getToolbar();
+//        if (toolbar != null) {
+//            Switch savedS = (Switch) ((DetailActivity) getActivity()).getToolbar().findViewById(R.id.savedS);
+//            savedS.setVisibility(View.INVISIBLE);
+//        }
     }
 
     public void setFilmCredits(Credits credits) {
@@ -229,7 +239,9 @@ public class FilmDetailFragment extends Fragment {
                             }
                             if (castProfileIV != null) {
                                 ImageLoader imageLoader = ImageLoader.getInstance();
-                                imageLoader.displayImage(IMAGE_BASE_PATH + cast.getProfilePath(), castProfileIV);
+                                if (cast.getProfilePath() != null) {
+                                    imageLoader.displayImage(IMAGE_BASE_PATH + cast.getProfilePath(), castProfileIV);
+                                }
                             }
                             if (castNameTV != null) {
                                 castNameTV.setText(cast.getName());
@@ -457,7 +469,9 @@ public class FilmDetailFragment extends Fragment {
                                 }
                                 if (castProfileIV != null) {
                                     ImageLoader imageLoader = ImageLoader.getInstance();
-                                    imageLoader.displayImage(IMAGE_BASE_PATH + cast.getProfilePath(), castProfileIV);
+                                    if (cast.getProfilePath() != null) {
+                                        imageLoader.displayImage(IMAGE_BASE_PATH + cast.getProfilePath(), castProfileIV);
+                                    }
                                 }
                                 if (castNameTV != null) {
                                     castNameTV.setText(cast.getName());

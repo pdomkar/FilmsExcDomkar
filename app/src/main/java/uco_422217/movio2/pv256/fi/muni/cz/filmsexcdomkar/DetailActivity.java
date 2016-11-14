@@ -33,7 +33,7 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadGenreListService;
 
-public class DetailActivity extends AppCompatActivity implements OnGenreSelectListener {
+public class DetailActivity extends AppCompatActivity {
     public static final String EXTRA_FILM = "extra_film";
     public static final String ACTION_SEND_RESULTS_GENRES = "SEND_RESULTS_GENRES";
     public static final String ACTION_INTERNET_CHANGE = "INTERNET_CHANGE";
@@ -57,14 +57,14 @@ public class DetailActivity extends AppCompatActivity implements OnGenreSelectLi
     @Override
     protected void onStart() {
         super.onStart();
-        mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_SEND_RESULTS_GENRES));
-        mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_INTERNET_CHANGE));
+        // mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_SEND_RESULTS_GENRES));
+        //mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_INTERNET_CHANGE));
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mBroadcastManager.unregisterReceiver(mBroadcastReceiver);
+        // mBroadcastManager.unregisterReceiver(mBroadcastReceiver);
     }
 
     @Override
@@ -88,143 +88,143 @@ public class DetailActivity extends AppCompatActivity implements OnGenreSelectLi
         }
 
         //navitagion drawer - prepare for next ukol
-        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        ImageButton menuIB = (ImageButton)findViewById(R.id.menuIB);
-        menuIB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.openDrawer(Gravity.LEFT);
-            }
-        });
-        genresLV = (ListView) findViewById(R.id.genresLV);
-        genresLV.setEmptyView(findViewById(R.id.empty_genres_list_item));
-        mEmptyGenresTV = (TextView) findViewById(R.id.empty_genres_list_item);
+//        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+//        ImageButton menuIB = (ImageButton)findViewById(R.id.menuIB);
+//        menuIB.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                drawerLayout.openDrawer(Gravity.LEFT);
+//            }
+//        });
+//        genresLV = (ListView) findViewById(R.id.genresLV);
+//        genresLV.setEmptyView(findViewById(R.id.empty_genres_list_item));
+//        mEmptyGenresTV = (TextView) findViewById(R.id.empty_genres_list_item);
+//
+//        mDrawerNavigationAdapter = new DrawerNavigationAdapter(mGenreList, getApplicationContext(), this);
+//        genresLV.setAdapter(mDrawerNavigationAdapter);
 
-        mDrawerNavigationAdapter = new DrawerNavigationAdapter(mGenreList, getApplicationContext(), this);
-        genresLV.setAdapter(mDrawerNavigationAdapter);
-
-        getSupportLoaderManager().initLoader(LOADER_GENRE_FIND_ALL_ID, null, new DetailActivity.GenreCallback(getApplicationContext())).forceLoad();
+        //getSupportLoaderManager().initLoader(LOADER_GENRE_FIND_ALL_ID, null, new DetailActivity.GenreCallback(getApplicationContext())).forceLoad();
     }
+//
+//
+//    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            int resultCode = intent.getIntExtra(DownloadGenreListService.RESULT_CODE, Activity.RESULT_CANCELED);
+//            if (resultCode == Activity.RESULT_OK && intent.getAction().equals(MainActivity.ACTION_SEND_RESULTS_GENRES)) {
+//                ArrayList<Genre> data = intent.getParcelableArrayListExtra(DownloadGenreListService.RESULT_VALUE);
+//                saveListGenre(data);
+//            } else if (intent.getAction().equals(FilmsListFragment.ACTION_INTERNET_CHANGE)) {
+//                intent = new Intent(context, DownloadGenreListService.class);
+//                context.startService(intent);
+//            }
+//        }
+//    };
 
-
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int resultCode = intent.getIntExtra(DownloadGenreListService.RESULT_CODE, Activity.RESULT_CANCELED);
-            if (resultCode == Activity.RESULT_OK && intent.getAction().equals(MainActivity.ACTION_SEND_RESULTS_GENRES)) {
-                ArrayList<Genre> data = intent.getParcelableArrayListExtra(DownloadGenreListService.RESULT_VALUE);
-                saveListGenre(data);
-            } else if (intent.getAction().equals(FilmsListFragment.ACTION_INTERNET_CHANGE)) {
-                intent = new Intent(context, DownloadGenreListService.class);
-                context.startService(intent);
-            }
-        }
-    };
-
-    private void saveListGenre(ArrayList<Genre> list) {
-        Genre[] genres = new Genre[list.size()];
-        int i = 0;
-        for (Genre genre : list) {
-            genre.setShow(true);
-            genres[i++] = genre;
-        }
-
-        Bundle args = new Bundle();
-        args.putParcelableArray(GENRES_DB_LIST, genres);
-
-        getSupportLoaderManager().initLoader(LOADER_GENRE_CREATE_ID, args, new DetailActivity.GenreCallback(getApplicationContext())).forceLoad();
-    }
+//    private void saveListGenre(ArrayList<Genre> list) {
+//        Genre[] genres = new Genre[list.size()];
+//        int i = 0;
+//        for (Genre genre : list) {
+//            genre.setShow(true);
+//            genres[i++] = genre;
+//        }
+//
+//        Bundle args = new Bundle();
+//        args.putParcelableArray(GENRES_DB_LIST, genres);
+//
+//        getSupportLoaderManager().initLoader(LOADER_GENRE_CREATE_ID, args, new DetailActivity.GenreCallback(getApplicationContext())).forceLoad();
+//    }
 
     public Toolbar getToolbar() {
         return toolbar;
     }
 
-    @Override
-    public void onGenreClick(Genre genre) {
-        Bundle args = new Bundle();
-        args.putParcelable(GENRE_DETAIL, genre);
-        if (getSupportLoaderManager().getLoader(LOADER_GENRE_UPDATE_ID) != null) {
-            getSupportLoaderManager().restartLoader(LOADER_GENRE_UPDATE_ID, args, new DetailActivity.GenreCallback(getApplicationContext())).forceLoad();
-        } else {
-            getSupportLoaderManager().initLoader(LOADER_GENRE_UPDATE_ID, args, new DetailActivity.GenreCallback(getApplicationContext())).forceLoad();
-        }
-    }
+//    @Override
+//    public void onGenreClick(Genre genre) {
+//        Bundle args = new Bundle();
+//        args.putParcelable(GENRE_DETAIL, genre);
+//        if (getSupportLoaderManager().getLoader(LOADER_GENRE_UPDATE_ID) != null) {
+//            getSupportLoaderManager().restartLoader(LOADER_GENRE_UPDATE_ID, args, new DetailActivity.GenreCallback(getApplicationContext())).forceLoad();
+//        } else {
+//            getSupportLoaderManager().initLoader(LOADER_GENRE_UPDATE_ID, args, new DetailActivity.GenreCallback(getApplicationContext())).forceLoad();
+//        }
+//    }
 
-    private class GenreCallback implements LoaderManager.LoaderCallbacks<List<Genre>> {
-        Context mContext;
-
-        public GenreCallback(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        public Loader<List<Genre>> onCreateLoader(int id, Bundle args) {
-            Log.i("DetailActivity", "+++ onCreateLoader() called! +++");
-            switch (id) {
-                case LOADER_GENRE_FIND_ALL_ID:
-                    return new GenreFindAllLoader(mContext);
-                case LOADER_GENRE_FIND_ALL_LIST_ID:
-                    return new GenreFindAllLoader(mContext);
-                case LOADER_GENRE_CREATE_ID:
-                    return new GenreCreateLoader(mContext, (Genre[]) args.getParcelableArray(GENRES_DB_LIST));
-                case LOADER_GENRE_UPDATE_ID:
-                    return new GenreUpdateLoader(mContext, (Genre) args.getParcelable(GENRE_DETAIL));
-                default:
-                    throw new UnsupportedOperationException("Not know loader id");
-            }
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<Genre>> loader, List<Genre> data) {
-            Log.i("DetailActivity", "+++ onLoadFinished() called! +++");
-            switch (loader.getId()) {
-                case LOADER_GENRE_FIND_ALL_ID:
-                    if (data.size() == 0) {
-                        //nacist
-                        Intent intent = new Intent(mContext, DownloadGenreListService.class);
-                        mContext.startService(intent);
-                    } else {
-                        getSupportLoaderManager().initLoader(LOADER_GENRE_FIND_ALL_LIST_ID, null, new DetailActivity.GenreCallback(getApplicationContext())).forceLoad();
-                    }
-                    break;
-                case LOADER_GENRE_FIND_ALL_LIST_ID:
-                    //vypsat
-                    mGenreList = new ArrayList<>();
-                    mGenreList.add(0, new Genre(0L, "Zobrazené žánry", false));
-                    mGenreList.addAll(data);
-                    mDrawerNavigationAdapter.setList(mGenreList);
-                    genresLV.setAdapter(mDrawerNavigationAdapter);
-
-                    if (data.size() == 0) {
-                        if (!Connectivity.isConnected(getApplicationContext())) {
-                            mEmptyGenresTV.setText("Žádné připojení");
-                        } else {
-                            mEmptyGenresTV.setText("Žádná data");
-                        }
-                    }
-                    break;
-                case LOADER_GENRE_FIND_SHOW_ID:
-
-                    break;
-                case LOADER_GENRE_FIND_ID:
-
-                    break;
-                case LOADER_GENRE_CREATE_ID:
-                    getSupportLoaderManager().initLoader(LOADER_GENRE_FIND_ALL_LIST_ID, null, new DetailActivity.GenreCallback(getApplicationContext())).forceLoad();
-                    break;
-                case LOADER_GENRE_UPDATE_ID:
-
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Not know loader id");
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<Genre>> loader) {
-            Log.i("DetailActivity", "+++ onLoadReset() called! +++");
-
-        }
-    }
+//    private class GenreCallback implements LoaderManager.LoaderCallbacks<List<Genre>> {
+//        Context mContext;
+//
+//        public GenreCallback(Context context) {
+//            mContext = context;
+//        }
+//
+//        @Override
+//        public Loader<List<Genre>> onCreateLoader(int id, Bundle args) {
+//            Log.i("DetailActivity", "+++ onCreateLoader() called! +++");
+//            switch (id) {
+//                case LOADER_GENRE_FIND_ALL_ID:
+//                    return new GenreFindAllLoader(mContext);
+//                case LOADER_GENRE_FIND_ALL_LIST_ID:
+//                    return new GenreFindAllLoader(mContext);
+//                case LOADER_GENRE_CREATE_ID:
+//                    return new GenreCreateLoader(mContext, (Genre[]) args.getParcelableArray(GENRES_DB_LIST));
+//                case LOADER_GENRE_UPDATE_ID:
+//                    return new GenreUpdateLoader(mContext, (Genre) args.getParcelable(GENRE_DETAIL));
+//                default:
+//                    throw new UnsupportedOperationException("Not know loader id");
+//            }
+//        }
+//
+//        @Override
+//        public void onLoadFinished(Loader<List<Genre>> loader, List<Genre> data) {
+//            Log.i("DetailActivity", "+++ onLoadFinished() called! +++");
+//            switch (loader.getId()) {
+//                case LOADER_GENRE_FIND_ALL_ID:
+//                    if (data.size() == 0) {
+//                        //nacist
+//                        Intent intent = new Intent(mContext, DownloadGenreListService.class);
+//                        mContext.startService(intent);
+//                    } else {
+//                        getSupportLoaderManager().initLoader(LOADER_GENRE_FIND_ALL_LIST_ID, null, new DetailActivity.GenreCallback(getApplicationContext())).forceLoad();
+//                    }
+//                    break;
+//                case LOADER_GENRE_FIND_ALL_LIST_ID:
+//                    //vypsat
+//                    mGenreList = new ArrayList<>();
+//                    mGenreList.add(0, new Genre(0L, "Zobrazené žánry", false));
+//                    mGenreList.addAll(data);
+//                    mDrawerNavigationAdapter.setList(mGenreList);
+//                    genresLV.setAdapter(mDrawerNavigationAdapter);
+//
+//                    if (data.size() == 0) {
+//                        if (!Connectivity.isConnected(getApplicationContext())) {
+//                            mEmptyGenresTV.setText("Žádné připojení");
+//                        } else {
+//                            mEmptyGenresTV.setText("Žádná data");
+//                        }
+//                    }
+//                    break;
+//                case LOADER_GENRE_FIND_SHOW_ID:
+//
+//                    break;
+//                case LOADER_GENRE_FIND_ID:
+//
+//                    break;
+//                case LOADER_GENRE_CREATE_ID:
+//                    getSupportLoaderManager().initLoader(LOADER_GENRE_FIND_ALL_LIST_ID, null, new DetailActivity.GenreCallback(getApplicationContext())).forceLoad();
+//                    break;
+//                case LOADER_GENRE_UPDATE_ID:
+//
+//                    break;
+//                default:
+//                    throw new UnsupportedOperationException("Not know loader id");
+//            }
+//        }
+//
+//        @Override
+//        public void onLoaderReset(Loader<List<Genre>> loader) {
+//            Log.i("DetailActivity", "+++ onLoadReset() called! +++");
+//
+//        }
+//    }
 
 }
