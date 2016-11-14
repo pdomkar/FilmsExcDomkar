@@ -46,17 +46,11 @@ public class DrawerNavigationAdapter extends BaseAdapter {
         }
         mContext = context;
         try {
-            if (activity instanceof MainActivity) {
-                mListener = (OnGenreSelectListener) ((MainActivity) activity);
-            } else {
-                mListener = (OnGenreSelectListener) ((DetailActivity) activity);
-            }
+            mListener = (OnGenreSelectListener) ((MainActivity) activity);
         } catch (ClassCastException e) {
             Log.e("DrawerNavAdapter", "Adapter must implement OnGenreSelectListener", e);
         }
-
     }
-
 
     public void setList(List<Genre> list) {
         if (list != null) {
@@ -64,38 +58,35 @@ public class DrawerNavigationAdapter extends BaseAdapter {
         }
     }
 
-        @Override
-        public int getCount() {
-            return mGenreList.size();
-        }
+    @Override
+    public int getCount() {
+        return mGenreList.size();
+    }
 
-        @Override
-        public Object getItem(int i) {
-            return mGenreList.get(i);
-        }
+    @Override
+    public Object getItem(int i) {
+        return mGenreList.get(i);
+    }
 
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
+    @Override
+    public long getItemId(int i) {
+        return i;
+    }
 
-        @Override
-        public int getViewTypeCount() {
-            return 2;
-        }
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
 
-        @Override
-        public int getItemViewType(int position) {
-            return position == 0 ? HEADER : GENRE_ITEM;
-        }
-
-
+    @Override
+    public int getItemViewType(int position) {
+        return position == 0 ? HEADER : GENRE_ITEM;
+    }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         int rowType = getItemViewType(position);
         if (convertView == null) {
-            Log.i("inf", "new view");
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             switch (rowType) {
                 case HEADER:
@@ -111,7 +102,6 @@ public class DrawerNavigationAdapter extends BaseAdapter {
                     break;
             }
         }
-        Log.i("inf", "change view");
 
         switch (rowType) {
             case HEADER:

@@ -157,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
     public void onGenreClick(Genre genre) {
         Bundle args = new Bundle();
         args.putParcelable(GENRE_DETAIL, genre);
-        Log.i("updadfgdgte", "updta" + genre.getId() + genre.getName());
         if (getSupportLoaderManager().getLoader(LOADER_GENRE_UPDATE_ID) != null) {
             getSupportLoaderManager().restartLoader(LOADER_GENRE_UPDATE_ID, args, new GenreCallback(getApplicationContext())).forceLoad();
         } else {
@@ -211,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
                 case LOADER_GENRE_CREATE_ID:
                     return new GenreCreateLoader(mContext, (Genre[]) args.getParcelableArray(GENRES_DB_LIST));
                 case LOADER_GENRE_UPDATE_ID:
-                    Log.i("update", "updtaloader" + ((Genre) args.getParcelable(GENRE_DETAIL)).getId());
                     return new GenreUpdateLoader(mContext, (Genre) args.getParcelable(GENRE_DETAIL));
                 default:
                     throw new UnsupportedOperationException("Not know loader id");

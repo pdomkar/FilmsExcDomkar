@@ -66,7 +66,7 @@ public class DownloadFilmListService extends IntentService {
             cal.add(Calendar.DAY_OF_YEAR, +14);
             Date endDate = cal.getTime();
 
-            if (intent.getIntExtra("order", 0) == 0) {
+            if (intent.getIntExtra(FilmsListFragment.ORDER, 0) == 0) {
                 callRequest(filmRetrofitInterface.findFilmsInTheatre(ymdFormat.format(startDate), ymdFormat.format(endDate), "vote_average.desc", MOVIE_API_KEY), IN_THEATRE);
             } else {
                 callRequest(filmRetrofitInterface.findFilmsPopularInYear(yearFormat.format(cal.getTime()), "vote_average.desc", MOVIE_API_KEY), POPULAR_IN_YEAR + String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
@@ -85,7 +85,6 @@ public class DownloadFilmListService extends IntentService {
     }
 
     private void callRequest(final Call<FilmResponse> films, final String title) {
-        Log.i("aaaa", title);
         films.enqueue(new Callback<FilmResponse>() {
             @Override
             public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {

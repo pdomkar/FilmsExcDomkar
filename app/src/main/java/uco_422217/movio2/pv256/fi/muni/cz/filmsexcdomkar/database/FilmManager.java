@@ -351,15 +351,6 @@ public class FilmManager {
         mContext.getContentResolver().update(FilmCotract.GenreEntry.CONTENT_URI, prepareGenreValues(genre), WHERE_GENRE_ID, new String[]{String.valueOf(genre.getId())});
     }
 
-
-//    public void deleteGenre(Long id) {
-//        if (id == null) {
-//            throw new IllegalStateException("geenre id cannot be null");
-//        }
-//
-//        mContext.getContentResolver().delete(FilmCotract.GenreEntry.CONTENT_URI, WHERE_GENRE_ID, new String[]{String.valueOf(id)});
-//    }
-
     private ContentValues prepareFilmValues(Film film) {
         ContentValues values = new ContentValues();
         values.put(FilmCotract.FilmEntry.COLUMN_FILM_ID, film.getId());

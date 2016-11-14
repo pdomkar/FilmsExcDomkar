@@ -28,7 +28,6 @@ public class MyGenreObserver extends ContentObserver {
 
     @Override
     public void onChange(boolean selfChange, Uri uri) {
-        Log.i("change", "CHANGE IN GENR");
         mContentObserverGenreCallback.updateFilmsList();
     }
 }

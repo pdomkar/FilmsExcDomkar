@@ -62,6 +62,7 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     public static final String ACTION_INTERNET_CHANGE = "INTERNET_CHANGE";
     private static final String FILM_API_LIST = "film_api_list";
     private static final String TITLE_FILMS = "title_films";
+    public static final String ORDER = "order";
     private static final int LOADER_FILM_FIND_ALL_ID = 1;
     private static final int LOADER_GENRE_FIND_SHOW_ID = 2;
     private int mPosition = ListView.INVALID_POSITION;
@@ -79,7 +80,7 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     public void onAttach(Context activity) {
         super.onAttach(activity);
         Intent intent = new Intent(getActivity(), DownloadFilmListService.class);
-        intent.putExtra("order", 0);
+        intent.putExtra(ORDER, 0);
         getActivity().startService(intent);
         mBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         mFilmManager = new FilmManager(getActivity().getApplicationContext());
@@ -164,7 +165,7 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
                         filmAdapter.setList(mAdapterArrayList);
                         mFilmsLV.setAdapter(filmAdapter);
                         Intent intent = new Intent(getActivity(), DownloadFilmListService.class);
-                        intent.putExtra("order", 0);
+                        intent.putExtra(ORDER, 0);
                         getActivity().startService(intent);
                     }
                 }
@@ -332,7 +333,7 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
 
                 if (title.equals(DownloadFilmListService.IN_THEATRE)) {
                     Intent intent = new Intent(getActivity(), DownloadFilmListService.class);
-                    intent.putExtra("order", 1);
+                    intent.putExtra(ORDER, 1);
                     getActivity().startService(intent);
                 }
 
@@ -366,7 +367,7 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     @Override
     public void updateFilmsList() {
         Intent intent = new Intent(getActivity(), DownloadFilmListService.class);
-        intent.putExtra("order", 0);
+        intent.putExtra(ORDER, 0);
         getActivity().startService(intent);
     }
 }

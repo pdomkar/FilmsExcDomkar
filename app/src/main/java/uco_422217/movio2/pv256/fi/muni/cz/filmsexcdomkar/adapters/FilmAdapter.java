@@ -39,7 +39,6 @@ public class FilmAdapter extends BaseAdapter {
     private static final int CATEGORY = 0, FILM = 1;
     private static final String IMAGE_BASE_PATH = "https://image.tmdb.org/t/p/w500";
 
-
     public FilmAdapter(List<Object> filmArrayList, Context context) {
         mAppContext = context.getApplicationContext();
         if(filmArrayList != null) {
@@ -48,7 +47,6 @@ public class FilmAdapter extends BaseAdapter {
             mFilmArrayList = new ArrayList<>();
         }
     }
-
 
     public void setList(List<Object> list)
     {
@@ -87,7 +85,6 @@ public class FilmAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         int rowType = getItemViewType(position);
         if (convertView == null) {
-            Log.i("inf", "new view");
             LayoutInflater inflater = (LayoutInflater) mAppContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             switch (rowType) {
                 case CATEGORY:
@@ -102,7 +99,7 @@ public class FilmAdapter extends BaseAdapter {
                     break;
             }
         }
-        Log.i("inf", "change view");
+
         switch (rowType) {
             case CATEGORY:
                 CategoryViewHolder categoryViewHolder = (CategoryViewHolder) convertView.getTag(R.layout.view_holder_category);
@@ -200,5 +197,4 @@ public class FilmAdapter extends BaseAdapter {
         }
 
     }
-
 }

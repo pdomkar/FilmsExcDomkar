@@ -184,7 +184,6 @@ public class FilmDetailFragment extends Fragment {
             //director
 
             if (mFilm.getCredits() == null) {
-                Log.i("a", "bbbb");
                 Bundle args = new Bundle();
                 args.putLong(DETAIL_ID, mFilm.getId());
                 getLoaderManager().initLoader(LOADER_DIRECTOR_FIND_ID, args, new DirectorCallback(getActivity().getApplicationContext())).forceLoad();
@@ -204,12 +203,6 @@ public class FilmDetailFragment extends Fragment {
     public void onStart() {
         super.onStart();
         Log.d(TAG, "onStart: ");
-
-//        Toolbar toolbar = ((DetailActivity) getActivity()).getToolbar();
-//        if (toolbar != null) {
-//            Switch savedS = (Switch) ((DetailActivity) getActivity()).getToolbar().findViewById(R.id.savedS);
-//            savedS.setVisibility(View.INVISIBLE);
-//        }
     }
 
     public void setFilmCredits(Credits credits) {

@@ -32,7 +32,6 @@ public class GenreCreateLoader extends AsyncTaskLoader<List<Genre>> {
     @Override
     public List<Genre> loadInBackground() {
         if (mGenres != null && mGenres.length > 0) {
-            Log.i("werwrwrwrwrw", mGenres.length + "");
             for (int i = 0; i < mGenres.length; i++) {
                 mFilmManager.createGenre(mGenres[i]);
             }
