@@ -2,6 +2,9 @@
 <manifest package="uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -16,6 +19,37 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".DetailActivity">
+        </activity>
+
+        <receiver
+            android:name=".networks.ConnectionChangeReceiver"
+            android:label="NetworkConnection">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".networks.DownloadFilmListService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+        <service
+            android:name=".networks.DownloadFilmDetailService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+        <service
+            android:name=".networks.DownloadGenreListService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+
+        <provider
+            android:name=".database.FilmProvider"
+            android:authorities="cz.muni.fi.pv256.movio2.uco_422217"
+            android:exported="false"/>
     </application>
 
 </manifest>
