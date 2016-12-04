@@ -2,6 +2,7 @@ package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -20,96 +21,50 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
  */
 
 public class FilmDetailFragment extends Fragment {
-    public static final String SELECTED_FILM = "selected_film";
-    final static String KEY_POSITION = "position";
-    int mCurrentPosition = -1;
+    public static final String TAG = FilmDetailFragment.class.getSimpleName();
+    private static final String ARGS_FILM = "args_film";
 
-    TextView mTtile;
-    TextView mReleaseDate;
-    TextView mBackdrop;
-    FloatingActionButton mPlusFAB;
-    Film mFilm;
+    private Context mContext;
+    private Film mFilm;
 
-    public FilmDetailFragment() {
+    public static FilmDetailFragment newInstance(Film film) {
+        FilmDetailFragment fragment = new FilmDetailFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(ARGS_FILM, film);
+        fragment.setArguments(args);
+        return fragment;
     }
-
 
     @Override
-    public void onAttach(Context activity) {
-        super.onAttach(activity);
-        Log.i("FD", "onAttach");
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mContext = getActivity();
+        Bundle args = getArguments();
+        if (args != null) {
+            mFilm = args.getParcelable(ARGS_FILM);
+        }
     }
 
+    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i("FD", "onCreateView");
-        //activity is recreated -> restore saveInstance state
-        if (savedInstanceState != null){
-            Log.i("FD", "onReCreated");
-            mCurrentPosition = savedInstanceState.getInt(KEY_POSITION);
-        }
-
         View view = inflater.inflate(R.layout.fragment_film_detail_layout, container, false);
 
-        this.mTtile = (TextView) view.findViewById(R.id.titleDetailTV);
-        this.mReleaseDate = (TextView) view.findViewById(R.id.releaseDateDetailTV);
-        this.mBackdrop = (TextView) view.findViewById(R.id.backdropDetailTV);
-        this.mPlusFAB = (FloatingActionButton) view.findViewById(R.id.plusFAB);
-        return view;
-    }
+        TextView titleTV = (TextView) view.findViewById(R.id.titleDetailTV);
+        TextView releaseDateTV = (TextView) view.findViewById(R.id.releaseDateDetailTV);
+        TextView backdropTV = (TextView) view.findViewById(R.id.backdropDetailTV);
+        FloatingActionButton plusFAB = (FloatingActionButton) view.findViewById(R.id.plusFAB);
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.i("FD", "onActivityCreated");
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.i("FD", "onStart");
-            //get Film from Args parcelable
-        Bundle args = getArguments();
-        if (args != null){
-            Film film = args.getParcelable(SELECTED_FILM);
-            setFilmDetail(film);
-        } else if(mCurrentPosition != -1){
-            // Set Film based on savedInstanceState defined during onCreateView()
-            setFilmDetail(MainActivity.mFilmList.get(mCurrentPosition));
-        } else {
-            mPlusFAB.hide();
-        }
-    }
-
-
-    public void setFilmDetail(Film film) {
-        if(film != null) {
-            this.mFilm = film;
-            this.mTtile.setText(film.getTitle());
-            this.mBackdrop.setText(film.getBackdrop());
-            Date date = new Date(film.getReleaseDate());
+        if (mFilm != null) {
+            titleTV.setText(mFilm.getTitle());
+            Date date = new Date(mFilm.getReleaseDate());
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
             int year = cal.get(Calendar.YEAR);
-            this.mReleaseDate.setText(year + "");
-            this.mTtile.setText(film.getTitle());
-            mPlusFAB.show();
+            releaseDateTV.setText(year + "");
+            backdropTV.setText(mFilm.getBackdrop());
+            plusFAB.show();
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.i("FD", "onSaveInstanceState");
-        // Save the current film selection in case we need to recreate the fragment
-        outState.putInt(KEY_POSITION, mCurrentPosition);
-    }
-
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.i("FD", "onDetatch");
+        return view;
     }
 }
