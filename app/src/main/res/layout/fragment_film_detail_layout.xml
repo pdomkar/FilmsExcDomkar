@@ -2,134 +2,128 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:ignore="MergeRootFrame">
 
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:orientation="vertical"
-                  android:weightSum="6">
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/collapseBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/headImageLL"
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/toolbarLayout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1.6"
-            android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/backdropDetailIV"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <LinearLayout
                 android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/backdropDetailIV"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    android:scaleType="centerCrop"
+                    app:layout_collapseMode="parallax"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    app:layout_collapseMode="parallax">
+
+                    <TextView
+                        android:id="@+id/titleDetailExpandedTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="140dp"
+                        android:layout_marginStart="140dp"
+                        android:paddingLeft="16dp"
+                        android:paddingStart="16dp"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/white"/>
+
+                    <TextView
+                        android:id="@+id/directorTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="144dp"
+                        android:layout_marginStart="144dp"
+                        android:paddingLeft="16dp"
+                        android:paddingStart="16dp"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/white"
+                        android:layout_below="@id/titleDetailExpandedTV"/>
+
+                    <TextView
+                        android:id="@+id/releaseDateDetailTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/white"
+                        android:layout_below="@id/titleDetailExpandedTV"
+                        android:layout_toRightOf="@id/directorTV"
+                        android:layout_toEndOf="@id/directorTV"
+                        android:paddingStart="16dp"
+                        android:paddingLeft="16dp"/>
+
+                </RelativeLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/posterDetailIV"
+                android:layout_width="110dp"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/image_not_found"
-                android:visibility="invisible"/>
-        </LinearLayout>
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="16dp"
+                app:layout_collapseMode="parallax"/>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbarDetail"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin">
+
+                <TextView
+                    android:id="@+id/titleDetailCollapsedTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/white"/>
+
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/movie_detail_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior_my">
 
         <RelativeLayout
-            android:id="@+id/headContentLL"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1.4"
+            android:id="@+id/contentLL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
             android:orientation="horizontal"
-            android:background="@color/myColorPrimary"
-            android:visibility="invisible">
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:orientation="horizontal">
-
-                <RelativeLayout
-                    android:layout_width="0dip"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="0.4">
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dip"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="0.6">
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:orientation="vertical">
-
-                        <RelativeLayout
-                            android:layout_height="0dip"
-                            android:layout_width="fill_parent"
-                            android:layout_weight="0.6">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:id="@+id/titleDetailTV"
-                                android:textColor="@android:color/white"
-                                android:textSize="19sp"
-                                android:layout_alignParentBottom="true"
-                                android:layout_gravity="center_vertical"/>
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_height="0dip"
-                            android:layout_width="fill_parent"
-                            android:layout_weight="0.2">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:id="@+id/releaseDateDetailTV"
-                                android:textColor="@android:color/white"
-                                android:textSize="14sp"
-                                android:paddingRight="15dp"
-                                android:paddingEnd="15dp"
-                                android:layout_alignParentRight="true"
-                                android:gravity="right"/>
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                            android:layout_height="0dip"
-                            android:layout_width="fill_parent"
-                            android:layout_weight="0.2">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:id="@+id/directorTV"
-                                android:textColor="@android:color/white"
-                                android:textSize="16sp"
-                                android:layout_alignParentRight="true"
-                                android:paddingRight="15dp"
-                                android:paddingEnd="15dp"
-                                android:gravity="right"/>
-                        </RelativeLayout>
-
-                    </LinearLayout>
-
-                </RelativeLayout>
-
-            </LinearLayout>
-        </RelativeLayout>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3">
-
-            <RelativeLayout
-                android:id="@+id/contentLL"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:orientation="horizontal"
-                android:padding="5dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:visibility="invisible">
+            android:padding="5dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:visibility="visible">
 
             <TextView
                 android:layout_width="match_parent"
@@ -141,76 +135,76 @@
                 android:layout_marginBottom="2dp"
                 android:visibility="invisible"/>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/cast1RL"
-                    android:layout_below="@+id/castTitleTV"
-                    android:layout_margin="6dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/cast1RL"
+                android:layout_below="@+id/castTitleTV"
+                android:layout_margin="6dp">
 
-                    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                                  android:id="@+id/cast1ProfileIV"
-                                                                  android:layout_width="40dp"
-                                                                  android:layout_height="40dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/cast1NameTV"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_toRightOf="@+id/cast1ProfileIV"
-                        android:layout_toEndOf="@+id/cast1ProfileIV"
-                        android:paddingStart="10dp"
-                        android:paddingLeft="10dp"/>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/cast2RL"
-                    android:layout_below="@+id/cast1RL"
-                    android:layout_margin="6dp">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/cast2ProfileIV"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/cast2NameTV"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/cast2ProfileIV"
-                        android:layout_toEndOf="@+id/cast2ProfileIV"
-                        android:paddingStart="10dp"
-                        android:paddingLeft="10dp"/>
-                </RelativeLayout>
-
-                <View
-                    android:id="@+id/separator"
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dip"
-                    android:background="#666666"
-                    android:layout_below="@id/cast2RL"/>
+                <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                              android:id="@+id/cast1ProfileIV"
+                                                              android:layout_width="40dp"
+                                                              android:layout_height="40dp"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/overviewTitleTV"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="17sp"
-                    android:text="Přehled"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_below="@+id/separator"
-                    android:visibility="invisible"/>
+                    android:id="@+id/cast1NameTV"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toRightOf="@+id/cast1ProfileIV"
+                    android:layout_toEndOf="@+id/cast1ProfileIV"
+                    android:paddingStart="16dp"
+                    android:paddingLeft="16dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/cast2RL"
+                android:layout_below="@+id/cast1RL"
+                android:layout_margin="6dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/cast2ProfileIV"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/cast2NameTV"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/cast2ProfileIV"
+                    android:layout_toEndOf="@+id/cast2ProfileIV"
+                    android:paddingStart="10dp"
+                    android:paddingLeft="10dp"/>
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/separator"
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="#666666"
+                android:layout_below="@id/cast2RL"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/overviewTitleTV"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="17sp"
+                android:text="Přehled"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/separator"
+                android:visibility="invisible"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -221,37 +215,19 @@
 
         </RelativeLayout>
 
-        </ScrollView>
-    </LinearLayout>
-
-    <ImageView
-        android:id="@+id/posterDetailIV"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        app:layout_anchor="@id/headContentLL"
-        app:layout_anchorGravity="left|center|start"
-        android:layout_height="140dp"
-        android:layout_width="wrap_content"
-        android:paddingBottom="20dp"
-        android:scaleType="fitStart"
-        android:src="@drawable/image_not_found_poster"
-        android:visibility="invisible"
-        />
+    </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/plusFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        app:layout_anchor="@+id/backdropDetailIV"
+        app:layout_anchorGravity="bottom|end"
         android:clickable="true"
         android:src="@drawable/ic_plus"
         app:backgroundTint="@color/myColorAccent"
-        app:layout_anchor="@id/headImageLL"
-        app:layout_anchorGravity="bottom|right|end"
         android:visibility="invisible"
         />
 
 </android.support.design.widget.CoordinatorLayout>
-
-
-
