@@ -12,10 +12,13 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -42,6 +45,8 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmListService;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadGenreListService;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.sync.RefreshDataDb;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.sync.UpdaterSyncAdapter;
 
 public class MainActivity extends AppCompatActivity implements OnFilmSelectListener, OnGenreSelectListener {
     private boolean mTwoPane;
@@ -70,6 +75,25 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        UpdaterSyncAdapter.initializeSyncAdapter(this);
+
+        ImageButton pupupMenuIB = (ImageButton)findViewById(R.id.popupMenuIB);
+        pupupMenuIB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(MainActivity.this, v);
+                popup.getMenuInflater().inflate(R.menu.menu, popup.getMenu());
+
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        UpdaterSyncAdapter.syncImmediately(MainActivity.this);
+                        return true;
+                    }
+                });
+
+                popup.show();
+            }
+        });
 
         mBroadcastManager = LocalBroadcastManager.getInstance(this);
 

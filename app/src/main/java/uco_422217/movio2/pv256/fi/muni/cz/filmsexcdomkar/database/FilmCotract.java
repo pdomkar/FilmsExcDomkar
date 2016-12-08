@@ -15,7 +15,7 @@ import java.util.Date;
  */
 
 public class FilmCotract {
-    public static final String CONTENT_AUTHORITY = "cz.muni.fi.pv256.movio2.uco_422217";
+    public static final String CONTENT_AUTHORITY = "uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     public static final String PATH_FILMS = "film";
     public static final String PATH_DIRECTORS = "director";
