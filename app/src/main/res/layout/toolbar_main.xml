@@ -63,7 +63,8 @@
             android:textOff="No"
             android:layout_alignBottom="@+id/menuIB"
             android:layout_toLeftOf="@+id/popupMenuIB"
-            android:layout_toStartOf="@+id/popupMenuIB"/>
+            android:layout_toStartOf="@+id/popupMenuIB"
+            android:layout_alignParentTop="true"/>
 
     </RelativeLayout>
 </android.support.v7.widget.Toolbar>
