@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -42,6 +43,7 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.Direct
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmCreateLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmDeleteLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmFindLoader;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmsContract;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Cast;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Credits;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Crew;
@@ -49,12 +51,13 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Director;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmDetailService;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmListService;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.DetailPresenter;
 
 /**
  * Created by Petr on 6. 10. 2016.
  */
 
-public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
+public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener, FilmsContract.DetailView {
     public static final String TAG = FilmDetailFragment.class.getSimpleName();
     private static final String ARGS_FILM = "args_film";
     public static final String ACTION_SEND_DETAIL_RESULTS = "SEND_DETAIL_RESULTS";
@@ -69,11 +72,18 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
     public static FilmDetailFragment ins;
     private FilmManager mFilmManager;
 
+    private DetailPresenter mDetailPresenter;
+
     FloatingActionButton plusFAB;
     TextView releaseDateTV;
     TextView titleTV;
     ImageView posterIV;
     TextView titleDetailCollapsedTV;
+    TextView directorTV;
+    ImageView cast1ProfileIV;
+    TextView cast1NameTV;
+    ImageView cast2ProfileIV;
+    TextView cast2NameTV;
 
     private static final int LOADER_FILM_FIND_ID = 1;
     private static final int LOADER_FILM_CREATE_ID = 2;
@@ -107,11 +117,14 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
                 Intent intent = new Intent(getActivity(), DownloadFilmDetailService.class);
                 intent.putExtra(DETAIL_ID, mFilm.getId());
                 getActivity().startService(intent);
+                mDetailPresenter = new DetailPresenter(this.getView(), getActivity().getApplicationContext(), getLoaderManager(), mFilm, this);
             }
+
         }
         mBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         ins = FilmDetailFragment.this;
         mFilmManager = new FilmManager(getActivity().getApplicationContext());
+
     }
 
     @Override
@@ -133,8 +146,13 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
         posterIV = (ImageView) view.findViewById(R.id.posterDetailIV);
         TextView overviewTitleTV = (TextView) view.findViewById(R.id.overviewTitleTV);
         TextView castTitleTV = (TextView) view.findViewById(R.id.castTitleTV);
+        cast1ProfileIV = (ImageView) view.findViewById(R.id.cast1ProfileIV);
+        cast1NameTV = (TextView) view.findViewById(R.id.cast1NameTV);
+        cast2ProfileIV = (ImageView) view.findViewById(R.id.cast2ProfileIV);
+        cast2NameTV = (TextView) view.findViewById(R.id.cast2NameTV);
         TextView overviewContentTV = (TextView) view.findViewById(R.id.overviewContentTV);
         plusFAB = (FloatingActionButton) view.findViewById(R.id.plusFAB);
+        directorTV = (TextView) view.findViewById(R.id.directorTV);
 
 
 
@@ -174,9 +192,8 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
             plusFAB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Bundle args = new Bundle();
-                    args.putLong(DETAIL_ID, mFilm.getId());
-                    getLoaderManager().initLoader(LOADER_FILM_FIND_ID, args, new FilmCallback(getActivity().getApplicationContext())).forceLoad();
+                    Log.i("sdfsdf", "dfsf");
+                    mDetailPresenter.onClickSaved(mFilm.getId());
                 }
             });
 
@@ -219,32 +236,7 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
                         directorTV.setText(getDirectorNameFromCrew(filmCredits.getCrew()));
                     }
 
-
-                    for (int i = 0; i < filmCredits.getCast().length; i++) {
-                        if (i < 2) {
-                            Cast cast = filmCredits.getCast()[i];
-                            TextView castNameTV = null;
-                            ImageView castProfileIV = null;
-                            if (i == 0) {
-                                castProfileIV = (ImageView) view.findViewById(R.id.cast1ProfileIV);
-                                castNameTV = (TextView) view.findViewById(R.id.cast1NameTV);
-                            } else if (i == 1) {
-                                castProfileIV = (ImageView) view.findViewById(R.id.cast2ProfileIV);
-                                castNameTV = (TextView) view.findViewById(R.id.cast2NameTV);
-                            }
-                            if (castProfileIV != null) {
-                                ImageLoader imageLoader = ImageLoader.getInstance();
-                                if (cast.getProfilePath() != null) {
-                                    imageLoader.displayImage(IMAGE_BASE_PATH + cast.getProfilePath(), castProfileIV);
-                                }
-                            }
-                            if (castNameTV != null) {
-                                castNameTV.setText(cast.getName());
-                            }
-                        } else {
-                            break;
-                        }
-                    }
+                    changeCasts(filmCredits.getCast());
                 }
             }
         }
@@ -395,11 +387,7 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
             switch (loader.getId()) {
                 case LOADER_DIRECTOR_FIND_ID:
                     if (data.size() > 0) {
-                        View view = FilmDetailFragment.getInstace().getView();
-                        TextView directorTV = (TextView) view.findViewById(R.id.directorTV);
-                        if (directorTV != null) {
-                            directorTV.setText(((Director) data.get(0)).getName());
-                        }
+                        changeDirectorTV(data.get(0).getName());
                     }
                     break;
                 case LOADER_DIRECTOR_CREATE_ID:
@@ -521,6 +509,49 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
             }
         }
         return "";
+    }
+
+    @Override
+    public void changeFab(Boolean showTrash) {
+        if(showTrash) {
+            plusFAB.setImageResource(R.drawable.ic_trash);
+        } else {
+            plusFAB.setImageResource(R.drawable.ic_plus);
+        }
+    }
+
+    @Override
+    public void changeDirectorTV(String name) {
+        directorTV.setText(name);
+    }
+
+    @Override
+    public void changeCasts(Cast[] casts) {
+        for (int i = 0; i < casts.length; i++) {
+            if (i < 2) {
+                Cast cast = casts[i];
+                TextView castNameTV = null;
+                ImageView castProfileIV = null;
+                if (i == 0) {
+                    castProfileIV = cast1ProfileIV;
+                    castNameTV = cast1NameTV;
+                } else if (i == 1) {
+                    castProfileIV = cast2ProfileIV;
+                    castNameTV = cast2NameTV;
+                }
+                if (castProfileIV != null) {
+                    ImageLoader imageLoader = ImageLoader.getInstance();
+                    if (cast.getProfilePath() != null) {
+                        imageLoader.displayImage(IMAGE_BASE_PATH + cast.getProfilePath(), castProfileIV);
+                    }
+                }
+                if (castNameTV != null) {
+                    castNameTV.setText(cast.getName());
+                }
+            } else {
+                break;
+            }
+        }
     }
 
 }
