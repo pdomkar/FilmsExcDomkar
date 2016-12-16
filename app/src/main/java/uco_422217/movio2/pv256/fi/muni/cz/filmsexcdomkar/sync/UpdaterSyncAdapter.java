@@ -21,7 +21,7 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.R;
 public class UpdaterSyncAdapter extends AbstractThreadedSyncAdapter {
 
     // Interval at which to sync with the server, in seconds.
-    public static final int SYNC_INTERVAL = 60 * 3;//60 * 60 * 24; //day 60 * 5
+    public static final int SYNC_INTERVAL = 60 * 60 * 24; //day // 60 * 5
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
 
     public UpdaterSyncAdapter(Context context, boolean autoInitialize) {
