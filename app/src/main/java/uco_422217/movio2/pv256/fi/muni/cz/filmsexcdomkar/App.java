@@ -10,7 +10,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 /**
- * Created by Petr on 20. 9. 2016.
+ * Created by Petr on 20. 9. 2016. 
  */
 
 public class App extends Application {
