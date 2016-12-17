@@ -56,12 +56,6 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
     private LocalBroadcastManager mBroadcastManager;
     public static final String ACTION_SEND_RESULTS_GENRES = "SEND_RESULTS_GENRES";
     public static final String ACTION_INTERNET_CHANGE = "INTERNET_CHANGE";
-    private static final int LOADER_GENRE_FIND_ID = 1;
-    private static final int LOADER_GENRE_FIND_ALL_ID = 2;
-    private static final int LOADER_GENRE_FIND_ALL_LIST_ID = 3;
-    private static final int LOADER_GENRE_FIND_SHOW_ID = 4;
-    private static final int LOADER_GENRE_CREATE_ID = 5;
-    private static final int LOADER_GENRE_UPDATE_ID = 6;
     private static final String GENRES_DB_LIST = "genres_db_list";
     private static final String GENRE_DETAIL = "genre_detail";
     private Toolbar toolbar;
@@ -127,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
         mDrawerNavigationAdapter = new DrawerNavigationAdapter(mGenreList, getApplicationContext(), this);
         genresLV.setAdapter(mDrawerNavigationAdapter);
 
-        getSupportLoaderManager().initLoader(LOADER_GENRE_FIND_ALL_ID, null, new GenreCallback(getApplicationContext())).forceLoad();
+        getSupportLoaderManager().initLoader(Consts.LOADER_GENRE_FIND_ALL_ID, null, new GenreCallback(getApplicationContext())).forceLoad();
     }
 
 
@@ -181,10 +175,10 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
     public void onGenreClick(Genre genre) {
         Bundle args = new Bundle();
         args.putParcelable(GENRE_DETAIL, genre);
-        if (getSupportLoaderManager().getLoader(LOADER_GENRE_UPDATE_ID) != null) {
-            getSupportLoaderManager().restartLoader(LOADER_GENRE_UPDATE_ID, args, new GenreCallback(getApplicationContext())).forceLoad();
+        if (getSupportLoaderManager().getLoader(Consts.LOADER_GENRE_UPDATE_ID) != null) {
+            getSupportLoaderManager().restartLoader(Consts.LOADER_GENRE_UPDATE_ID, args, new GenreCallback(getApplicationContext())).forceLoad();
         } else {
-            getSupportLoaderManager().initLoader(LOADER_GENRE_UPDATE_ID, args, new GenreCallback(getApplicationContext())).forceLoad();
+            getSupportLoaderManager().initLoader(Consts.LOADER_GENRE_UPDATE_ID, args, new GenreCallback(getApplicationContext())).forceLoad();
         }
     }
 
@@ -213,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
         Bundle args = new Bundle();
         args.putParcelableArray(GENRES_DB_LIST, genres);
 
-        getSupportLoaderManager().initLoader(LOADER_GENRE_CREATE_ID, args, new GenreCallback(getApplicationContext())).forceLoad();
+        getSupportLoaderManager().initLoader(Consts.LOADER_GENRE_CREATE_ID, args, new GenreCallback(getApplicationContext())).forceLoad();
     }
 
     public class GenreCallback implements LoaderManager.LoaderCallbacks<List<Genre>> {
@@ -227,13 +221,13 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
         public Loader<List<Genre>> onCreateLoader(int id, Bundle args) {
             Log.i("MainActivity", "+++ onCreateLoader() called! +++");
             switch (id) {
-                case LOADER_GENRE_FIND_ALL_ID:
+                case Consts.LOADER_GENRE_FIND_ALL_ID:
                     return new GenreFindAllLoader(mContext);
-                case LOADER_GENRE_FIND_ALL_LIST_ID:
+                case Consts.LOADER_GENRE_FIND_ALL_LIST_ID:
                     return new GenreFindAllLoader(mContext);
-                case LOADER_GENRE_CREATE_ID:
+                case Consts.LOADER_GENRE_CREATE_ID:
                     return new GenreCreateLoader(mContext, (Genre[]) args.getParcelableArray(GENRES_DB_LIST));
-                case LOADER_GENRE_UPDATE_ID:
+                case Consts.LOADER_GENRE_UPDATE_ID:
                     return new GenreUpdateLoader(mContext, (Genre) args.getParcelable(GENRE_DETAIL));
                 default:
                     throw new UnsupportedOperationException("Not know loader id");
@@ -244,16 +238,16 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
         public void onLoadFinished(Loader<List<Genre>> loader, List<Genre> data) {
             Log.i("MainActivity", "+++ onLoadFinished() called! +++");
             switch (loader.getId()) {
-                case LOADER_GENRE_FIND_ALL_ID:
+                case Consts.LOADER_GENRE_FIND_ALL_ID:
                     if (data.size() == 0) {
                         //nacist
                         Intent intent = new Intent(mContext, DownloadGenreListService.class);
                         mContext.startService(intent);
                     } else {
-                        getSupportLoaderManager().initLoader(LOADER_GENRE_FIND_ALL_LIST_ID, null, new GenreCallback(getApplicationContext())).forceLoad();
+                        getSupportLoaderManager().initLoader(Consts.LOADER_GENRE_FIND_ALL_LIST_ID, null, new GenreCallback(getApplicationContext())).forceLoad();
                     }
                     break;
-                case LOADER_GENRE_FIND_ALL_LIST_ID:
+                case Consts.LOADER_GENRE_FIND_ALL_LIST_ID:
                     //vypsat
                     mGenreList = new ArrayList<>();
                     mGenreList.add(0, new Genre(0L, "Zobrazené žánry", false));
@@ -269,16 +263,16 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
                         }
                     }
                     break;
-                case LOADER_GENRE_FIND_SHOW_ID:
+                case Consts.LOADER_GENRE_FIND_SHOW_ID:
 
                     break;
-                case LOADER_GENRE_FIND_ID:
+                case Consts.LOADER_GENRE_FIND_ID:
 
                     break;
-                case LOADER_GENRE_CREATE_ID:
-                    getSupportLoaderManager().initLoader(LOADER_GENRE_FIND_ALL_LIST_ID, null, new GenreCallback(getApplicationContext())).forceLoad();
+                case Consts.LOADER_GENRE_CREATE_ID:
+                    getSupportLoaderManager().initLoader(Consts.LOADER_GENRE_FIND_ALL_LIST_ID, null, new GenreCallback(getApplicationContext())).forceLoad();
                     break;
-                case LOADER_GENRE_UPDATE_ID:
+                case Consts.LOADER_GENRE_UPDATE_ID:
 
                     break;
                 default:

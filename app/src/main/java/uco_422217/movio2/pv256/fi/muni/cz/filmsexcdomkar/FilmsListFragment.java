@@ -63,8 +63,6 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     private static final String FILM_API_LIST = "film_api_list";
     private static final String TITLE_FILMS = "title_films";
     public static final String ORDER = "order";
-    private static final int LOADER_FILM_FIND_ALL_ID = 1;
-    private static final int LOADER_GENRE_FIND_SHOW_ID = 2;
     private int mPosition = ListView.INVALID_POSITION;
     private OnFilmSelectListener mListener;
     private Context mContext;
@@ -158,7 +156,7 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        getLoaderManager().initLoader(LOADER_FILM_FIND_ALL_ID, null, new FilmCallback(getActivity().getApplicationContext())).forceLoad();
+                        getLoaderManager().initLoader(Consts.LOADER_FILM_FIND_ALL_ID, null, new FilmCallback(getActivity().getApplicationContext())).forceLoad();
                     } else {
                         mAdapterArrayList.clear();
                         filmAdapter.setList(mAdapterArrayList);
@@ -241,10 +239,10 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
         Bundle args = new Bundle();
         args.putParcelableArray(FILM_API_LIST, films);
         args.putString(TITLE_FILMS, title);
-        if (getLoaderManager().getLoader(LOADER_GENRE_FIND_SHOW_ID) != null) {
-            getLoaderManager().restartLoader(LOADER_GENRE_FIND_SHOW_ID, args, new GenreCallback(getActivity().getApplicationContext())).forceLoad();
+        if (getLoaderManager().getLoader(Consts.LOADER_GENRE_FIND_SHOW_ID) != null) {
+            getLoaderManager().restartLoader(Consts.LOADER_GENRE_FIND_SHOW_ID, args, new GenreCallback(getActivity().getApplicationContext())).forceLoad();
         } else {
-            getLoaderManager().initLoader(LOADER_GENRE_FIND_SHOW_ID, args, new GenreCallback(getActivity().getApplicationContext())).forceLoad();
+            getLoaderManager().initLoader(Consts.LOADER_GENRE_FIND_SHOW_ID, args, new GenreCallback(getActivity().getApplicationContext())).forceLoad();
         }
     }
 

@@ -51,7 +51,9 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Director;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmDetailService;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmListService;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.CastCallback;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.DetailPresenter;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.DirectorCallback;
 
 /**
  * Created by Petr on 6. 10. 2016.
@@ -62,10 +64,6 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
     private static final String ARGS_FILM = "args_film";
     public static final String ACTION_SEND_DETAIL_RESULTS = "SEND_DETAIL_RESULTS";
     private static final String IMAGE_BASE_PATH = "https://image.tmdb.org/t/p/w500";
-    public static final String DETAIL_ID = "id";
-    public static final String DETAIL_FILM = "film";
-    public static final String DETAIL_DIRECTOR = "director";
-    public static final String DETAIL_CAST = "cast";
     private Context mContext;
     private Film mFilm;
     private LocalBroadcastManager mBroadcastManager;
@@ -115,7 +113,7 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
             mFilm = args.getParcelable(ARGS_FILM);
             if (mFilm != null) {
                 Intent intent = new Intent(getActivity(), DownloadFilmDetailService.class);
-                intent.putExtra(DETAIL_ID, mFilm.getId());
+                intent.putExtra(Consts.DETAIL_ID, mFilm.getId());
                 getActivity().startService(intent);
                 mDetailPresenter = new DetailPresenter(this.getView(), getActivity().getApplicationContext(), getLoaderManager(), mFilm, this);
             }
@@ -204,15 +202,15 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
 
             if (mFilm.getCredits() == null) {
                 Bundle args = new Bundle();
-                args.putLong(DETAIL_ID, mFilm.getId());
-                getLoaderManager().initLoader(LOADER_DIRECTOR_FIND_ID, args, new DirectorCallback(getActivity().getApplicationContext())).forceLoad();
+                args.putLong(Consts.DETAIL_ID, mFilm.getId());
+                getLoaderManager().initLoader(LOADER_DIRECTOR_FIND_ID, args, new DirectorCallback(getActivity().getApplicationContext(), FilmDetailFragment.this)).forceLoad();
             }
 
             //obsazeni
             if (mFilm.getCredits() == null) {
                 Bundle args = new Bundle();
-                args.putLong(DETAIL_ID, mFilm.getId());
-                getLoaderManager().initLoader(LOADER_CAST_FIND_ID, args, new CastCallback(getActivity().getApplicationContext())).forceLoad();
+                args.putLong(Consts.DETAIL_ID, mFilm.getId());
+                getLoaderManager().initLoader(LOADER_CAST_FIND_ID, args, new CastCallback(getActivity().getApplicationContext(), FilmDetailFragment.this)).forceLoad();
             }
         }
         return view;
@@ -282,206 +280,6 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
         }
     };
 
-
-    private class FilmCallback implements LoaderManager.LoaderCallbacks<List<Film>> {
-        Context mContext;
-
-        public FilmCallback(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        public Loader<List<Film>> onCreateLoader(int id, Bundle args) {
-            Log.i(TAG, "+++ onCreateLoader() called! +++");
-            switch (id) {
-                case LOADER_FILM_FIND_ID:
-                    return new FilmFindLoader(mContext, args.getLong(DETAIL_ID, 0));
-                case LOADER_FILM_CREATE_ID:
-                    return new FilmCreateLoader(mContext, (Film) args.getParcelable(DETAIL_FILM));
-                case LOADER_FILM_DELETE_ID:
-                    return new FilmDeleteLoader(mContext, (Film) args.getParcelable(DETAIL_FILM));
-                default:
-                    throw new UnsupportedOperationException("Not know loader id");
-            }
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<Film>> loader, List<Film> data) {
-            Log.i(TAG, "+++ onLoadFinished() called! +++");
-            switch (loader.getId()) {
-                case LOADER_FILM_FIND_ID:
-                    Bundle args = new Bundle();
-                    args.putLong(DETAIL_ID, mFilm.getId());
-                    args.putParcelable(DETAIL_FILM, mFilm);
-                    String name = "";
-                    if (mFilm.getCredits() != null) {
-                        name = getDirectorNameFromCrew(mFilm.getCredits().getCrew());
-                    }
-                    Director director = new Director(mFilm.getId(), name);
-                    args.putParcelable(DETAIL_DIRECTOR, director);
-                    if (mFilm.getCredits() != null) {
-                        args.putParcelableArray(DETAIL_CAST, mFilm.getCredits().getCast());
-                    }
-
-                    if (data.size() == 0) {
-                        getLoaderManager().initLoader(LOADER_FILM_CREATE_ID, args, FilmCallback.this).forceLoad();
-                        getLoaderManager().initLoader(LOADER_DIRECTOR_CREATE_ID, args, new DirectorCallback(mContext)).forceLoad();
-                        getLoaderManager().initLoader(LOADER_CAST_CREATE_ID, args, new CastCallback(mContext)).forceLoad();
-                    } else {
-                        getLoaderManager().initLoader(LOADER_FILM_DELETE_ID, args, FilmCallback.this).forceLoad();
-                        getLoaderManager().initLoader(LOADER_DIRECTOR_DELETE_ID, args, new DirectorCallback(mContext)).forceLoad();
-                        getLoaderManager().initLoader(LOADER_CAST_DELETE_ID, args, new CastCallback(mContext)).forceLoad();
-                    }
-                    break;
-                case LOADER_FILM_CREATE_ID:
-                    if (FilmDetailFragment.getInstace() != null) {
-                        View view = FilmDetailFragment.getInstace().getView();
-                        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.plusFAB);
-                        fab.setImageResource(R.drawable.ic_trash);
-                    }
-                    break;
-                case LOADER_FILM_DELETE_ID:
-                    if (FilmDetailFragment.getInstace() != null) {
-                        View view = FilmDetailFragment.getInstace().getView();
-                        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.plusFAB);
-                        fab.setImageResource(R.drawable.ic_plus);
-                    }
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Not know loader id");
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<Film>> loader) {
-            Log.i(TAG, "+++ onLoadReset() called! +++");
-
-        }
-    }
-
-    private class DirectorCallback implements LoaderManager.LoaderCallbacks<List<Director>> {
-        Context mContext;
-
-        public DirectorCallback(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        public Loader<List<Director>> onCreateLoader(int id, Bundle args) {
-            Log.i(TAG, "+++ onCreateLoader() called! +++");
-            switch (id) {
-                case LOADER_DIRECTOR_FIND_ID:
-                    return new DirectorFindLoader(mContext, args.getLong(DETAIL_ID, 0));
-                case LOADER_DIRECTOR_CREATE_ID:
-                    return new DirectorCreateLoader(mContext, (Director) args.getParcelable(DETAIL_DIRECTOR));
-                case LOADER_DIRECTOR_DELETE_ID:
-                    return new DirectorDeleteLoader(mContext, (Director) args.getParcelable(DETAIL_DIRECTOR));
-                default:
-                    throw new UnsupportedOperationException("Not know loader id");
-            }
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<Director>> loader, List<Director> data) {
-            Log.i(TAG, "+++ onLoadFinished() called! +++");
-            switch (loader.getId()) {
-                case LOADER_DIRECTOR_FIND_ID:
-                    if (data.size() > 0) {
-                        changeDirectorTV(data.get(0).getName());
-                    }
-                    break;
-                case LOADER_DIRECTOR_CREATE_ID:
-
-                    break;
-                case LOADER_DIRECTOR_DELETE_ID:
-
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Not know loader id");
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<Director>> loader) {
-            Log.i(TAG, "+++ onLoadReset() called! +++");
-
-        }
-    }
-
-    private class CastCallback implements LoaderManager.LoaderCallbacks<List<Cast>> {
-        Context mContext;
-
-        public CastCallback(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        public Loader<List<Cast>> onCreateLoader(int id, Bundle args) {
-            Log.i(TAG, "+++ onCreateLoader() called! +++");
-            switch (id) {
-                case LOADER_CAST_FIND_ID:
-                    return new CastFindLoader(mContext, args.getLong(DETAIL_ID, 0));
-                case LOADER_CAST_CREATE_ID:
-                    return new CastCreateLoader(mContext, (Cast[]) args.getParcelableArray(DETAIL_CAST), args.getLong(DETAIL_ID));
-                case LOADER_CAST_DELETE_ID:
-                    return new CastDeleteLoader(mContext, args.getLong(DETAIL_ID));
-                default:
-                    throw new UnsupportedOperationException("Not know loader id");
-            }
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<Cast>> loader, List<Cast> data) {
-            Log.i(TAG, "+++ onLoadFinished() called! +++");
-            switch (loader.getId()) {
-                case LOADER_CAST_FIND_ID:
-                    if (data.size() > 0) {
-                        View view = FilmDetailFragment.getInstace().getView();
-
-                        for (int i = 0; i < data.size(); i++) {
-                            if (i < 2) {
-                                Cast cast = data.get(i);
-                                TextView castNameTV = null;
-                                ImageView castProfileIV = null;
-                                if (i == 0) {
-                                    castProfileIV = (ImageView) view.findViewById(R.id.cast1ProfileIV);
-                                    castNameTV = (TextView) view.findViewById(R.id.cast1NameTV);
-                                } else if (i == 1) {
-                                    castProfileIV = (ImageView) view.findViewById(R.id.cast2ProfileIV);
-                                    castNameTV = (TextView) view.findViewById(R.id.cast2NameTV);
-                                }
-                                if (castProfileIV != null) {
-                                    ImageLoader imageLoader = ImageLoader.getInstance();
-                                    if (cast.getProfilePath() != null) {
-                                        imageLoader.displayImage(IMAGE_BASE_PATH + cast.getProfilePath(), castProfileIV);
-                                    }
-                                }
-                                if (castNameTV != null) {
-                                    castNameTV.setText(cast.getName());
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-                    }
-                    break;
-                case LOADER_CAST_CREATE_ID:
-
-                    break;
-                case LOADER_CAST_DELETE_ID:
-
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Not know loader id");
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<Cast>> loader) {
-            Log.i(TAG, "+++ onLoadReset() called! +++");
-
-        }
-    }
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int offset)

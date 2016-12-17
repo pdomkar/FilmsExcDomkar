@@ -26,6 +26,7 @@ import okhttp3.Response;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmDetailFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmsListFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmRetrofitInterface;
@@ -50,7 +51,7 @@ public class DownloadFilmDetailService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (Connectivity.isConnected(getApplicationContext())) {
-            Long id = intent.getLongExtra(FilmDetailFragment.DETAIL_ID, 0L);
+            Long id = intent.getLongExtra(Consts.DETAIL_ID, 0L);
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(MOVIE_API_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
