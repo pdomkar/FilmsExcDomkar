@@ -33,22 +33,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters.DrawerNavigationAdapter;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmFindAllLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.GenreCreateLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.GenreFindAllLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.GenreUpdateLoader;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmsContract;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.OnFilmSelectListener;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.OnGenreSelectListener;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Cast;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmListService;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadGenreListService;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.sync.RefreshDataDb;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.List.ListPresenter;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.sync.UpdaterSyncAdapter;
 
-public class MainActivity extends AppCompatActivity implements OnFilmSelectListener, OnGenreSelectListener {
+public class MainActivity extends AppCompatActivity implements OnFilmSelectListener, OnGenreSelectListener, FilmsContract.GenreView {
     private boolean mTwoPane;
     private ListView genresLV;
     private TextView mEmptyGenresTV;
@@ -56,9 +51,8 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
     private LocalBroadcastManager mBroadcastManager;
     public static final String ACTION_SEND_RESULTS_GENRES = "SEND_RESULTS_GENRES";
     public static final String ACTION_INTERNET_CHANGE = "INTERNET_CHANGE";
-    private static final String GENRES_DB_LIST = "genres_db_list";
-    private static final String GENRE_DETAIL = "genre_detail";
     private Toolbar toolbar;
+    private ListPresenter mListPresenter;
     public static ArrayList<Genre> mGenreList = new ArrayList<Genre>(){{
         add(new Genre(0L, "Zobrazované žánry", false));
     }};
@@ -121,7 +115,8 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
         mDrawerNavigationAdapter = new DrawerNavigationAdapter(mGenreList, getApplicationContext(), this);
         genresLV.setAdapter(mDrawerNavigationAdapter);
 
-        getSupportLoaderManager().initLoader(Consts.LOADER_GENRE_FIND_ALL_ID, null, new GenreCallback(getApplicationContext())).forceLoad();
+        mListPresenter = new ListPresenter(null, getApplicationContext(), getSupportLoaderManager(), null, MainActivity.this);
+        mListPresenter.loadFilmGenres();
     }
 
 
@@ -173,13 +168,7 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
 
     @Override
     public void onGenreClick(Genre genre) {
-        Bundle args = new Bundle();
-        args.putParcelable(GENRE_DETAIL, genre);
-        if (getSupportLoaderManager().getLoader(Consts.LOADER_GENRE_UPDATE_ID) != null) {
-            getSupportLoaderManager().restartLoader(Consts.LOADER_GENRE_UPDATE_ID, args, new GenreCallback(getApplicationContext())).forceLoad();
-        } else {
-            getSupportLoaderManager().initLoader(Consts.LOADER_GENRE_UPDATE_ID, args, new GenreCallback(getApplicationContext())).forceLoad();
-        }
+        mListPresenter.changeStateGenre(genre);
     }
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -190,8 +179,7 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
                 ArrayList<Genre> data = intent.getParcelableArrayListExtra(DownloadGenreListService.RESULT_VALUE);
                 saveListGenre(data);
             } else if (intent.getAction().equals(FilmsListFragment.ACTION_INTERNET_CHANGE)) {
-                intent = new Intent(context, DownloadGenreListService.class);
-                context.startService(intent);
+                mListPresenter.loadFilmGenresApi();
             }
         }
     };
@@ -204,86 +192,23 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
             genres[i++] = genre;
         }
 
-        Bundle args = new Bundle();
-        args.putParcelableArray(GENRES_DB_LIST, genres);
-
-        getSupportLoaderManager().initLoader(Consts.LOADER_GENRE_CREATE_ID, args, new GenreCallback(getApplicationContext())).forceLoad();
+        mListPresenter.createGenres(genres);
     }
 
-    public class GenreCallback implements LoaderManager.LoaderCallbacks<List<Genre>> {
-        Context mContext;
+    @Override
+    public void setGenreList(List<Genre> data) {
+        mGenreList = new ArrayList<>();
+        mGenreList.add(0, new Genre(0L, "Zobrazené žánry", false));
+        mGenreList.addAll(data);
+        mDrawerNavigationAdapter.setList(mGenreList);
+        genresLV.setAdapter(mDrawerNavigationAdapter);
 
-        public GenreCallback(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        public Loader<List<Genre>> onCreateLoader(int id, Bundle args) {
-            Log.i("MainActivity", "+++ onCreateLoader() called! +++");
-            switch (id) {
-                case Consts.LOADER_GENRE_FIND_ALL_ID:
-                    return new GenreFindAllLoader(mContext);
-                case Consts.LOADER_GENRE_FIND_ALL_LIST_ID:
-                    return new GenreFindAllLoader(mContext);
-                case Consts.LOADER_GENRE_CREATE_ID:
-                    return new GenreCreateLoader(mContext, (Genre[]) args.getParcelableArray(GENRES_DB_LIST));
-                case Consts.LOADER_GENRE_UPDATE_ID:
-                    return new GenreUpdateLoader(mContext, (Genre) args.getParcelable(GENRE_DETAIL));
-                default:
-                    throw new UnsupportedOperationException("Not know loader id");
+        if (data.size() == 0) {
+            if (!Connectivity.isConnected(getApplicationContext())) {
+                mEmptyGenresTV.setText("Žádné připojení");
+            } else {
+                mEmptyGenresTV.setText("Žádná data");
             }
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<Genre>> loader, List<Genre> data) {
-            Log.i("MainActivity", "+++ onLoadFinished() called! +++");
-            switch (loader.getId()) {
-                case Consts.LOADER_GENRE_FIND_ALL_ID:
-                    if (data.size() == 0) {
-                        //nacist
-                        Intent intent = new Intent(mContext, DownloadGenreListService.class);
-                        mContext.startService(intent);
-                    } else {
-                        getSupportLoaderManager().initLoader(Consts.LOADER_GENRE_FIND_ALL_LIST_ID, null, new GenreCallback(getApplicationContext())).forceLoad();
-                    }
-                    break;
-                case Consts.LOADER_GENRE_FIND_ALL_LIST_ID:
-                    //vypsat
-                    mGenreList = new ArrayList<>();
-                    mGenreList.add(0, new Genre(0L, "Zobrazené žánry", false));
-                    mGenreList.addAll(data);
-                    mDrawerNavigationAdapter.setList(mGenreList);
-                    genresLV.setAdapter(mDrawerNavigationAdapter);
-
-                    if (data.size() == 0) {
-                        if (!Connectivity.isConnected(getApplicationContext())) {
-                            mEmptyGenresTV.setText("Žádné připojení");
-                        } else {
-                            mEmptyGenresTV.setText("Žádná data");
-                        }
-                    }
-                    break;
-                case Consts.LOADER_GENRE_FIND_SHOW_ID:
-
-                    break;
-                case Consts.LOADER_GENRE_FIND_ID:
-
-                    break;
-                case Consts.LOADER_GENRE_CREATE_ID:
-                    getSupportLoaderManager().initLoader(Consts.LOADER_GENRE_FIND_ALL_LIST_ID, null, new GenreCallback(getApplicationContext())).forceLoad();
-                    break;
-                case Consts.LOADER_GENRE_UPDATE_ID:
-
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Not know loader id");
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<Genre>> loader) {
-            Log.i("MainActivity", "+++ onLoadReset() called! +++");
-
         }
     }
 

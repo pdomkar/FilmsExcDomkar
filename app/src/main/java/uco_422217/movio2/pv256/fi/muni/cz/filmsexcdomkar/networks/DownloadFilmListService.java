@@ -9,6 +9,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -18,9 +19,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmDetailFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmsListFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.R;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmRetrofitInterface;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Credits;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.FilmResponse;
 
 /**
@@ -29,12 +34,8 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.FilmResponse;
 
 public class DownloadFilmListService extends IntentService {
     private static final String TAG = DownloadFilmListService.class.getName();
-    public static final String IN_THEATRE = "Právě v kině", POPULAR_IN_YEAR = "Populární v ";
     private final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/";
     private final String MOVIE_API_KEY = "9abf76a6b9a507feb496c4d4bc7cb670";
-    public static final String RESULT_CODE = "resultCode";
-    public static final String RESULT_VALUE = "resultValue";
-    public static final String RESULT_VALUE_TITLE = "resultValueTitle";
     private static final int NOTIFICATION_DOWNLOAD = 10;
     private static final int NOTIFICATION_DONE = 20;
     private static final int NOTIFICATION_ERROR = 30;
@@ -66,10 +67,10 @@ public class DownloadFilmListService extends IntentService {
             cal.add(Calendar.DAY_OF_YEAR, +14);
             Date endDate = cal.getTime();
 
-            if (intent.getIntExtra(FilmsListFragment.ORDER, 0) == 0) {
-                callRequest(filmRetrofitInterface.findFilmsInTheatre(ymdFormat.format(startDate), ymdFormat.format(endDate), "vote_average.desc", MOVIE_API_KEY), IN_THEATRE);
+            if (intent.getIntExtra(Consts.ORDER, 0) == 0) {
+                callRequest(filmRetrofitInterface.findFilmsInTheatre(ymdFormat.format(startDate), ymdFormat.format(endDate), "vote_average.desc", MOVIE_API_KEY), Consts.IN_THEATRE);
             } else {
-                callRequest(filmRetrofitInterface.findFilmsPopularInYear(yearFormat.format(cal.getTime()), "vote_average.desc", MOVIE_API_KEY), POPULAR_IN_YEAR + String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+                callRequest(filmRetrofitInterface.findFilmsPopularInYear(yearFormat.format(cal.getTime()), "vote_average.desc", MOVIE_API_KEY), Consts.POPULAR_IN_YEAR + String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
             }
         } else {
             mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification("Not internet connection").build());
@@ -94,9 +95,9 @@ public class DownloadFilmListService extends IntentService {
                     mNotificationManager.notify(NOTIFICATION_DONE, getDownloadDoneNotification().build());
 
                     Intent intent = new Intent(FilmsListFragment.ACTION_SEND_RESULTS);
-                    intent.putExtra(RESULT_CODE, Activity.RESULT_OK);
-                    intent.putParcelableArrayListExtra(RESULT_VALUE, (response.body()).getFilms());
-                    intent.putExtra(RESULT_VALUE_TITLE, title);
+                    intent.putExtra(Consts.RESULT_CODE, Activity.RESULT_OK);
+                    intent.putParcelableArrayListExtra(Consts.RESULT_VALUE, (response.body()).getFilms());
+                    intent.putExtra(Consts.RESULT_VALUE_TITLE, title);
                     LocalBroadcastManager.getInstance(DownloadFilmListService.this).sendBroadcast(intent);
                 } else {
                     if (response.code() == 404) {

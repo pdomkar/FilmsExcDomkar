@@ -1,4 +1,4 @@
-package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters;
+package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.Detail;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import java.util.List;
 
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmDetailFragment;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.FilmCotract;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmCreateLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmDeleteLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmFindLoader;

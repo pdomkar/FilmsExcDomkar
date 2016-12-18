@@ -40,13 +40,15 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmFi
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmFindLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.GenreFindByShowLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.ContentObserverGenreCallback;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmsContract;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.OnFilmSelectListener;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Cast;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.FilmsGenresBlock;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmListService;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.List.GenreCallback;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.List.ListPresenter;
 
 import static android.R.attr.focusable;
 import static android.R.attr.key;
@@ -55,14 +57,13 @@ import static android.R.attr.key;
  * Created by Petr on 6. 10. 2016.
  */
 
-public class FilmsListFragment extends Fragment implements ContentObserverGenreCallback {
+public class FilmsListFragment extends Fragment implements ContentObserverGenreCallback, FilmsContract.ListView {
     private static final String TAG = FilmsListFragment.class.getName();
     private static final String SELECTED_KEY = "selected_position";
     public static final String ACTION_SEND_RESULTS = "SEND_RESULTS";
     public static final String ACTION_INTERNET_CHANGE = "INTERNET_CHANGE";
     private static final String FILM_API_LIST = "film_api_list";
     private static final String TITLE_FILMS = "title_films";
-    public static final String ORDER = "order";
     private int mPosition = ListView.INVALID_POSITION;
     private OnFilmSelectListener mListener;
     private Context mContext;
@@ -73,13 +74,16 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     private ArrayList<Object> mAdapterArrayList;
     private MyGenreObserver myGenreObserver;
     private FilmManager mFilmManager;
+    private ListPresenter mListPresenter;
+
 
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
-        Intent intent = new Intent(getActivity(), DownloadFilmListService.class);
-        intent.putExtra(ORDER, 0);
-        getActivity().startService(intent);
+
+        mListPresenter = new ListPresenter(this.getView(), getActivity().getApplicationContext(), getLoaderManager(), this, null);
+        mListPresenter.loadFilmsApi(0);
+
         mBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         mFilmManager = new FilmManager(getActivity().getApplicationContext());
         try {
@@ -156,14 +160,12 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        getLoaderManager().initLoader(Consts.LOADER_FILM_FIND_ALL_ID, null, new FilmCallback(getActivity().getApplicationContext())).forceLoad();
+                        mListPresenter.loadFilmsDb();
                     } else {
                         mAdapterArrayList.clear();
                         filmAdapter.setList(mAdapterArrayList);
                         mFilmsLV.setAdapter(filmAdapter);
-                        Intent intent = new Intent(getActivity(), DownloadFilmListService.class);
-                        intent.putExtra(ORDER, 0);
-                        getActivity().startService(intent);
+                        mListPresenter.loadFilmsApi(0);
                     }
                 }
             });
@@ -218,14 +220,13 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int resultCode = intent.getIntExtra(DownloadFilmListService.RESULT_CODE, Activity.RESULT_CANCELED);
+            int resultCode = intent.getIntExtra(Consts.RESULT_CODE, Activity.RESULT_CANCELED);
             if (resultCode == Activity.RESULT_OK && intent.getAction().equals(FilmsListFragment.ACTION_SEND_RESULTS)) {
-                ArrayList<Film> data = intent.getParcelableArrayListExtra(DownloadFilmListService.RESULT_VALUE);
-                String title = intent.getStringExtra(DownloadFilmListService.RESULT_VALUE_TITLE);
+                ArrayList<Film> data = intent.getParcelableArrayListExtra(Consts.RESULT_VALUE);
+                String title = intent.getStringExtra(Consts.RESULT_VALUE_TITLE);
                 setList(data, title);
             } else if (intent.getAction().equals(FilmsListFragment.ACTION_INTERNET_CHANGE)) {
-                intent = new Intent(getActivity(), DownloadFilmListService.class);
-                getActivity().startService(intent);
+                mListPresenter.loadFilmsApi(0);
             }
         }
     };
@@ -236,122 +237,11 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
         for (Film film : filmArrayList) {
             films[i++] = film;
         }
-        Bundle args = new Bundle();
-        args.putParcelableArray(FILM_API_LIST, films);
-        args.putString(TITLE_FILMS, title);
-        if (getLoaderManager().getLoader(Consts.LOADER_GENRE_FIND_SHOW_ID) != null) {
-            getLoaderManager().restartLoader(Consts.LOADER_GENRE_FIND_SHOW_ID, args, new GenreCallback(getActivity().getApplicationContext())).forceLoad();
-        } else {
-            getLoaderManager().initLoader(Consts.LOADER_GENRE_FIND_SHOW_ID, args, new GenreCallback(getActivity().getApplicationContext())).forceLoad();
-        }
+
+        mListPresenter.doFilteringFilmsByGenres(films, title);
     }
 
-    private class FilmCallback implements LoaderManager.LoaderCallbacks<List<Film>> {
-        Context mContext;
-
-        public FilmCallback(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        public Loader<List<Film>> onCreateLoader(int id, Bundle args) {
-            Log.i(TAG, "+++ onCreateLoader() called! +++");
-            return new FilmFindAllLoader(mContext);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<List<Film>> loader, List<Film> data) {
-            Log.i(TAG, "+++ onLoadFinished() called! +++");
-
-            mAdapterArrayList.clear();
-            mAdapterArrayList.add("Uložené");
-            mAdapterArrayList.addAll(data);
-            filmAdapter.setList(mAdapterArrayList);
-            mFilmsLV.setAdapter(filmAdapter);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<Film>> loader) {
-            Log.i(TAG, "+++ onLoadReset() called! +++");
-
-        }
-    }
-
-    private class GenreCallback implements LoaderManager.LoaderCallbacks<FilmsGenresBlock> {
-        Context mContext;
-
-        public GenreCallback(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        public Loader<FilmsGenresBlock> onCreateLoader(int id, Bundle args) {
-            Log.i(TAG, "+++ onCreateLoader() called! +++");
-            return new GenreFindByShowLoader(mContext, true, (Film[]) args.getParcelableArray(FILM_API_LIST), args.getString(TITLE_FILMS));
-        }
-
-        @Override
-        public void onLoadFinished(Loader<FilmsGenresBlock> loader, FilmsGenresBlock filmsGenresBlock) {
-            Log.i(TAG, "+++ onLoadFinished() called! +++");
-
-            if (filmsGenresBlock != null) {
-                List<Film> films = filmsGenresBlock.getFilms();
-                List<Genre> genresShow = filmsGenresBlock.getGenresShow();
-                String title = filmsGenresBlock.getTitle();
-
-                if (title.equals(DownloadFilmListService.IN_THEATRE)) {
-                    //clear
-                    mAdapterArrayList.clear();
-                }
-
-                ArrayList<Integer> genresIdShow = new ArrayList<>();
-                for (Genre genre : genresShow) {
-                    genresIdShow.add((int) (long) genre.getId());
-                }
-                ArrayList<Film> filmsToShow = new ArrayList<>();
-                for (Film film : films) {
-                    if (isAnyValueInAray(film.getGenres(), genresIdShow)) {
-                        filmsToShow.add(film);
-                    }
-                }
-
-                if (filmsToShow.size() > 0) {
-                    mAdapterArrayList.add(title);
-                    mAdapterArrayList.addAll(filmsToShow);
-                }
-                filmAdapter.setList(mAdapterArrayList);
-                mFilmsLV.setAdapter(filmAdapter);
-                if (mAdapterArrayList.size() == 0) {
-                    if (!Connectivity.isConnected(getActivity().getApplicationContext())) {
-                        mEmptyTV.setText("Žádné připojení");
-                    } else {
-                        mEmptyTV.setText("Žádná data");
-                    }
-                }
-
-                if (title.equals(DownloadFilmListService.IN_THEATRE)) {
-                    Intent intent = new Intent(getActivity(), DownloadFilmListService.class);
-                    intent.putExtra(ORDER, 1);
-                    getActivity().startService(intent);
-                }
-
-            } else {
-                if (!Connectivity.isConnected(getActivity().getApplicationContext())) {
-                    mEmptyTV.setText("Žádné připojení");
-                } else {
-                    mEmptyTV.setText("Žádná data");
-                }
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<FilmsGenresBlock> loader) {
-            Log.i(TAG, "+++ onLoadReset() called! +++");
-
-        }
-    }
-
-    private Boolean isAnyValueInAray(int[] values, List<Integer> array) {
+    private Boolean isAnyValueInArray(int[] values, List<Integer> array) {
         Boolean result = false;
         for (int i = 0; i < values.length; i++) {
             if (array.contains(values[i])) {
@@ -364,8 +254,65 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
 
     @Override
     public void updateFilmsList() {
-        Intent intent = new Intent(getActivity(), DownloadFilmListService.class);
-        intent.putExtra(ORDER, 0);
-        getActivity().startService(intent);
+        mListPresenter.loadFilmsApi(0);
+    }
+
+    @Override
+    public void setFilmsDb(List<Film> data) {
+        mAdapterArrayList.clear();
+        mAdapterArrayList.add("Uložené");
+        mAdapterArrayList.addAll(data);
+        filmAdapter.setList(mAdapterArrayList);
+        mFilmsLV.setAdapter(filmAdapter);
+    }
+
+    @Override
+    public void setFilteredFilmsByGenres(FilmsGenresBlock filmsGenresBlock) {
+        if (filmsGenresBlock != null) {
+            List<Film> films = filmsGenresBlock.getFilms();
+            List<Genre> genresShow = filmsGenresBlock.getGenresShow();
+            String title = filmsGenresBlock.getTitle();
+
+            if (title.equals(Consts.IN_THEATRE)) {
+                //clear
+                mAdapterArrayList.clear();
+            }
+
+            ArrayList<Integer> genresIdShow = new ArrayList<>();
+            for (Genre genre : genresShow) {
+                genresIdShow.add((int) (long) genre.getId());
+            }
+            ArrayList<Film> filmsToShow = new ArrayList<>();
+            for (Film film : films) {
+                if (isAnyValueInArray(film.getGenres(), genresIdShow)) {
+                    filmsToShow.add(film);
+                }
+            }
+
+            if (filmsToShow.size() > 0) {
+                mAdapterArrayList.add(title);
+                mAdapterArrayList.addAll(filmsToShow);
+            }
+            filmAdapter.setList(mAdapterArrayList);
+            mFilmsLV.setAdapter(filmAdapter);
+            if (mAdapterArrayList.size() == 0) {
+                if (!Connectivity.isConnected(getActivity().getApplicationContext())) {
+                    mEmptyTV.setText("Žádné připojení");
+                } else {
+                    mEmptyTV.setText("Žádná data");
+                }
+            }
+
+            if (title.equals(Consts.IN_THEATRE)) {
+                mListPresenter.loadFilmsApi(1);
+            }
+
+        } else {
+            if (!Connectivity.isConnected(getActivity().getApplicationContext())) {
+                mEmptyTV.setText("Žádné připojení");
+            } else {
+                mEmptyTV.setText("Žádná data");
+            }
+        }
     }
 }

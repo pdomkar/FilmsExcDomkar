@@ -28,4 +28,13 @@ public class Consts {
     public static final String DETAIL_FILM = "film";
     public static final String DETAIL_DIRECTOR = "director";
     public static final String DETAIL_CAST = "cast";
+    public static final String ORDER = "order";
+    public static final String IN_THEATRE = "Právě v kině", POPULAR_IN_YEAR = "Populární v ";
+    public static final String RESULT_CODE = "resultCode";
+    public static final String RESULT_VALUE = "resultValue";
+    public static final String RESULT_VALUE_TITLE = "resultValueTitle";
+    public static final String FILM_API_LIST = "film_api_list";
+    public static final String TITLE_FILMS = "title_films";
+    public static final String GENRES_DB_LIST = "genres_db_list";
+    public static final String GENRE_DETAIL = "genre_detail";
 }

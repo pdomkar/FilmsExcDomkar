@@ -72,10 +72,12 @@ public class DownloadFilmDetailService extends IntentService {
             @Override
             public void onResponse(retrofit2.Call<Credits> call, retrofit2.Response<Credits> response) {
                 if (response.isSuccessful()) {
-                    Intent intent = new Intent(FilmDetailFragment.ACTION_SEND_DETAIL_RESULTS);
-                    intent.putExtra(RESULT_CODE, Activity.RESULT_OK);
-                    intent.putExtra(RESULT_VALUE, response.body());
-                    LocalBroadcastManager.getInstance(DownloadFilmDetailService.this).sendBroadcast(intent);
+//                    Intent intent = new Intent(FilmDetailFragment.ACTION_SEND_DETAIL_RESULTS);
+//                    intent.putExtra(RESULT_CODE, Activity.RESULT_OK);
+//                    intent.putExtra(RESULT_VALUE, response.body());
+//                    LocalBroadcastManager.getInstance(DownloadFilmDetailService.this).sendBroadcast(intent);
+                    Credits data = response.body();
+                    FilmDetailFragment.getInstace().setFilmCredits(data);
                 } else {
                     Log.i(TAG, response.code() + "");
                 }

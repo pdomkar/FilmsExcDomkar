@@ -1,59 +1,29 @@
 package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
-
 import com.nostra13.universalimageloader.core.ImageLoader;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.FilmManager;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.CastCreateLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.CastDeleteLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.CastFindLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.DirectorCreateLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.DirectorDeleteLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.DirectorFindLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmCreateLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmDeleteLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmFindLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmsContract;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Cast;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Credits;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Crew;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Director;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmDetailService;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmListService;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.CastCallback;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.DetailPresenter;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.DirectorCallback;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.Detail.DetailPresenter;
 
 /**
  * Created by Petr on 6. 10. 2016.
@@ -83,16 +53,6 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
     ImageView cast2ProfileIV;
     TextView cast2NameTV;
 
-    private static final int LOADER_FILM_FIND_ID = 1;
-    private static final int LOADER_FILM_CREATE_ID = 2;
-    private static final int LOADER_FILM_DELETE_ID = 3;
-    private static final int LOADER_DIRECTOR_FIND_ID = 4;
-    private static final int LOADER_DIRECTOR_CREATE_ID = 5;
-    private static final int LOADER_DIRECTOR_DELETE_ID = 6;
-    private static final int LOADER_CAST_FIND_ID = 7;
-    private static final int LOADER_CAST_CREATE_ID = 8;
-    private static final int LOADER_CAST_DELETE_ID = 9;
-
     public static FilmDetailFragment newInstance(Film film) {
         FilmDetailFragment fragment = new FilmDetailFragment();
         Bundle args = new Bundle();
@@ -112,10 +72,8 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
         if (args != null) {
             mFilm = args.getParcelable(ARGS_FILM);
             if (mFilm != null) {
-                Intent intent = new Intent(getActivity(), DownloadFilmDetailService.class);
-                intent.putExtra(Consts.DETAIL_ID, mFilm.getId());
-                getActivity().startService(intent);
                 mDetailPresenter = new DetailPresenter(this.getView(), getActivity().getApplicationContext(), getLoaderManager(), mFilm, this);
+                mDetailPresenter.loadFilmDetails();
             }
 
         }
@@ -153,8 +111,6 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
         directorTV = (TextView) view.findViewById(R.id.directorTV);
 
 
-
-
         if (mFilm != null) {
             collapseAppBarL.addOnOffsetChangedListener(this);
             titleTV.setText(mFilm.getTitle());
@@ -190,7 +146,6 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
             plusFAB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("sdfsdf", "dfsf");
                     mDetailPresenter.onClickSaved(mFilm.getId());
                 }
             });
@@ -199,18 +154,13 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
             posterIV.setVisibility(View.VISIBLE);
 
             //director
-
             if (mFilm.getCredits() == null) {
-                Bundle args = new Bundle();
-                args.putLong(Consts.DETAIL_ID, mFilm.getId());
-                getLoaderManager().initLoader(LOADER_DIRECTOR_FIND_ID, args, new DirectorCallback(getActivity().getApplicationContext(), FilmDetailFragment.this)).forceLoad();
+                mDetailPresenter.loadDirectorFromDb();
             }
 
             //obsazeni
             if (mFilm.getCredits() == null) {
-                Bundle args = new Bundle();
-                args.putLong(Consts.DETAIL_ID, mFilm.getId());
-                getLoaderManager().initLoader(LOADER_CAST_FIND_ID, args, new CastCallback(getActivity().getApplicationContext(), FilmDetailFragment.this)).forceLoad();
+                mDetailPresenter.loadCastFromDb();
             }
         }
         return view;
@@ -244,7 +194,6 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: ");
-        mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_SEND_DETAIL_RESULTS));
         ins = FilmDetailFragment.this;
     }
 
@@ -252,7 +201,6 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
     public void onPause() {
         super.onPause();
         Log.d(TAG, "onPause: ");
-        mBroadcastManager.unregisterReceiver(mBroadcastReceiver);
     }
 
     @Override
@@ -268,18 +216,6 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
         Log.d(TAG, "onDetach: ");
         FilmDetailFragment.ins = null;
     }
-
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int resultCode = intent.getIntExtra(DownloadFilmListService.RESULT_CODE, Activity.RESULT_CANCELED);
-            if (resultCode == Activity.RESULT_OK && intent.getAction().equals(FilmDetailFragment.ACTION_SEND_DETAIL_RESULTS)) {
-                Credits data = intent.getParcelableExtra(DownloadFilmDetailService.RESULT_VALUE);
-                setFilmCredits(data);
-            }
-        }
-    };
-
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int offset)
