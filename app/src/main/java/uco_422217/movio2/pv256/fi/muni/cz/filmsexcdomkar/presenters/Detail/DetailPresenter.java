@@ -20,13 +20,11 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmDe
 
 public class DetailPresenter implements FilmsContract.DetailListeners{
     public static final String TAG = uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.Detail.DetailPresenter.class.getSimpleName();
-    private View view;
     private Context context;
     private LoaderManager loaderManager;
     private Film mFilm;
     private FilmDetailFragment thisFr;
-    public DetailPresenter(View view, Context context, LoaderManager loaderManager, Film film, FilmDetailFragment thisFr) {
-        this.view = view;
+    public DetailPresenter(Context context, LoaderManager loaderManager, Film film, FilmDetailFragment thisFr) {
         this.context = context;
         this.loaderManager = loaderManager;
         this.mFilm = film;

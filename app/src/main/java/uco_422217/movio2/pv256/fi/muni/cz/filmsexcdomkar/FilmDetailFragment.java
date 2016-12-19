@@ -72,7 +72,7 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
         if (args != null) {
             mFilm = args.getParcelable(ARGS_FILM);
             if (mFilm != null) {
-                mDetailPresenter = new DetailPresenter(this.getView(), getActivity().getApplicationContext(), getLoaderManager(), mFilm, this);
+                mDetailPresenter = new DetailPresenter(getActivity().getApplicationContext(), getLoaderManager(), mFilm, this);
                 mDetailPresenter.loadFilmDetails();
             }
 
