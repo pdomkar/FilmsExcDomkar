@@ -230,7 +230,6 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
                 setList(data, title);
                 Log.i("y", "a");
             } else if (intent.getAction().equals(Consts.ACTION_INTERNET_CHANGE)) {
-                mAdapterArrayList.clear();
                 mListPresenter.loadFilmsApi(0);
             }
         }
@@ -259,7 +258,6 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
 
     @Override
     public void updateFilmsList() {
-        mAdapterArrayList.clear();
         mListPresenter.loadFilmsApi(0);
     }
 
