@@ -1,11 +1,16 @@
 package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar;
 
+import android.app.Instrumentation;
+import android.content.Context;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,16 +31,28 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class DetailSavedFilmTest {
+public class DetailFilmTest {
 
     private MainActivity mainActivity;
 
     @Rule
     public final ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
+    IntentServiceIdlingResource idlingResource;
 
     @Before
     public void init() {
+        Instrumentation instrumentation
+                = InstrumentationRegistry.getInstrumentation();
+        Context ctx = instrumentation.getTargetContext();
+        idlingResource = new IntentServiceIdlingResource(ctx);
+        Espresso.registerIdlingResources(idlingResource);
         mainActivity = rule.getActivity();
+    }
+
+    @After
+    public void after() {
+        Espresso.unregisterIdlingResources(idlingResource);
+
     }
 
     @Test
@@ -50,7 +67,7 @@ public class DetailSavedFilmTest {
 //                .atPosition(0)
 //                .onChildView(withId(R.id.titleTV))
 //                .perform(click());
-        Thread.sleep(5000);
+
 
         onView(withId(R.id.titleDetailExpandedTV)).check(matches(isDisplayed()));
     }

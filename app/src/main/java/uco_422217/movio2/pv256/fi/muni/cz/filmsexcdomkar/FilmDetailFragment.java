@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -131,9 +133,13 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
             ImageLoader imageLoader = ImageLoader.getInstance();
             if (mFilm.getBackdropPath() != null) {
                 imageLoader.displayImage(IMAGE_BASE_PATH + mFilm.getBackdropPath(), backdropIV);
+            } else {
+                imageLoader.displayImage("drawable://" + R.drawable.image_not_found, backdropIV);
             }
             if (mFilm.getCoverPath() != null) {
                 imageLoader.displayImage(IMAGE_BASE_PATH + mFilm.getCoverPath(), posterIV);
+            } else {
+                imageLoader.displayImage("drawable://" + R.drawable.image_not_found_poster, posterIV);
             }
             overviewTitleTV.setVisibility(View.VISIBLE);
             castTitleTV.setVisibility(View.VISIBLE);
@@ -277,6 +283,8 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
                     ImageLoader imageLoader = ImageLoader.getInstance();
                     if (cast.getProfilePath() != null) {
                         imageLoader.displayImage(IMAGE_BASE_PATH + cast.getProfilePath(), castProfileIV);
+                    } else {
+                        imageLoader.displayImage("drawable://" + R.drawable.image_not_found, castProfileIV);
                     }
                 }
                 if (castNameTV != null) {

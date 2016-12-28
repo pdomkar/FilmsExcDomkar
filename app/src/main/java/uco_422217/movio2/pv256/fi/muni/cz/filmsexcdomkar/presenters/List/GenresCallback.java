@@ -81,6 +81,7 @@ public class GenresCallback implements LoaderManager.LoaderCallbacks<List<Genre>
                 loaderManager.initLoader(Consts.LOADER_GENRE_FIND_ALL_LIST_ID, null, GenresCallback.this).forceLoad();
                 break;
             case Consts.LOADER_GENRE_UPDATE_ID:
+                Log.i("q", "q");
                 break;
             default:
                 throw new UnsupportedOperationException("Not know loader id");

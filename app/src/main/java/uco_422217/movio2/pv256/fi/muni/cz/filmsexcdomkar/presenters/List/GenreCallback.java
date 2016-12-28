@@ -48,15 +48,4 @@ public class GenreCallback implements LoaderManager.LoaderCallbacks<FilmsGenresB
         Log.i(TAG, "+++ onLoadReset() called! +++");
 
     }
-
-    private Boolean isAnyValueInAray(int[] values, List<Integer> array) {
-        Boolean result = false;
-        for (int i = 0; i < values.length; i++) {
-            if (array.contains(values[i])) {
-                result = true;
-                break;
-            }
-        }
-        return result;
-    }
 }

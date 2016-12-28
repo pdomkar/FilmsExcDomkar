@@ -112,6 +112,9 @@ public class FilmAdapter extends BaseAdapter {
                 String imagePath = IMAGE_BASE_PATH + ((Film) mFilmArrayList.get(position)).getBackdropPath();
                 if (((Film) mFilmArrayList.get(position)).getBackdropPath() != null) {
                     filmViewHolder.setBackdrop(imagePath);
+                } else {
+                    ImageLoader imageLoader = ImageLoader.getInstance();
+                    imageLoader.displayImage("drawable://" + R.drawable.image_not_found, filmViewHolder.getBackdrop());
                 }
                 break;
         }

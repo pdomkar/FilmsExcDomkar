@@ -104,6 +104,8 @@ public class DownloadFilmListService extends IntentService {
                         mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);
                         mNotificationManager.cancel(NOTIFICATION_DONE);
                         mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification("Not found resource").build());
+                    } else if(response.code() == 429) {
+
                     } else {
                         mNotificationManager.cancel(NOTIFICATION_DONE);
                         mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);

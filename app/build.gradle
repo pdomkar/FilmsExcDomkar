@@ -48,4 +48,5 @@ dependencies {
     debugCompile 'com.facebook.stetho:stetho:1.4.1'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:1.10.19'
+    compile 'com.android.support.test.espresso:espresso-idling-resource:2.2.2'
 }

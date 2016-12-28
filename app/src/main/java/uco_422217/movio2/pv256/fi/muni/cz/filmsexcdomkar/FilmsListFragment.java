@@ -61,7 +61,6 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     private static final String TAG = FilmsListFragment.class.getName();
     private static final String SELECTED_KEY = "selected_position";
     public static final String ACTION_SEND_RESULTS = "SEND_RESULTS";
-    public static final String ACTION_INTERNET_CHANGE = "INTERNET_CHANGE";
     private static final String FILM_API_LIST = "film_api_list";
     private static final String TITLE_FILMS = "title_films";
     private int mPosition = ListView.INVALID_POSITION;
@@ -80,7 +79,6 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
-
         mListPresenter = new ListPresenter(this.getView(), getActivity().getApplicationContext(), getLoaderManager(), this, null);
         mListPresenter.loadFilmsApi(0);
 
@@ -165,7 +163,12 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
                         mAdapterArrayList.clear();
                         filmAdapter.setList(mAdapterArrayList);
                         mFilmsLV.setAdapter(filmAdapter);
-                        mListPresenter.loadFilmsApi(0);
+                        if (!Connectivity.isConnected(getActivity().getApplicationContext())) {
+                            mEmptyTV.setText("Žádné připojení");
+                        } else {
+                            mListPresenter.loadFilmsApi(0);
+                            mEmptyTV.setText("Načítání dat . . .");
+                        }
                     }
                 }
             });
@@ -189,7 +192,7 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
                         myGenreObserver);
 
         mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_SEND_RESULTS));
-        mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_INTERNET_CHANGE));
+        mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(Consts.ACTION_INTERNET_CHANGE));
     }
 
     @Override
@@ -225,7 +228,9 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
                 ArrayList<Film> data = intent.getParcelableArrayListExtra(Consts.RESULT_VALUE);
                 String title = intent.getStringExtra(Consts.RESULT_VALUE_TITLE);
                 setList(data, title);
-            } else if (intent.getAction().equals(FilmsListFragment.ACTION_INTERNET_CHANGE)) {
+                Log.i("y", "a");
+            } else if (intent.getAction().equals(Consts.ACTION_INTERNET_CHANGE)) {
+                mAdapterArrayList.clear();
                 mListPresenter.loadFilmsApi(0);
             }
         }
@@ -254,6 +259,7 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
 
     @Override
     public void updateFilmsList() {
+        mAdapterArrayList.clear();
         mListPresenter.loadFilmsApi(0);
     }
 
@@ -272,6 +278,7 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
             List<Film> films = filmsGenresBlock.getFilms();
             List<Genre> genresShow = filmsGenresBlock.getGenresShow();
             String title = filmsGenresBlock.getTitle();
+            Log.i("c", "ccccc");
 
             if (title.equals(Consts.IN_THEATRE)) {
                 //clear
@@ -282,13 +289,15 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
             for (Genre genre : genresShow) {
                 genresIdShow.add((int) (long) genre.getId());
             }
+            Log.i("genres", genresIdShow.toString());
             ArrayList<Film> filmsToShow = new ArrayList<>();
             for (Film film : films) {
+                Log.i("sf", Arrays.toString(film.getGenres()));
                 if (isAnyValueInArray(film.getGenres(), genresIdShow)) {
                     filmsToShow.add(film);
                 }
             }
-
+            Log.i("sfdsdff", films.size() + " " + filmsToShow.size());
             if (filmsToShow.size() > 0) {
                 mAdapterArrayList.add(title);
                 mAdapterArrayList.addAll(filmsToShow);

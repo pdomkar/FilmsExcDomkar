@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
             if (resultCode == Activity.RESULT_OK && intent.getAction().equals(MainActivity.ACTION_SEND_RESULTS_GENRES)) {
                 ArrayList<Genre> data = intent.getParcelableArrayListExtra(DownloadGenreListService.RESULT_VALUE);
                 saveListGenre(data);
-            } else if (intent.getAction().equals(FilmsListFragment.ACTION_INTERNET_CHANGE)) {
+            } else if (intent.getAction().equals(Consts.ACTION_INTERNET_CHANGE)) {
                 mListPresenter.loadFilmGenresApi();
             }
         }

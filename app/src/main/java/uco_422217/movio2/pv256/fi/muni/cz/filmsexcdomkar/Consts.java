@@ -37,4 +37,5 @@ public class Consts {
     public static final String TITLE_FILMS = "title_films";
     public static final String GENRES_DB_LIST = "genres_db_list";
     public static final String GENRE_DETAIL = "genre_detail";
+    public static final String ACTION_INTERNET_CHANGE = "INTERNET_CHANGE";
 }
