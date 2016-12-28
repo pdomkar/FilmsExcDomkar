@@ -29,6 +29,7 @@ import android.widget.Toast;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters.FilmAdapter;
@@ -281,6 +282,17 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
             if (title.equals(Consts.IN_THEATRE)) {
                 //clear
                 mAdapterArrayList.clear();
+            }
+            if (title.equals(Consts.POPULAR_IN_YEAR + String.valueOf(Calendar.getInstance().get(Calendar.YEAR)))) {
+                boolean remove = false;
+                for(int i = 0; i<mAdapterArrayList.size(); i++) {
+                    if(!(mAdapterArrayList.get(i) instanceof Film) && mAdapterArrayList.get(i).equals(Consts.POPULAR_IN_YEAR + String.valueOf(Calendar.getInstance().get(Calendar.YEAR)))) {
+                        remove = true;
+                    }
+                    if(remove) {
+                        mAdapterArrayList.remove(i);
+                    }
+                }
             }
 
             ArrayList<Integer> genresIdShow = new ArrayList<>();
