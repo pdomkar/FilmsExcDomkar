@@ -1,0 +1,23 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="cast">キャスト</string>
+    <string name="survey">調査</string>
+    <string name="no_data">データなし</string>
+    <string name="films">ムービー</string>
+    <string name="saved">保存</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
+    <string name="displayed_genres">ジャンルを表示</string>
+    <string name="title">見出し</string>
+    <string name="no_conntection">No connection</string>
+    <string name="load_data">Loading data . . .</string>
+    <string name="director">Director</string>
+    <string name="in_theatre">Now in theatre</string>
+    <string name="popular_in">Popular in </string>
+    <string name="no_found_resource">No found resource</string>
+    <string name="f_downloading">Films are downloading</string>
+    <string name="f_downloaded">Films were downloaded</string>
+    <string name="f_error">Error while downloading films</string>
+    <string name="update_saved_films">Update saved films</string>
+    <string name="actuals_films">Films are actual</string>
+    <string name="films_db_updated">Films in db were updated</string>
+</resources>

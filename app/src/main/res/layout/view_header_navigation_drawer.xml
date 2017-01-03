@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="18dp"
         android:textColor="#ffffff"
-        android:text="Zobrazované žánry"
+        android:text="@string/displayed_genres"
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_centerVertical="true"

@@ -2,6 +2,7 @@ package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;

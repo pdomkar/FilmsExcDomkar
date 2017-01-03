@@ -1,0 +1,23 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="cast">Obsazení</string>
+    <string name="survey">Přehled</string>
+    <string name="no_data">Žádná data</string>
+    <string name="films">Filmy</string>
+    <string name="saved">Uložené</string>
+    <string name="yes">Ano</string>
+    <string name="no">ne</string>
+    <string name="displayed_genres">Zobrazované žánry</string>
+    <string name="title">Nadpis</string>
+    <string name="no_conntection">Žádné připojení</string>
+    <string name="load_data">Načítání dat . . .</string>
+    <string name="director">Režisér</string>
+    <string name="in_theatre">Právě v kině</string>
+    <string name="popular_in">Populární v </string>
+    <string name="no_found_resource">Nenajit zdroj</string>
+    <string name="f_downloading">Stahování filmů..</string>
+    <string name="f_downloaded">Filmy byly staženy</string>
+    <string name="f_error">Chyba při stahování filmů</string>
+    <string name="update_saved_films">Aktualizovat uložené filmy</string>
+    <string name="actuals_films">Filmy jsou aktuální</string>
+    <string name="films_db_updated">Uložené filmy byly aktualizovány</string>
+</resources>

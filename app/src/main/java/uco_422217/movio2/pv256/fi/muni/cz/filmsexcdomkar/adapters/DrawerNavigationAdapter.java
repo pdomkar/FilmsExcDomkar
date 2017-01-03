@@ -25,7 +25,6 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.OnFilmSelect
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.OnGenreSelectListener;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadGenreListService;
 
 /**
  * Created by Petr on 23. 10. 2016.
@@ -106,7 +105,7 @@ public class DrawerNavigationAdapter extends BaseAdapter {
         switch (rowType) {
             case HEADER:
                 DrawerNavigationAdapter.HeaderViewHolder headerViewHolder = (DrawerNavigationAdapter.HeaderViewHolder) convertView.getTag(R.layout.view_header_navigation_drawer);
-                headerViewHolder.getNameTV().setText("Zobrazované žánry");
+                headerViewHolder.getNameTV().setText(R.string.displayed_genres);
                 break;
             case GENRE_ITEM:
                 final  DrawerNavigationAdapter.GenreItemViewHolder genreItemViewHolder = ( DrawerNavigationAdapter.GenreItemViewHolder) convertView.getTag(R.layout.view_holder_navigation_drawer);

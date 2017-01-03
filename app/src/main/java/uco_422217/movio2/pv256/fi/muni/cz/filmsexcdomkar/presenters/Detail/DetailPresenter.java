@@ -5,13 +5,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
+import android.util.Log;
 import android.view.View;
 
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmDetailFragment;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmRetrofitInterface;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmsContract;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Credits;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmDetailService;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
 
 
 /**
@@ -39,9 +45,29 @@ public class DetailPresenter implements FilmsContract.DetailListeners{
     }
 
     public void loadFilmDetails() {
-        Intent intent = new Intent(context, DownloadFilmDetailService.class);
-        intent.putExtra(Consts.DETAIL_ID, mFilm.getId());
-        context.startService(intent);
+        if (Connectivity.isConnected(context)) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(Consts.MOVIE_API_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            FilmRetrofitInterface filmRetrofitInterface = retrofit.create(FilmRetrofitInterface.class);
+            filmRetrofitInterface.findFilmCredits(mFilm.getId(), Consts.MOVIE_API_KEY).enqueue(new Callback<Credits>() {
+                @Override
+                public void onResponse(retrofit2.Call<Credits> call, retrofit2.Response<Credits> response) {
+                    if (response.isSuccessful()) {
+                        Credits data = response.body();
+                        thisFr.setFilmCredits(data);
+                    } else {
+                        Log.i(TAG, response.code() + "");
+                    }
+                }
+
+                @Override
+                public void onFailure(retrofit2.Call<Credits> call, Throwable t) {
+                    Log.d(TAG, t.getMessage());
+                }
+            });
+        }
     }
 
     public void loadDirectorFromDb() {

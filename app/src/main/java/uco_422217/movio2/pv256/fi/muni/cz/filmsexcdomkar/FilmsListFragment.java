@@ -102,9 +102,9 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
         mEmptyTV = (TextView) view.findViewById(R.id.empty_list_item);
 
         if(!Connectivity.isConnected(getActivity().getApplicationContext())) {
-            mEmptyTV.setText("Žádné připojení");
+            mEmptyTV.setText(R.string.no_conntection);
         } else {
-            mEmptyTV.setText("Načítání dat . . .");
+            mEmptyTV.setText(R.string.load_data);
         }
 
         filmAdapter = new FilmAdapter(new ArrayList<>(), getContext());
@@ -161,10 +161,10 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
                     filmAdapter.clearList();
                     mFilmsLV.setAdapter(filmAdapter);
                     if (!Connectivity.isConnected(getActivity().getApplicationContext())) {
-                        mEmptyTV.setText("Žádné připojení");
+                        mEmptyTV.setText(R.string.no_conntection);
                     } else {
                         mListPresenter.onLoadFilms();
-                        mEmptyTV.setText("Načítání dat . . .");
+                        mEmptyTV.setText(R.string.load_data);
                     }
                 }
                 }
@@ -236,7 +236,7 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     @Override
     public void setFilmsDb(List<Film> data) {
         List<Object> films = new ArrayList<>();
-        films.add("Uložené");
+        films.add(getString(R.string.saved));
         films.addAll(data);
         filmAdapter.clearList();
         filmAdapter.addList(films);
@@ -245,11 +245,12 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
 
 
     public void setAdapterList(String title, ArrayList<Object> films) {
+        Log.i("ee", title);
         if(title.equals("")) {
             if (!Connectivity.isConnected(getActivity().getApplicationContext())) {
-                mEmptyTV.setText("Žádné připojení");
+                mEmptyTV.setText(R.string.no_conntection);
             } else {
-                mEmptyTV.setText("Žádná data");
+                mEmptyTV.setText(R.string.no_data);
             }
         } else {
             filmAdapter.addList(films);

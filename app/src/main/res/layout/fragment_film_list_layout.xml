@@ -17,7 +17,7 @@
         android:padding="10dp"
         android:textSize="20sp"
         android:gravity="center_horizontal"
-        android:text="Žádná data" >
+        android:text="@string/no_data" >
     </TextView>
 </FrameLayout>
 

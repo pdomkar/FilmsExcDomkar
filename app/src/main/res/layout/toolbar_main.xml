@@ -29,7 +29,7 @@
             android:id="@+id/titleTextTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Films"
+            android:text="@string/films"
             android:background="@android:color/transparent"
             android:layout_marginLeft="20dp"
             android:textSize="20sp"
@@ -52,15 +52,15 @@
             android:padding="4dp"/>
 
         <Switch
-            android:text="Saved"
+            android:text="@string/saved"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/savedS"
             android:checked="false"
             android:textColor="@android:color/white"
             android:splitTrack="false"
-            android:textOn="Yes"
-            android:textOff="No"
+            android:textOn="@string/yes"
+            android:textOff="@string/no"
             android:layout_alignBottom="@+id/menuIB"
             android:layout_toLeftOf="@+id/popupMenuIB"
             android:layout_toStartOf="@+id/popupMenuIB"

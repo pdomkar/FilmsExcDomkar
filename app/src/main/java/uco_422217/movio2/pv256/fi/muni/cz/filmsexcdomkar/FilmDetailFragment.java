@@ -35,7 +35,6 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
     public static final String TAG = FilmDetailFragment.class.getSimpleName();
     private static final String ARGS_FILM = "args_film";
     public static final String ACTION_SEND_DETAIL_RESULTS = "SEND_DETAIL_RESULTS";
-    private static final String IMAGE_BASE_PATH = "https://image.tmdb.org/t/p/w500";
     private Context mContext;
     private Film mFilm;
     private LocalBroadcastManager mBroadcastManager;
@@ -129,12 +128,12 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
             //foto
             ImageLoader imageLoader = ImageLoader.getInstance();
             if (mFilm.getBackdropPath() != null) {
-                imageLoader.displayImage(IMAGE_BASE_PATH + mFilm.getBackdropPath(), backdropIV);
+                imageLoader.displayImage(Consts.IMAGE_BASE_PATH + mFilm.getBackdropPath(), backdropIV);
             } else {
                 imageLoader.displayImage("drawable://" + R.drawable.image_not_found, backdropIV);
             }
             if (mFilm.getCoverPath() != null) {
-                imageLoader.displayImage(IMAGE_BASE_PATH + mFilm.getCoverPath(), posterIV);
+                imageLoader.displayImage(Consts.IMAGE_BASE_PATH + mFilm.getCoverPath(), posterIV);
             } else {
                 imageLoader.displayImage("drawable://" + R.drawable.image_not_found_poster, posterIV);
             }
@@ -241,7 +240,7 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
 
     private String getDirectorNameFromCrew(Crew[] crews) {
         for (Crew crew : crews) {
-            if (crew.getJob().equals("Director")) {
+            if (crew.getJob().equals(getString(R.string.director))) {
                 return crew.getName();
             }
         }
@@ -279,7 +278,7 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
                 if (castProfileIV != null) {
                     ImageLoader imageLoader = ImageLoader.getInstance();
                     if (cast.getProfilePath() != null) {
-                        imageLoader.displayImage(IMAGE_BASE_PATH + cast.getProfilePath(), castProfileIV);
+                        imageLoader.displayImage(Consts.IMAGE_BASE_PATH + cast.getProfilePath(), castProfileIV);
                     } else {
                         imageLoader.displayImage("drawable://" + R.drawable.image_not_found, castProfileIV);
                     }

@@ -40,6 +40,7 @@ public class GenreCallback implements LoaderManager.LoaderCallbacks<FilmsGenresB
     @Override
     public void onLoadFinished(Loader<FilmsGenresBlock> loader, FilmsGenresBlock filmsGenresBlock) {
         Log.i(TAG, "+++ onLoadFinished() called! +++");
+        Log.i("qqwqww", filmsGenresBlock.getGenresShow().size()+"");
         listPresenter.filterFilmsByGenre(filmsGenresBlock);
     }
 

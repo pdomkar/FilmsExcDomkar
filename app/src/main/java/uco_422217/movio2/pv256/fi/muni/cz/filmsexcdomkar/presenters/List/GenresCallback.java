@@ -10,6 +10,9 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmsListFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.MainActivity;
@@ -17,11 +20,12 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.GenreC
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.GenreFindAllLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.GenreFindByShowLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.GenreUpdateLoader;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmRetrofitInterface;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.FilmsGenresBlock;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.GenreResponse;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadGenreListService;
 
 /**
  * Created by Petr on 17. 12. 2016.
@@ -63,8 +67,28 @@ public class GenresCallback implements LoaderManager.LoaderCallbacks<List<Genre>
             case Consts.LOADER_GENRE_FIND_ALL_ID:
                 if (data.size() == 0) {
                     //nacist
-                    Intent intent = new Intent(mContext, DownloadGenreListService.class);
-                    mContext.startService(intent);
+                    if (Connectivity.isConnected(mContext)) {
+                        Retrofit retrofit = new Retrofit.Builder()
+                                .baseUrl(Consts.MOVIE_API_BASE_URL)
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .build();
+                        FilmRetrofitInterface filmRetrofitInterface = retrofit.create(FilmRetrofitInterface.class);
+                        filmRetrofitInterface.findGenres(Consts.MOVIE_API_KEY).enqueue(new Callback<GenreResponse>() {
+                            @Override
+                            public void onResponse(retrofit2.Call<GenreResponse> call, retrofit2.Response<GenreResponse> response) {
+                                if (response.isSuccessful()) {
+                                    activity.saveListGenre(response.body().getGenres());
+                                } else {
+                                    Log.i(TAG, response.code() + "");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(retrofit2.Call<GenreResponse> call, Throwable t) {
+                                Log.d(TAG, t.getMessage());
+                            }
+                        });
+                    }
                 } else {
                     loaderManager.initLoader(Consts.LOADER_GENRE_FIND_ALL_LIST_ID, null, GenresCallback.this).forceLoad();
                 }

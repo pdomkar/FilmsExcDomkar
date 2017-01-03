@@ -1,7 +1,29 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">FilmsExcDomkar</string>
     <string name="movieAPIKey">9abf76a6b9a507feb496c4d4bc7cb670</string>
     <string name="content_authority">uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar</string>
     <string name="sync_account_type">uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar</string>
     <string name="appbar_scrolling_view_behavior_my" translatable="false" tools:override="true">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
+
+    <string name="app_name">FilmsExcDomkar</string>
+    <string name="cast">Cast</string>
+    <string name="survey">Survey</string>
+    <string name="no_data">No data</string>
+    <string name="films">Films</string>
+    <string name="saved">Saved</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="displayed_genres">Displayed genres</string>
+    <string name="title">Title</string>
+    <string name="no_conntection">No connection</string>
+    <string name="load_data">Loading data . . .</string>
+    <string name="director">Director</string>
+    <string name="in_theatre">Now in theatre</string>
+    <string name="popular_in">Popular in </string>
+    <string name="no_found_resource">No found resource</string>
+    <string name="f_downloading">Films are downloading..</string>
+    <string name="f_downloaded">Films were downloaded</string>
+    <string name="f_error">Error while downloading films</string>
+    <string name="update_saved_films">Update saved films</string>
+    <string name="actuals_films">Films are actual</string>
+    <string name="films_db_updated">Films in db were updated</string>
 </resources>

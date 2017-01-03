@@ -29,7 +29,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            tools:text="Title"
+            tools:text="@string/title"
             android:layout_toLeftOf="@+id/popularityStarIV"
             android:paddingLeft="10dp"
             android:ellipsize="marquee"

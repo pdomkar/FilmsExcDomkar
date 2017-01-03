@@ -5,10 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -20,8 +19,6 @@ import android.view.Gravity;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -39,7 +36,6 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.OnGenreSelec
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadGenreListService;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.List.ListPresenter;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.sync.UpdaterSyncAdapter;
 
@@ -53,9 +49,7 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
     public static final String ACTION_INTERNET_CHANGE = "INTERNET_CHANGE";
     private Toolbar toolbar;
     private ListPresenter mListPresenter;
-    public static ArrayList<Genre> mGenreList = new ArrayList<Genre>(){{
-        add(new Genre(0L, "Zobrazované žánry", false));
-    }};
+    public ArrayList<Genre> mGenreList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mGenreList = new ArrayList<>();
+        mGenreList.add(new Genre(0L, getString(R.string.displayed_genres), false));
         UpdaterSyncAdapter.initializeSyncAdapter(this);
 
         ImageButton pupupMenuIB = (ImageButton)findViewById(R.id.popupMenuIB);
@@ -99,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
             getSupportActionBar().setElevation(0f);
         }
 
-        //navitagion drawer- prepare for next ukol
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         ImageButton menuIB = (ImageButton)findViewById(R.id.menuIB);
         menuIB.setOnClickListener(new View.OnClickListener() {
@@ -127,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
     @Override
     protected void onStart() {
         super.onStart();
-        mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_SEND_RESULTS_GENRES));
         mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_INTERNET_CHANGE));
     }
 
@@ -174,17 +168,13 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int resultCode = intent.getIntExtra(DownloadGenreListService.RESULT_CODE, Activity.RESULT_CANCELED);
-            if (resultCode == Activity.RESULT_OK && intent.getAction().equals(MainActivity.ACTION_SEND_RESULTS_GENRES)) {
-                ArrayList<Genre> data = intent.getParcelableArrayListExtra(DownloadGenreListService.RESULT_VALUE);
-                saveListGenre(data);
-            } else if (intent.getAction().equals(Consts.ACTION_INTERNET_CHANGE)) {
-                mListPresenter.loadFilmGenresApi();
-            }
+        if (intent.getAction().equals(Consts.ACTION_INTERNET_CHANGE)) {
+            mListPresenter.loadFilmGenresApi();
+        }
         }
     };
 
-    private void saveListGenre(ArrayList<Genre> list) {
+    public void saveListGenre(ArrayList<Genre> list) {
         Genre[] genres = new Genre[list.size()];
         int i = 0;
         for (Genre genre : list) {
@@ -198,16 +188,16 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
     @Override
     public void setGenreList(List<Genre> data) {
         mGenreList = new ArrayList<>();
-        mGenreList.add(0, new Genre(0L, "Zobrazené žánry", false));
+        mGenreList.add(0, new Genre(0L, getString(R.string.displayed_genres), false));
         mGenreList.addAll(data);
         mDrawerNavigationAdapter.setList(mGenreList);
         genresLV.setAdapter(mDrawerNavigationAdapter);
 
         if (data.size() == 0) {
             if (!Connectivity.isConnected(getApplicationContext())) {
-                mEmptyGenresTV.setText("Žádné připojení");
+                mEmptyGenresTV.setText(R.string.no_conntection);
             } else {
-                mEmptyGenresTV.setText("Žádná data");
+                mEmptyGenresTV.setText(R.string.no_data);
             }
         }
     }

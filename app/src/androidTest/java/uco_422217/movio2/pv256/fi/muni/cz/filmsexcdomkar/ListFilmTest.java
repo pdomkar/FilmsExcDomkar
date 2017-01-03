@@ -37,13 +37,18 @@ public class ListFilmTest {
         mainActivity = rule.getActivity();
     }
 
+//    @Test
+//    public void testShowSavedAndNotSaved() throws Exception {
+//        onView(withId(R.id.menuIB))
+//                .perform(click());
+//        onView(withId(R.id.nameTV)).check(matches(isDisplayed()));
+//    }
     @Test
-    public void testShowSavedAndNotSaved() throws Exception {
+    public void test2() throws Exception {
         onView(withId(R.id.menuIB))
                 .perform(click());
         onView(withId(R.id.nameTV)).check(matches(isDisplayed()));
     }
-
 
 
 

@@ -16,6 +16,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.R;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.FilmManager;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmRetrofitInterface;
@@ -26,8 +27,6 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
  */
 
 public class RefreshDataDb {
-    private final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/";
-    private final String MOVIE_API_KEY = "9abf76a6b9a507feb496c4d4bc7cb670";
     private static final int NOTIFICATION_CHANGE = 1;
     private Context context;
     private static RefreshDataDb instance = null;
@@ -52,7 +51,7 @@ public class RefreshDataDb {
             public void run() {
                 FilmManager mFilmManager = new FilmManager(context);
                 Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl(MOVIE_API_BASE_URL)
+                        .baseUrl(Consts.MOVIE_API_BASE_URL)
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
 
@@ -60,7 +59,7 @@ public class RefreshDataDb {
                 List<Film> filmsDb = mFilmManager.findFilms();
                 boolean updated = false;
                 for (Film filmDb : filmsDb) {
-                    final Call<Film> call = filmRetrofitInterface.findFilmById(filmDb.getId(), MOVIE_API_KEY);
+                    final Call<Film> call = filmRetrofitInterface.findFilmById(filmDb.getId(), Consts.MOVIE_API_KEY);
                     try {
                         Response<Film> newPostResponse = call.execute();
 
@@ -92,7 +91,7 @@ public class RefreshDataDb {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(context, "Films are actual", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, R.string.actuals_films, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -106,8 +105,8 @@ public class RefreshDataDb {
     private NotificationCompat.Builder getChangeNotification() {
         return new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_updated)
-                .setContentTitle("Films in db were updated")
-                .setContentText("Films in db were updated")
+                .setContentTitle(context.getString(R.string.films_db_updated))
+                .setContentText(context.getString(R.string.films_db_updated))
                 .setAutoCancel(true);
     }
 

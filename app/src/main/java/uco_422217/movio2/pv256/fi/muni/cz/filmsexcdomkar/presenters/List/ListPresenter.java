@@ -36,10 +36,8 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.FilmResponse;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.FilmsGenresBlock;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.GenreResponse;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmDetailService;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmListService;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadGenreListService;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.Detail.DirectorCallback;
 
 
@@ -49,11 +47,6 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.Detail.Direc
 
 public class ListPresenter {
     public static final String TAG = ListPresenter.class.getSimpleName();
-    private final String MOVIE_API_BASE_URL = "https://api.themoviedb.org/3/";
-    private final String MOVIE_API_KEY = "9abf76a6b9a507feb496c4d4bc7cb670";
-    private static final int NOTIFICATION_DOWNLOAD = 10;
-    private static final int NOTIFICATION_DONE = 20;
-    private static final int NOTIFICATION_ERROR = 30;
     private NotificationManager mNotificationManager;
     private Context context;
     private LoaderManager loaderManager;
@@ -68,11 +61,12 @@ public class ListPresenter {
     }
 
     public void onLoadFilms() {
+
         if (Connectivity.isConnected(context)) {
-            mNotificationManager.notify(NOTIFICATION_DOWNLOAD, getDownloadRunningNotification().build());
+            mNotificationManager.notify(Consts.NOTIFICATION_DOWNLOAD, getDownloadRunningNotification().build());
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(MOVIE_API_BASE_URL)
+                    .baseUrl(Consts.MOVIE_API_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
@@ -88,31 +82,31 @@ public class ListPresenter {
             Date endDate = cal.getTime();
 
 
-            filmRetrofitInterface.findFilmsInTheatre(ymdFormat.format(startDate), ymdFormat.format(endDate), "vote_average.desc", MOVIE_API_KEY).enqueue(new Callback<FilmResponse>() {
+            filmRetrofitInterface.findFilmsInTheatre(ymdFormat.format(startDate), ymdFormat.format(endDate), "vote_average.desc", Consts.MOVIE_API_KEY).enqueue(new Callback<FilmResponse>() {
                 @Override
                 public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
                     if (response.isSuccessful()) {
-                        mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);
-                        mNotificationManager.cancel(NOTIFICATION_ERROR);
-                        mNotificationManager.notify(NOTIFICATION_DONE, getDownloadDoneNotification().build());
+                        mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
+                        mNotificationManager.cancel(Consts.NOTIFICATION_ERROR);
+                        mNotificationManager.notify(Consts.NOTIFICATION_DONE, getDownloadDoneNotification().build());
                         ArrayList<Film> resFilms = response.body().getFilms();
                         Film[] films = new Film[resFilms.size()];
                         int i = 0;
                         for (Film film : resFilms) {
                             films[i++] = film;
                         }
-                        doFilteringFilmsByGenres(films, Consts.IN_THEATRE);
+                        doFilteringFilmsByGenres(films, context.getString(R.string.in_theatre));
                     } else {
                         if (response.code() == 404) {
-                            mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);
-                            mNotificationManager.cancel(NOTIFICATION_DONE);
-                            mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification("Not found resource").build());
+                            mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
+                            mNotificationManager.cancel(Consts.NOTIFICATION_DONE);
+                            mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(context.getString(R.string.no_found_resource)).build());
                         } else if(response.code() == 429) {
 
                         } else {
-                            mNotificationManager.cancel(NOTIFICATION_DONE);
-                            mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);
-                            mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(response.code())).build());
+                            mNotificationManager.cancel(Consts.NOTIFICATION_DONE);
+                            mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
+                            mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(response.code())).build());
                         }
                     }
                 }
@@ -120,36 +114,36 @@ public class ListPresenter {
                 @Override
                 public void onFailure(Call<FilmResponse> call, Throwable t) {
                     Log.d(TAG, t.getMessage());
-                    mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);
-                    mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(t.getMessage())).build());
+                    mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
+                    mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(t.getMessage())).build());
                 }
             });
 
-            filmRetrofitInterface.findFilmsPopularInYear(yearFormat.format(cal.getTime()), "vote_average.desc", MOVIE_API_KEY).enqueue(new Callback<FilmResponse>() {
+            filmRetrofitInterface.findFilmsPopularInYear(yearFormat.format(cal.getTime()), "vote_average.desc", Consts.MOVIE_API_KEY).enqueue(new Callback<FilmResponse>() {
                 @Override
                 public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
                     if (response.isSuccessful()) {
-                        mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);
-                        mNotificationManager.cancel(NOTIFICATION_ERROR);
-                        mNotificationManager.notify(NOTIFICATION_DONE, getDownloadDoneNotification().build());
+                        mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
+                        mNotificationManager.cancel(Consts.NOTIFICATION_ERROR);
+                        mNotificationManager.notify(Consts.NOTIFICATION_DONE, getDownloadDoneNotification().build());
                         ArrayList<Film> resFilms = response.body().getFilms();
                         Film[] films = new Film[resFilms.size()];
                         int i = 0;
                         for (Film film : resFilms) {
                             films[i++] = film;
                         }
-                        doFilteringFilmsByGenres(films, Consts.POPULAR_IN_YEAR + String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+                        doFilteringFilmsByGenres(films, context.getString(R.string.popular_in) + " " + String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
                     } else {
                         if (response.code() == 404) {
-                            mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);
-                            mNotificationManager.cancel(NOTIFICATION_DONE);
-                            mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification("Not found resource").build());
+                            mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
+                            mNotificationManager.cancel(Consts.NOTIFICATION_DONE);
+                            mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(context.getString(R.string.no_found_resource)).build());
                         } else if(response.code() == 429) {
 
                         } else {
-                            mNotificationManager.cancel(NOTIFICATION_DONE);
-                            mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);
-                            mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(response.code())).build());
+                            mNotificationManager.cancel(Consts.NOTIFICATION_DONE);
+                            mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
+                            mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(response.code())).build());
                         }
                     }
                 }
@@ -157,13 +151,13 @@ public class ListPresenter {
                 @Override
                 public void onFailure(Call<FilmResponse> call, Throwable t) {
                     Log.d(TAG, t.getMessage());
-                    mNotificationManager.cancel(NOTIFICATION_DOWNLOAD);
-                    mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(t.getMessage())).build());
+                    mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
+                    mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(t.getMessage())).build());
                 }
             });
 
         } else {
-            mNotificationManager.notify(NOTIFICATION_ERROR, getDownloadErrorNotification("Not internet connection").build());
+            mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(context.getString(R.string.no_conntection)).build());
         }
 
     }
@@ -190,7 +184,7 @@ public class ListPresenter {
             List<Genre> genresShow = filmsGenresBlock.getGenresShow();
             String title = filmsGenresBlock.getTitle();
             filmsToShow.add(title);
-
+            Log.i("hh", title);
             ArrayList<Integer> genresIdShow = new ArrayList<>();
             for (Genre genre : genresShow) {
                 genresIdShow.add((int) (long) genre.getId());
@@ -212,8 +206,28 @@ public class ListPresenter {
     }
 
     public void loadFilmGenresApi() {
-        Intent intent = new Intent(context, DownloadGenreListService.class);
-        context.startService(intent);
+        if (Connectivity.isConnected(context)) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(Consts.MOVIE_API_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            FilmRetrofitInterface filmRetrofitInterface = retrofit.create(FilmRetrofitInterface.class);
+            filmRetrofitInterface.findGenres(Consts.MOVIE_API_KEY).enqueue(new Callback<GenreResponse>() {
+                @Override
+                public void onResponse(retrofit2.Call<GenreResponse> call, retrofit2.Response<GenreResponse> response) {
+                    if (response.isSuccessful()) {
+                        activity.saveListGenre(response.body().getGenres());
+                    } else {
+                        Log.i(TAG, response.code() + "");
+                    }
+                }
+
+                @Override
+                public void onFailure(retrofit2.Call<GenreResponse> call, Throwable t) {
+                    Log.d(TAG, t.getMessage());
+                }
+            });
+        }
     }
 
     public void changeStateGenre(Genre genre) {
@@ -236,8 +250,8 @@ public class ListPresenter {
     private NotificationCompat.Builder getDownloadRunningNotification() {
         return new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_downloading)
-                .setContentTitle("Films downloading")
-                .setContentText("Films are downloading")
+                .setContentTitle(context.getString(R.string.f_downloading))
+                .setContentText(context.getString(R.string.f_downloading))
                 .setProgress(0, 0, true)
                 .setAutoCancel(true);
     }
@@ -245,15 +259,15 @@ public class ListPresenter {
     private NotificationCompat.Builder getDownloadDoneNotification() {
         return new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_downloading_done)
-                .setContentTitle("Films downloading")
-                .setContentText("Films were downloaded")
+                .setContentTitle(context.getString(R.string.f_downloaded))
+                .setContentText(context.getString(R.string.f_downloaded))
                 .setAutoCancel(true);
     }
 
     private NotificationCompat.Builder getDownloadErrorNotification(String error) {
         return new NotificationCompat.Builder(context)
                 .setSmallIcon(android.R.drawable.ic_dialog_alert)
-                .setContentTitle("Error while downloading films")
+                .setContentTitle(context.getString(R.string.f_error))
                 .setContentText(error)
                 .setAutoCancel(true);
     }

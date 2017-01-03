@@ -26,6 +26,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.R;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 
@@ -37,7 +38,6 @@ public class FilmAdapter extends BaseAdapter {
     private Context mAppContext;
     private List<Object> mFilmArrayList;
     private static final int CATEGORY = 0, FILM = 1;
-    private static final String IMAGE_BASE_PATH = "https://image.tmdb.org/t/p/w500";
 
     public FilmAdapter(List<Object> filmArrayList, Context context) {
         mAppContext = context.getApplicationContext();
@@ -114,7 +114,7 @@ public class FilmAdapter extends BaseAdapter {
                 final FilmViewHolder filmViewHolder = (FilmViewHolder) convertView.getTag(R.layout.view_holder_film);
                 filmViewHolder.setTitle(((Film) mFilmArrayList.get(position)).getTitle());
                 filmViewHolder.setVoteAverage( ((Film) mFilmArrayList.get(position)).getVoteAverage() );
-                String imagePath = IMAGE_BASE_PATH + ((Film) mFilmArrayList.get(position)).getBackdropPath();
+                String imagePath = Consts.IMAGE_BASE_PATH + ((Film) mFilmArrayList.get(position)).getBackdropPath();
                 if (((Film) mFilmArrayList.get(position)).getBackdropPath() != null) {
                     filmViewHolder.setBackdrop(imagePath);
                 } else {
