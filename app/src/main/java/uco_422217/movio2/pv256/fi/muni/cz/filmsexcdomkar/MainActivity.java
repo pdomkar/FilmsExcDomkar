@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
         mDrawerNavigationAdapter = new DrawerNavigationAdapter(mGenreList, getApplicationContext(), this);
         genresLV.setAdapter(mDrawerNavigationAdapter);
 
-        mListPresenter = new ListPresenter(null, getApplicationContext(), getSupportLoaderManager(), null, MainActivity.this);
+        mListPresenter = new ListPresenter(getApplicationContext(), getSupportLoaderManager(), null, MainActivity.this);
         mListPresenter.loadFilmGenres();
     }
 

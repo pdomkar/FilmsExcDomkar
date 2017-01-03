@@ -22,7 +22,6 @@ public interface FilmsContract {
 
     interface ListView {
         void setFilmsDb(List<Film> data);
-        void setFilteredFilmsByGenres(FilmsGenresBlock filmsGenresBlock);
     }
 
     interface GenreView {

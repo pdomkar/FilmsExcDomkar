@@ -73,11 +73,6 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
         Bundle args = getArguments();
         if (args != null) {
             mFilm = args.getParcelable(ARGS_FILM);
-            if (mFilm != null) {
-                mDetailPresenter = new DetailPresenter(getActivity().getApplicationContext(), getLoaderManager(), mFilm, this);
-                mDetailPresenter.loadFilmDetails();
-            }
-
         }
         mBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         ins = FilmDetailFragment.this;
@@ -114,6 +109,8 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
 
 
         if (mFilm != null) {
+            mDetailPresenter = new DetailPresenter(getActivity().getApplicationContext(), getLoaderManager(), mFilm, this);
+            mDetailPresenter.loadFilmDetails();
             collapseAppBarL.addOnOffsetChangedListener(this);
             titleTV.setText(mFilm.getTitle());
             titleDetailCollapsedTV.setText(mFilm.getTitle());

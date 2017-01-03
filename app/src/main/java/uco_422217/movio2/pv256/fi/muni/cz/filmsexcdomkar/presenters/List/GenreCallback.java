@@ -24,11 +24,11 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
 public class GenreCallback implements LoaderManager.LoaderCallbacks<FilmsGenresBlock> {
     public static final String TAG = GenreCallback.class.getSimpleName();
     private Context mContext;
-    private FilmsListFragment thisFr;
+    private ListPresenter listPresenter;
 
-    public GenreCallback(Context context, FilmsListFragment thisFr) {
+    public GenreCallback(Context context, ListPresenter listPresenter) {
         mContext = context;
-        this.thisFr = thisFr;
+        this.listPresenter = listPresenter;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class GenreCallback implements LoaderManager.LoaderCallbacks<FilmsGenresB
     @Override
     public void onLoadFinished(Loader<FilmsGenresBlock> loader, FilmsGenresBlock filmsGenresBlock) {
         Log.i(TAG, "+++ onLoadFinished() called! +++");
-        thisFr.setFilteredFilmsByGenres(filmsGenresBlock);
+        listPresenter.filterFilmsByGenre(filmsGenresBlock);
     }
 
     @Override

@@ -48,11 +48,16 @@ public class FilmAdapter extends BaseAdapter {
         }
     }
 
-    public void setList(List<Object> list)
+    public void addList(List<Object> list)
     {
         if(list !=  null ) {
-            mFilmArrayList = list;
+            mFilmArrayList.addAll(list);
         }
+    }
+
+    public void clearList()
+    {
+        mFilmArrayList.clear();
     }
 
 
