@@ -16,6 +16,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.R;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.FilmManager;
@@ -80,10 +81,14 @@ public class RefreshDataDb {
                                 mNotificationManager.notify(NOTIFICATION_CHANGE, getChangeNotification().build());
                             }
                         } else {
-                            Log.i("Error", "Fail by getting data");
+                            if(BuildConfig.logging) {
+                                Log.i("Error", "Fail by getting data");
+                            }
                         }
                     } catch (IOException e) {
-                        Log.i("Error", e.toString());
+                        if(BuildConfig.logging) {
+                            Log.i("Error", e.toString());
+                        }
                     }
                 }
                 if(!updated) {

@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.R;
 
 /**
@@ -119,7 +120,9 @@ public class UpdaterSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        Log.i("perform", "FDFFDFDSFSF");
+        if(BuildConfig.logging) {
+            Log.i("perform", "sync");
+        }
         RefreshDataDb refreshDataDb = RefreshDataDb.getInstance();
         refreshDataDb.init(getContext());
         refreshDataDb.refreshFilmsInDb();

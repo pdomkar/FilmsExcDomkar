@@ -226,7 +226,6 @@
         app:layout_anchorGravity="bottom|end"
         android:clickable="true"
         android:src="@drawable/ic_plus"
-        app:backgroundTint="@color/myColorAccent"
         android:visibility="invisible"
         />
 

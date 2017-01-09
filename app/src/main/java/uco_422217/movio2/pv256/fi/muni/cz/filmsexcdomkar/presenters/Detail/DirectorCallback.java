@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmDetailFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.DirectorCreateLoader;
@@ -31,7 +32,9 @@ public class DirectorCallback implements LoaderManager.LoaderCallbacks<List<Dire
 
     @Override
     public Loader<List<Director>> onCreateLoader(int id, Bundle args) {
-        Log.i(TAG, "+++ onCreateLoader() called! +++");
+        if(BuildConfig.logging) {
+            Log.i(TAG, "+++ onCreateLoader() called! +++");
+        }
         switch (id) {
             case Consts.LOADER_DIRECTOR_FIND_ID:
                 return new DirectorFindLoader(mContext, args.getLong(Consts.DETAIL_ID, 0));
@@ -46,7 +49,9 @@ public class DirectorCallback implements LoaderManager.LoaderCallbacks<List<Dire
 
     @Override
     public void onLoadFinished(Loader<List<Director>> loader, List<Director> data) {
-        Log.i(TAG, "+++ onLoadFinished() called! +++");
+        if(BuildConfig.logging) {
+            Log.i(TAG, "+++ onLoadFinished() called! +++");
+        }
         switch (loader.getId()) {
             case Consts.LOADER_DIRECTOR_FIND_ID:
                 if (data.size() > 0) {
@@ -64,7 +69,8 @@ public class DirectorCallback implements LoaderManager.LoaderCallbacks<List<Dire
 
     @Override
     public void onLoaderReset(Loader<List<Director>> loader) {
-        Log.i(TAG, "+++ onLoadReset() called! +++");
-
+        if(BuildConfig.logging) {
+            Log.i(TAG, "+++ onLoadReset() called! +++");
+        }
     }
 }

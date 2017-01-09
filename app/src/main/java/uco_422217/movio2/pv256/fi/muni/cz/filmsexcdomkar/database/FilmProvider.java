@@ -12,6 +12,8 @@ import android.util.Log;
 
 import java.util.Arrays;
 
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
+
 /**
  * Created by Petr on 2. 11. 2016.
  */
@@ -230,8 +232,10 @@ public class FilmProvider extends ContentProvider {
                 rowsUpdated = db.update(FilmCotract.FilmCastEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             case GENRE:
-                Log.i("Profisdl", values.getAsInteger("show") + "");
-                Log.i("asdf", selectionArgs[0]);
+                if(BuildConfig.logging) {
+                    Log.i("Profisdl", values.getAsInteger("show") + "");
+                    Log.i("asdf", selectionArgs[0]);
+                }
                 rowsUpdated = db.update(FilmCotract.GenreEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:

@@ -1,26 +1,85 @@
+def versionMajor = 0
+def versionMinor = 1
+def versionPatch = 0
+def versionBuild = 0
+
 apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
+
+    applicationVariants.all { variant -> // .all stejně jako each prochází všechny prvky kolekce, ale aplikuje se i v případě, že v ní přibudou nové prvky
+        variant.outputs.each { output ->
+            output.outputFile = new File(
+                    output.outputFile.parent,
+                    "$project.name-$variant.name-$variant.versionName-${variant.versionCode}.apk")
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
+    }
+
     defaultConfig {
         applicationId "uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar"
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 1
-        versionName "1.0"
+
+        resConfigs "cs", "ja", "en" //nechat resources jen pro vyjmenované jazyky
+
+        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+
+    compileOptions { //chceme psát syntaxí javy 7
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
+
+        // mějte release a debug build rozlišitelné. takto můžete nahrát na 1 zařízení 2 buildy aplikace
+        // je vhodné také vizuálně odlišit ikonu debug verze
+        debug {
+            applicationIdSuffix '.debug'
+        }
+    }
+
+    productFlavors {
+        orig {
+            buildConfigField "boolean", "logging", "true"
+            applicationId "uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.orig"
+        }
+        second {
+            buildConfigField "boolean", "logging", "false"
+            applicationId "uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.second"
+            //úplně jiný package name
+            versionCode 10
+            versionName "10"
+        }
+    }
+
+    lintOptions {
+        textReport true // když je true, vygeneruje se textový report problémů (default je false)
+        textOutput 'stdout' // kam zapsat výstup. buď do souboru - file nebo do 'stdout' (standardní výstup)
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })

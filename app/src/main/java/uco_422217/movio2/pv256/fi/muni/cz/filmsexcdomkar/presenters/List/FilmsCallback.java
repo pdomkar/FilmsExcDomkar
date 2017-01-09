@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmsListFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmFindAllLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
@@ -27,19 +28,24 @@ public class FilmsCallback implements LoaderManager.LoaderCallbacks<List<Film>> 
 
     @Override
     public Loader<List<Film>> onCreateLoader(int id, Bundle args) {
-        Log.i(TAG, "+++ onCreateLoader() called! +++");
+        if(BuildConfig.logging) {
+            Log.i(TAG, "+++ onCreateLoader() called! +++");
+        }
         return new FilmFindAllLoader(mContext);
     }
 
     @Override
     public void onLoadFinished(Loader<List<Film>> loader, List<Film> data) {
-        Log.i(TAG, "+++ onLoadFinished() called! +++");
+        if(BuildConfig.logging) {
+            Log.i(TAG, "+++ onLoadFinished() called! +++");
+        }
         thisFr.setFilmsDb(data);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Film>> loader) {
-        Log.i(TAG, "+++ onLoadReset() called! +++");
-
+            if(BuildConfig.logging) {
+                Log.i(TAG, "+++ onLoadReset() called! +++");
+            }
     }
 }

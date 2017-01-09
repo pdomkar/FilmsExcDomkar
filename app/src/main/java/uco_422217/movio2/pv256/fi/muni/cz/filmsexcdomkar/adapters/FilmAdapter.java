@@ -88,40 +88,42 @@ public class FilmAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        int rowType = getItemViewType(position);
-        if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) mAppContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if(getCount() > 0) {
+            int rowType = getItemViewType(position);
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) mAppContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                switch (rowType) {
+                    case CATEGORY:
+                        convertView = inflater.inflate(R.layout.view_holder_category, parent, false);
+                        CategoryViewHolder categoryViewHolder = new CategoryViewHolder(convertView);
+                        convertView.setTag(R.layout.view_holder_category, categoryViewHolder);
+                        break;
+                    case FILM:
+                        convertView = inflater.inflate(R.layout.view_holder_film, parent, false);
+                        FilmViewHolder filmViewHolder = new FilmViewHolder(convertView, mAppContext);
+                        convertView.setTag(R.layout.view_holder_film, filmViewHolder);
+                        break;
+                }
+            }
+
             switch (rowType) {
                 case CATEGORY:
-                    convertView = inflater.inflate(R.layout.view_holder_category, parent, false);
-                    CategoryViewHolder categoryViewHolder = new CategoryViewHolder(convertView);
-                    convertView.setTag(R.layout.view_holder_category, categoryViewHolder);
+                    CategoryViewHolder categoryViewHolder = (CategoryViewHolder) convertView.getTag(R.layout.view_holder_category);
+                    categoryViewHolder.setCategory(mFilmArrayList.get(position).toString());
                     break;
                 case FILM:
-                    convertView = inflater.inflate(R.layout.view_holder_film, parent, false);
-                    FilmViewHolder filmViewHolder = new FilmViewHolder(convertView, mAppContext);
-                    convertView.setTag(R.layout.view_holder_film, filmViewHolder);
+                    final FilmViewHolder filmViewHolder = (FilmViewHolder) convertView.getTag(R.layout.view_holder_film);
+                    filmViewHolder.setTitle(((Film) mFilmArrayList.get(position)).getTitle());
+                    filmViewHolder.setVoteAverage(((Film) mFilmArrayList.get(position)).getVoteAverage());
+                    String imagePath = Consts.IMAGE_BASE_PATH + ((Film) mFilmArrayList.get(position)).getBackdropPath();
+                    if (((Film) mFilmArrayList.get(position)).getBackdropPath() != null) {
+                        filmViewHolder.setBackdrop(imagePath);
+                    } else {
+                        ImageLoader imageLoader = ImageLoader.getInstance();
+                        imageLoader.displayImage("drawable://" + R.drawable.image_not_found, filmViewHolder.getBackdrop());
+                    }
                     break;
             }
-        }
-
-        switch (rowType) {
-            case CATEGORY:
-                CategoryViewHolder categoryViewHolder = (CategoryViewHolder) convertView.getTag(R.layout.view_holder_category);
-                categoryViewHolder.setCategory(mFilmArrayList.get(position).toString());
-                break;
-            case FILM:
-                final FilmViewHolder filmViewHolder = (FilmViewHolder) convertView.getTag(R.layout.view_holder_film);
-                filmViewHolder.setTitle(((Film) mFilmArrayList.get(position)).getTitle());
-                filmViewHolder.setVoteAverage( ((Film) mFilmArrayList.get(position)).getVoteAverage() );
-                String imagePath = Consts.IMAGE_BASE_PATH + ((Film) mFilmArrayList.get(position)).getBackdropPath();
-                if (((Film) mFilmArrayList.get(position)).getBackdropPath() != null) {
-                    filmViewHolder.setBackdrop(imagePath);
-                } else {
-                    ImageLoader imageLoader = ImageLoader.getInstance();
-                    imageLoader.displayImage("drawable://" + R.drawable.image_not_found, filmViewHolder.getBackdrop());
-                }
-                break;
         }
         return convertView;
     }

@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmDetailFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmCreateLoader;
@@ -37,7 +38,9 @@ public class FilmCallback implements LoaderManager.LoaderCallbacks<List<Film>> {
 
     @Override
     public Loader<List<Film>> onCreateLoader(int id, Bundle args) {
-        Log.i(TAG, "+++ onCreateLoader() called! +++");
+        if(BuildConfig.logging) {
+            Log.i(TAG, "+++ onCreateLoader() called! +++");
+        }
         switch (id) {
             case Consts.LOADER_FILM_FIND_ID:
                 return new FilmFindLoader(mContext, args.getLong(Consts.DETAIL_ID, 0));
@@ -52,7 +55,9 @@ public class FilmCallback implements LoaderManager.LoaderCallbacks<List<Film>> {
 
     @Override
     public void onLoadFinished(Loader<List<Film>> loader, List<Film> data) {
-        Log.i(TAG, "+++ onLoadFinished() called! +++");
+        if(BuildConfig.logging) {
+            Log.i(TAG, "+++ onLoadFinished() called! +++");
+        }
         switch (loader.getId()) {
             case Consts.LOADER_FILM_FIND_ID:
                 Bundle args = new Bundle();
@@ -91,8 +96,9 @@ public class FilmCallback implements LoaderManager.LoaderCallbacks<List<Film>> {
 
     @Override
     public void onLoaderReset(Loader<List<Film>> loader) {
-        Log.i(TAG, "+++ onLoadReset() called! +++");
-
+        if(BuildConfig.logging) {
+            Log.i(TAG, "+++ onLoadReset() called! +++");
+        }
     }
 
     private String getDirectorNameFromCrew(Crew[] crews) {

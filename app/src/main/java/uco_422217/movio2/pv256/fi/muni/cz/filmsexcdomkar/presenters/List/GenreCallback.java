@@ -9,6 +9,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmsListFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.GenreFindByShowLoader;
@@ -21,7 +22,7 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
  * Created by Petr on 17. 12. 2016.
  */
 
-public class GenreCallback implements LoaderManager.LoaderCallbacks<FilmsGenresBlock> {
+public class GenreCallback implements LoaderManager.LoaderCallbacks<List<Genre>> {
     public static final String TAG = GenreCallback.class.getSimpleName();
     private Context mContext;
     private ListPresenter listPresenter;
@@ -32,21 +33,26 @@ public class GenreCallback implements LoaderManager.LoaderCallbacks<FilmsGenresB
     }
 
     @Override
-    public Loader<FilmsGenresBlock> onCreateLoader(int id, Bundle args) {
-        Log.i(TAG, "+++ onCreateLoader() called! +++");
-        return new GenreFindByShowLoader(mContext, true, (Film[]) args.getParcelableArray(Consts.FILM_API_LIST), args.getString(Consts.TITLE_FILMS));
+    public Loader<List<Genre>> onCreateLoader(int id, Bundle args) {
+        if(BuildConfig.logging) {
+            Log.i(TAG, "+++ onCreateLoader() called! +++");
+        }
+        return new GenreFindByShowLoader(mContext, true);
     }
 
     @Override
-    public void onLoadFinished(Loader<FilmsGenresBlock> loader, FilmsGenresBlock filmsGenresBlock) {
-        Log.i(TAG, "+++ onLoadFinished() called! +++");
-        Log.i("qqwqww", filmsGenresBlock.getGenresShow().size()+"");
-        listPresenter.filterFilmsByGenre(filmsGenresBlock);
+    public void onLoadFinished(Loader<List<Genre>> loader, List<Genre> genres) {
+        if(BuildConfig.logging) {
+            Log.i(TAG, "+++ onLoadFinished() called! +++");
+            Log.i("qqwqww", genres.size() + "");
+        }
+        listPresenter.downloadFilms(genres);
     }
 
     @Override
-    public void onLoaderReset(Loader<FilmsGenresBlock> loader) {
-        Log.i(TAG, "+++ onLoadReset() called! +++");
-
+    public void onLoaderReset(Loader<List<Genre>> loader) {
+        if(BuildConfig.logging) {
+            Log.i(TAG, "+++ onLoadReset() called! +++");
+        }
     }
 }

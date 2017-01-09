@@ -11,6 +11,7 @@ import android.view.View;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmDetailFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmRetrofitInterface;
@@ -58,13 +59,17 @@ public class DetailPresenter implements FilmsContract.DetailListeners{
                         Credits data = response.body();
                         thisFr.setFilmCredits(data);
                     } else {
-                        Log.i(TAG, response.code() + "");
+                        if(BuildConfig.logging) {
+                            Log.i(TAG, response.code() + "");
+                        }
                     }
                 }
 
                 @Override
                 public void onFailure(retrofit2.Call<Credits> call, Throwable t) {
-                    Log.d(TAG, t.getMessage());
+                    if(BuildConfig.logging) {
+                        Log.d(TAG, t.getMessage());
+                    }
                 }
             });
         }

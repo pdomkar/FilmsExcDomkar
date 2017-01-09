@@ -7,6 +7,7 @@ import android.util.Log;
 import java.util.Collections;
 import java.util.List;
 
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.FilmManager;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Cast;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Director;
@@ -30,7 +31,9 @@ public class CastDeleteLoader extends AsyncTaskLoader<List<Cast>> {
 
     @Override
     public List<Cast> loadInBackground() {
-        Log.i("asdf", mCastFilmId + "");
+        if(BuildConfig.logging) {
+            Log.i("asdf", mCastFilmId + "");
+        }
         mFilmManager.deleteCast(mCastFilmId);
         return Collections.emptyList();
     }

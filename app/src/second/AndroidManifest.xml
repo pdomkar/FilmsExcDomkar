@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:theme="@style/MySecondaryTheme"
+        tools:replace="android:theme">
+
+    </application>
+
+</manifest>

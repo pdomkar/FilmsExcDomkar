@@ -33,44 +33,44 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 @LargeTest
 public class DetailFilmTest {
 
-    private MainActivity mainActivity;
-
-    @Rule
-    public final ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
-    IntentServiceIdlingResource idlingResource;
-
-    @Before
-    public void init() {
-        Instrumentation instrumentation
-                = InstrumentationRegistry.getInstrumentation();
-        Context ctx = instrumentation.getTargetContext();
-        idlingResource = new IntentServiceIdlingResource(ctx);
-        Espresso.registerIdlingResources(idlingResource);
-        mainActivity = rule.getActivity();
-    }
-
-    @After
-    public void after() {
-        Espresso.unregisterIdlingResources(idlingResource);
-
-    }
-
-    @Test
-    public void testClickOnFilmInList() throws Exception {
-        Thread.sleep(5000);
-
-        onData(Matchers.anything()).inAdapterView(withId(R.id.filmsLV)).atPosition(0).perform(click());
-
-
-//        onData(Matchers.anything())
-//                .inAdapterView(withId(R.id.filmsLV))
-//                .atPosition(0)
-//                .onChildView(withId(R.id.titleTV))
-//                .perform(click());
-
-
-        onView(withId(R.id.titleDetailExpandedTV)).check(matches(isDisplayed()));
-    }
+//    private MainActivity mainActivity;
+//
+//    @Rule
+//    public final ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
+//    IntentServiceIdlingResource idlingResource;
+//
+//    @Before
+//    public void init() {
+//        Instrumentation instrumentation
+//                = InstrumentationRegistry.getInstrumentation();
+//        Context ctx = instrumentation.getTargetContext();
+//        idlingResource = new IntentServiceIdlingResource(ctx);
+//        Espresso.registerIdlingResources(idlingResource);
+//        mainActivity = rule.getActivity();
+//    }
+//
+//    @After
+//    public void after() {
+//        Espresso.unregisterIdlingResources(idlingResource);
+//
+//    }
+//
+//    @Test
+//    public void testClickOnFilmInList() throws Exception {
+//        Thread.sleep(5000);
+//
+//        onData(Matchers.anything()).inAdapterView(withId(R.id.filmsLV)).atPosition(0).perform(click());
+//
+//
+////        onData(Matchers.anything())
+////                .inAdapterView(withId(R.id.filmsLV))
+////                .atPosition(0)
+////                .onChildView(withId(R.id.titleTV))
+////                .perform(click());
+//
+//
+//        onView(withId(R.id.titleDetailExpandedTV)).check(matches(isDisplayed()));
+//    }
 
 
 

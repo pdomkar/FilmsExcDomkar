@@ -25,6 +25,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmDetailFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmsListFragment;
@@ -61,7 +62,19 @@ public class ListPresenter {
     }
 
     public void onLoadFilms() {
+        Bundle args = new Bundle();
+        if (loaderManager.getLoader(Consts.LOADER_GENRE_FIND_SHOW_ID) != null) {
+            loaderManager.restartLoader(Consts.LOADER_GENRE_FIND_SHOW_ID, args, new GenreCallback(context, this)).forceLoad();
+        } else {
+            loaderManager.initLoader(Consts.LOADER_GENRE_FIND_SHOW_ID, args, new GenreCallback(context, this)).forceLoad();
+        }
+    }
 
+    public void loadFilmsDb() {
+        loaderManager.initLoader(Consts.LOADER_FILM_FIND_ALL_ID, null, new FilmsCallback(context, thisFr)).forceLoad();
+    }
+
+    public void downloadFilms(final List<Genre> genres) {
         if (Connectivity.isConnected(context)) {
             mNotificationManager.notify(Consts.NOTIFICATION_DOWNLOAD, getDownloadRunningNotification().build());
 
@@ -95,8 +108,9 @@ public class ListPresenter {
                         for (Film film : resFilms) {
                             films[i++] = film;
                         }
-                        doFilteringFilmsByGenres(films, context.getString(R.string.in_theatre));
+                        filterFilmsByGenre(films, context.getString(R.string.in_theatre), genres);
                     } else {
+                        thisFr.setEmptyAdapter();
                         if (response.code() == 404) {
                             mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
                             mNotificationManager.cancel(Consts.NOTIFICATION_DONE);
@@ -114,6 +128,7 @@ public class ListPresenter {
                 @Override
                 public void onFailure(Call<FilmResponse> call, Throwable t) {
                     Log.d(TAG, t.getMessage());
+                    thisFr.setEmptyAdapter();
                     mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
                     mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(t.getMessage())).build());
                 }
@@ -132,8 +147,9 @@ public class ListPresenter {
                         for (Film film : resFilms) {
                             films[i++] = film;
                         }
-                        doFilteringFilmsByGenres(films, context.getString(R.string.popular_in) + " " + String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+                        filterFilmsByGenre(films, context.getString(R.string.popular_in) + " " + String.valueOf(Calendar.getInstance().get(Calendar.YEAR)), genres);
                     } else {
+                        thisFr.setEmptyAdapter();
                         if (response.code() == 404) {
                             mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
                             mNotificationManager.cancel(Consts.NOTIFICATION_DONE);
@@ -151,42 +167,24 @@ public class ListPresenter {
                 @Override
                 public void onFailure(Call<FilmResponse> call, Throwable t) {
                     Log.d(TAG, t.getMessage());
+                    thisFr.setEmptyAdapter();
                     mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
                     mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(t.getMessage())).build());
                 }
             });
 
         } else {
+            thisFr.setEmptyAdapter();
             mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(context.getString(R.string.no_conntection)).build());
         }
-
     }
 
-    public void loadFilmsDb() {
-        loaderManager.initLoader(Consts.LOADER_FILM_FIND_ALL_ID, null, new FilmsCallback(context, thisFr)).forceLoad();
-    }
-
-    private void doFilteringFilmsByGenres(Film[] films, String title) {
-        Bundle args = new Bundle();
-        args.putParcelableArray(Consts.FILM_API_LIST, films);
-        args.putString(Consts.TITLE_FILMS, title);
-        if (loaderManager.getLoader(Consts.LOADER_GENRE_FIND_SHOW_ID) != null) {
-            loaderManager.restartLoader(Consts.LOADER_GENRE_FIND_SHOW_ID, args, new GenreCallback(context, this)).forceLoad();
-        } else {
-            loaderManager.initLoader(Consts.LOADER_GENRE_FIND_SHOW_ID, args, new GenreCallback(context, this)).forceLoad();
-        }
-    }
-
-    void filterFilmsByGenre(FilmsGenresBlock filmsGenresBlock) {
+    private void filterFilmsByGenre(Film[] films, String title, List<Genre> genres) {
         ArrayList<Object> filmsToShow = new ArrayList<>();
-        if (filmsGenresBlock != null) {
-            List<Film> films = filmsGenresBlock.getFilms();
-            List<Genre> genresShow = filmsGenresBlock.getGenresShow();
-            String title = filmsGenresBlock.getTitle();
+        if (genres.size() > 0) {
             filmsToShow.add(title);
-            Log.i("hh", title);
             ArrayList<Integer> genresIdShow = new ArrayList<>();
-            for (Genre genre : genresShow) {
+            for (Genre genre : genres) {
                 genresIdShow.add((int) (long) genre.getId());
             }
 
@@ -195,9 +193,13 @@ public class ListPresenter {
                     filmsToShow.add(film);
                 }
             }
-            thisFr.setAdapterList(title, filmsToShow);
+            thisFr.setAdapterList(filmsToShow);
         } else {
-            thisFr.setAdapterList("", filmsToShow);
+            filmsToShow.add(title);
+            for (Film film : films) {
+                filmsToShow.add(film);
+            }
+            thisFr.setAdapterList(filmsToShow);
         }
     }
 
@@ -218,13 +220,17 @@ public class ListPresenter {
                     if (response.isSuccessful()) {
                         activity.saveListGenre(response.body().getGenres());
                     } else {
-                        Log.i(TAG, response.code() + "");
+                        if(BuildConfig.logging) {
+                            Log.i(TAG, response.code() + "");
+                        }
                     }
                 }
 
                 @Override
                 public void onFailure(retrofit2.Call<GenreResponse> call, Throwable t) {
-                    Log.d(TAG, t.getMessage());
+                    if(BuildConfig.logging) {
+                        Log.d(TAG, t.getMessage());
+                    }
                 }
             });
         }

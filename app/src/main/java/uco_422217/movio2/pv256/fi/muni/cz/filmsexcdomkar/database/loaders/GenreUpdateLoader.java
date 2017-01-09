@@ -7,6 +7,7 @@ import android.util.Log;
 import java.util.Collections;
 import java.util.List;
 
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.FilmManager;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
 
@@ -30,7 +31,9 @@ public class GenreUpdateLoader extends AsyncTaskLoader<List<Genre>> {
     @Override
     public List<Genre> loadInBackground() {
         if (mGenre != null) {
-            Log.i("ad", mGenre.getId() + "");
+            if(BuildConfig.logging) {
+                Log.i("ad", mGenre.getId() + "");
+            }
             mFilmManager.updateGenre(mGenre);
         }
 

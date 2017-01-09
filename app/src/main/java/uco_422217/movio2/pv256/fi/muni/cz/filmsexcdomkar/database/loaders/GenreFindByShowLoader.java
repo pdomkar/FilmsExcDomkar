@@ -18,26 +18,22 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
  * Created by Petr on 2. 11. 2016.
  */
 
-public class GenreFindByShowLoader extends AsyncTaskLoader<FilmsGenresBlock> {
+public class GenreFindByShowLoader extends AsyncTaskLoader<List<Genre>> {
     private Context mContext;
     private FilmManager mFilmManager;
     private Boolean mShow;
-    Film[] mFilmDbList;
-    String mTitle;
 
-    public GenreFindByShowLoader(Context context, Boolean show, Film[] filmDbList, String title) {
+    public GenreFindByShowLoader(Context context, Boolean show) {
         super(context);
         mContext = context;
         mFilmManager = new FilmManager(context);
         mShow = show;
-        mFilmDbList = filmDbList;
-        mTitle = title;
     }
 
     @Override
-    public FilmsGenresBlock loadInBackground() {
+    public List<Genre> loadInBackground() {
         if (mShow != null) {
-            return new FilmsGenresBlock(mFilmManager.findGenresByShow(mShow), Arrays.asList(mFilmDbList), mTitle);
+            return mFilmManager.findGenresByShow(mShow);
         }
         return null;
     }

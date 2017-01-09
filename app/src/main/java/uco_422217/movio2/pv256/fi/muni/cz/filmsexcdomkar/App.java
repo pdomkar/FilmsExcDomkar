@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
 
-import com.facebook.stetho.Stetho;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -24,7 +23,6 @@ public class App extends Application {
         }
 
         initImageLoader(this);
-        Stetho.initializeWithDefaults(this);
     }
 
     private void initStrictMode() {

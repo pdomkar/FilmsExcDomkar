@@ -26,6 +26,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +61,10 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
         mGenreList = new ArrayList<>();
         mGenreList.add(new Genre(0L, getString(R.string.displayed_genres), false));
         UpdaterSyncAdapter.initializeSyncAdapter(this);
+
+        if(BuildConfig.logging) {
+            Log.i("init start log", "onCreate was called");
+        }
 
         ImageButton pupupMenuIB = (ImageButton)findViewById(R.id.popupMenuIB);
         pupupMenuIB.setOnClickListener(new View.OnClickListener() {

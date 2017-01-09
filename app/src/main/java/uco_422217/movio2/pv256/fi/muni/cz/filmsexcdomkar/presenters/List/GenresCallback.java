@@ -13,6 +13,7 @@ import java.util.List;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmsListFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.MainActivity;
@@ -45,7 +46,9 @@ public class GenresCallback implements LoaderManager.LoaderCallbacks<List<Genre>
 
     @Override
     public Loader<List<Genre>> onCreateLoader(int id, Bundle args) {
-        Log.i("MainActivity", "+++ onCreateLoader() called! +++");
+        if(BuildConfig.logging) {
+            Log.i("MainActivity", "+++ onCreateLoader() called! +++");
+        }
         switch (id) {
             case Consts.LOADER_GENRE_FIND_ALL_ID:
                 return new GenreFindAllLoader(mContext);
@@ -62,7 +65,9 @@ public class GenresCallback implements LoaderManager.LoaderCallbacks<List<Genre>
 
     @Override
     public void onLoadFinished(Loader<List<Genre>> loader, List<Genre> data) {
-        Log.i("MainActivity", "+++ onLoadFinished() called! +++");
+        if(BuildConfig.logging) {
+            Log.i("MainActivity", "+++ onLoadFinished() called! +++");
+        }
         switch (loader.getId()) {
             case Consts.LOADER_GENRE_FIND_ALL_ID:
                 if (data.size() == 0) {
@@ -105,7 +110,6 @@ public class GenresCallback implements LoaderManager.LoaderCallbacks<List<Genre>
                 loaderManager.initLoader(Consts.LOADER_GENRE_FIND_ALL_LIST_ID, null, GenresCallback.this).forceLoad();
                 break;
             case Consts.LOADER_GENRE_UPDATE_ID:
-                Log.i("q", "q");
                 break;
             default:
                 throw new UnsupportedOperationException("Not know loader id");
@@ -114,7 +118,9 @@ public class GenresCallback implements LoaderManager.LoaderCallbacks<List<Genre>
 
     @Override
     public void onLoaderReset(Loader<List<Genre>> loader) {
-        Log.i("MainActivity", "+++ onLoadReset() called! +++");
+        if(BuildConfig.logging) {
+            Log.i("MainActivity", "+++ onLoadReset() called! +++");
+        }
 
     }
 }

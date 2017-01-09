@@ -8,7 +8,10 @@
     <color name="myColorPrimaryDark">#7B1FA2</color>
     <color name="myColorAccent">#7C4DFF</color>
 
-    <color name="mySecondaryColorPrimary">#CDDC39</color>
-    <color name="mySecondaryColorPrimaryDark">#AFB42B</color>
-    <color name="mySecondaryColorAccent">#3223C6</color>
+    <color name="mySecondaryColorPrimary">#b7ca00</color>
+    <color name="mySecondaryColorPrimaryDark">#83b300</color>
+    <color name="mySecondaryColorAccent">#3faad1</color>
+
+    <color name="textColorPrimary">#000000</color>
+    <color name="textColorSecondary">#ffffff</color>
 </resources>

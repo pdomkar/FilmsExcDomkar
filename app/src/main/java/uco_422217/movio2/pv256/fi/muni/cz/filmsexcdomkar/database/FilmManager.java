@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Cast;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Director;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
@@ -347,7 +348,9 @@ public class FilmManager {
         if (genre.getId() == null) {
             throw new IllegalStateException("genre id cannot be null");
         }
-        Log.i("manage", genre.getId() + "");
+        if(BuildConfig.logging) {
+            Log.i("manage", genre.getId() + "");
+        }
         mContext.getContentResolver().update(FilmCotract.GenreEntry.CONTENT_URI, prepareGenreValues(genre), WHERE_GENRE_ID, new String[]{String.valueOf(genre.getId())});
     }
 

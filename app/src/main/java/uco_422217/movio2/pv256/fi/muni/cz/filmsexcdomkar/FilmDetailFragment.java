@@ -121,7 +121,9 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
                 SimpleDateFormat df = new SimpleDateFormat("dd. MM. yyyy");
                 year = df.format(date);
             } catch (ParseException e) {
-                Log.i(TAG, "parse exception", e);
+                if(BuildConfig.logging) {
+                    Log.i(TAG, "parse exception", e);
+                }
             }
             releaseDateTV.setText(year);
             overviewContentTV.setText(mFilm.getOverview());

@@ -244,9 +244,8 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     }
 
 
-    public void setAdapterList(String title, ArrayList<Object> films) {
-        Log.i("ee", title);
-        if(title.equals("")) {
+    public void setAdapterList(ArrayList<Object> films) {
+        if(films.size() == 0 && filmAdapter.getCount() == 0) {
             if (!Connectivity.isConnected(getActivity().getApplicationContext())) {
                 mEmptyTV.setText(R.string.no_conntection);
             } else {
@@ -255,6 +254,17 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
         } else {
             filmAdapter.addList(films);
             mFilmsLV.setAdapter(filmAdapter);
+            filmAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void setEmptyAdapter() {
+        if(filmAdapter.getCount() == 0) {
+            if (!Connectivity.isConnected(getActivity().getApplicationContext())) {
+                mEmptyTV.setText(R.string.no_conntection);
+            } else {
+                mEmptyTV.setText(R.string.no_data);
+            }
         }
     }
 }

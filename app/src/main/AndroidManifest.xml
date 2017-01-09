@@ -33,21 +33,6 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name=".networks.DownloadFilmListService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
-        <service
-            android:name=".networks.DownloadFilmDetailService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
-        <service
-            android:name=".networks.DownloadGenreListService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
         <!-- SyncAdapter's dummy authentication service -->
         <service android:name=".sync.UpdaterAuthenticatorService" >
             <intent-filter>

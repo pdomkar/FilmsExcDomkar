@@ -1,4 +1,9 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
+    <string name="movie_api_key">9abf76a6b9a507feb496c4d4bc7cb670</string>
+    <string name="content_authority">uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar</string>
+    <string name="sync_account_type">uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar</string>
+
+    <string name="app_name">FilmsDomkar</string>
     <string name="cast">キャスト</string>
     <string name="survey">調査</string>
     <string name="no_data">データなし</string>
