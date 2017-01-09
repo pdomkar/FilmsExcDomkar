@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -53,7 +54,7 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.DownloadFilmLi
  * Created by Petr on 6. 10. 2016.
  */
 
-public class FilmDetailFragment extends Fragment {
+public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
     public static final String TAG = FilmDetailFragment.class.getSimpleName();
     private static final String ARGS_FILM = "args_film";
     public static final String ACTION_SEND_DETAIL_RESULTS = "SEND_DETAIL_RESULTS";
@@ -67,6 +68,13 @@ public class FilmDetailFragment extends Fragment {
     private LocalBroadcastManager mBroadcastManager;
     public static FilmDetailFragment ins;
     private FilmManager mFilmManager;
+
+    FloatingActionButton plusFAB;
+    TextView releaseDateTV;
+    TextView titleTV;
+    ImageView posterIV;
+    TextView titleDetailCollapsedTV;
+
     private static final int LOADER_FILM_FIND_ID = 1;
     private static final int LOADER_FILM_CREATE_ID = 2;
     private static final int LOADER_FILM_DELETE_ID = 3;
@@ -117,29 +125,24 @@ public class FilmDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_film_detail_layout, container, false);
-
-        TextView titleTV = (TextView) view.findViewById(R.id.titleDetailTV);
-        TextView releaseDateTV = (TextView) view.findViewById(R.id.releaseDateDetailTV);
+        AppBarLayout collapseAppBarL = (AppBarLayout) view.findViewById(R.id.collapseBar);
+        titleTV = (TextView) view.findViewById(R.id.titleDetailExpandedTV);
+        titleDetailCollapsedTV = (TextView) view.findViewById(R.id.titleDetailCollapsedTV);
+        releaseDateTV = (TextView) view.findViewById(R.id.releaseDateDetailTV);
         ImageView backdropIV = (ImageView) view.findViewById(R.id.backdropDetailIV);
-        final ImageView posterIV = (ImageView) view.findViewById(R.id.posterDetailIV);
+        posterIV = (ImageView) view.findViewById(R.id.posterDetailIV);
         TextView overviewTitleTV = (TextView) view.findViewById(R.id.overviewTitleTV);
         TextView castTitleTV = (TextView) view.findViewById(R.id.castTitleTV);
         TextView overviewContentTV = (TextView) view.findViewById(R.id.overviewContentTV);
-        final FloatingActionButton plusFAB = (FloatingActionButton) view.findViewById(R.id.plusFAB);
-        RelativeLayout contentLL = (RelativeLayout) view.findViewById(R.id.contentLL);
+        plusFAB = (FloatingActionButton) view.findViewById(R.id.plusFAB);
 
-        final RelativeLayout headContentLL = (RelativeLayout) view.findViewById(R.id.headContentLL);
-        ViewTreeObserver viewTreeObserver = headContentLL.getViewTreeObserver();
-        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                headContentLL.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                posterIV.getLayoutParams().height = headContentLL.getMeasuredHeight();
-            }
-        });
+
+
 
         if (mFilm != null) {
+            collapseAppBarL.addOnOffsetChangedListener(this);
             titleTV.setText(mFilm.getTitle());
+            titleDetailCollapsedTV.setText(mFilm.getTitle());
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Date date;
             String year = "";
@@ -176,8 +179,7 @@ public class FilmDetailFragment extends Fragment {
                     getLoaderManager().initLoader(LOADER_FILM_FIND_ID, args, new FilmCallback(getActivity().getApplicationContext())).forceLoad();
                 }
             });
-            contentLL.setVisibility(View.VISIBLE);
-            headContentLL.setVisibility(View.VISIBLE);
+
             backdropIV.setVisibility(View.VISIBLE);
             posterIV.setVisibility(View.VISIBLE);
 
@@ -491,6 +493,25 @@ public class FilmDetailFragment extends Fragment {
             Log.i(TAG, "+++ onLoadReset() called! +++");
 
         }
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int offset)
+    {
+        if (Math.abs(offset) == appBarLayout.getTotalScrollRange()) {
+            plusFAB.setVisibility(View.GONE);
+            releaseDateTV.setVisibility(View.GONE);
+            titleTV.setVisibility(View.GONE);
+            posterIV.setVisibility(View.GONE);
+            titleDetailCollapsedTV.setVisibility(View.VISIBLE);
+        } else {
+            plusFAB.setVisibility(View.VISIBLE);
+            releaseDateTV.setVisibility(View.VISIBLE);
+            titleTV.setVisibility(View.VISIBLE);
+            posterIV.setVisibility(View.VISIBLE);
+            titleDetailCollapsedTV.setVisibility(View.GONE);
+        }
+
     }
 
     private String getDirectorNameFromCrew(Crew[] crews) {

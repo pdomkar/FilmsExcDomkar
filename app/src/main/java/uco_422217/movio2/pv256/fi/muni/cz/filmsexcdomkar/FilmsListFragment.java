@@ -95,7 +95,6 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getActivity().getApplicationContext();
-        mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_INTERNET_CHANGE));
     }
 
     @Nullable
@@ -190,6 +189,7 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
                         myGenreObserver);
 
         mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_SEND_RESULTS));
+        mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_INTERNET_CHANGE));
     }
 
     @Override

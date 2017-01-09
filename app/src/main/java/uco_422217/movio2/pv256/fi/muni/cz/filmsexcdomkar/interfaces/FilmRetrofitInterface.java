@@ -5,6 +5,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Credits;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.FilmResponse;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.GenreResponse;
@@ -19,6 +20,9 @@ public interface FilmRetrofitInterface {
 
     @GET("discover/movie/")
     Call<FilmResponse> findFilmsPopularInYear(@Query("primary_release_year.gte") String year, @Query("sort_by") String sortBy, @Query("api_key") String apiKey);
+
+    @GET("movie/{id}")
+    Call<Film> findFilmById(@Path("id") long id, @Query("api_key") String apiKey);
 
     @GET("movie/{id}/credits")
     Call<Credits> findFilmCredits(@Path("id") long id, @Query("api_key") String apiKey);

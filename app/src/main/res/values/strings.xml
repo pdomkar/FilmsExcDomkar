@@ -1,4 +1,7 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">FilmsExcDomkar</string>
     <string name="movieAPIKey">9abf76a6b9a507feb496c4d4bc7cb670</string>
+    <string name="content_authority">uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar</string>
+    <string name="sync_account_type">uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar</string>
+    <string name="appbar_scrolling_view_behavior_my" translatable="false" tools:override="true">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
 </resources>

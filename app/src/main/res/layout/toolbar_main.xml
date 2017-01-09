@@ -40,20 +40,31 @@
             android:layout_marginStart="20dp"/>
 
 
+        <ImageButton
+            android:id="@+id/popupMenuIB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_pupup_menu"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="?selectableItemBackground"
+            android:padding="4dp"/>
+
         <Switch
             android:text="Saved"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/savedS"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/menuIB"
-            android:layout_alignBottom="@+id/menuIB"
             android:checked="false"
             android:textColor="@android:color/white"
             android:splitTrack="false"
             android:textOn="Yes"
-            android:textOff="No"/>
+            android:textOff="No"
+            android:layout_alignBottom="@+id/menuIB"
+            android:layout_toLeftOf="@+id/popupMenuIB"
+            android:layout_toStartOf="@+id/popupMenuIB"
+            android:layout_alignParentTop="true"/>
 
     </RelativeLayout>
 </android.support.v7.widget.Toolbar>

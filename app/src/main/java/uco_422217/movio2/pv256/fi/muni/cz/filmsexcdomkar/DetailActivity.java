@@ -15,7 +15,6 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 
 public class DetailActivity extends AppCompatActivity {
     public static final String EXTRA_FILM = "extra_film";
-    private Toolbar toolbar;
 
     @Override
     protected void onStart() {
@@ -31,15 +30,6 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ImageButton backIB = (ImageButton) findViewById(R.id.backIB);
-        backIB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
 
         if(savedInstanceState == null){
             Film film = getIntent().getParcelableExtra(EXTRA_FILM);
@@ -55,9 +45,5 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-
-    public Toolbar getToolbar() {
-        return toolbar;
-    }
 
 }
