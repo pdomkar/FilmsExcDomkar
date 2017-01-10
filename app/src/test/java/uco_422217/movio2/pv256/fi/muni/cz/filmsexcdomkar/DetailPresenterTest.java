@@ -46,7 +46,7 @@ public class DetailPresenterTest {
     }
 
     @Test
-    public void testOnLoginClickedCorrectData() throws Exception {
+    public void testLoadFilmDetails() throws Exception {
         this.mDetailPresenter.loadFilmDetails();
         Credits credits = new Credits(new Cast[]{}, new Crew[]{});
         verify(this.mFilmDetailFragment, times(1)).setFilmCredits(credits);
