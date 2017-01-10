@@ -1,5 +1,9 @@
 package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar;
 
+import android.content.Context;
+import android.support.v4.app.LoaderManager;
+import android.util.Log;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,8 +12,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmsContract;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.Detail.DetailPresenter;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.List.FilmsCallback;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.List.GenreCallback;
+import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.List.ListPresenter;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,45 +29,29 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ExampleUnitTest {
 
-//        @Mock
-//        private FilmsContract.DetailView detailView;
-//    private FilmsContract.ListView listView;
-//        @Mock
-//        private DetailPresenter detailPresenter;
-//
-//        @Before
-//        public void setUp() throws Exception {
-//            detailPresenter = new DetailPresenter(loginView, loginService);
-//        }
-//
-//        @Test
-//        public void testOnLoginClickedCorrectData() throws Exception {
-//            when(loginService.login("John", "Doe")).thenReturn(true);
-//            loginPresenter.onLoginClicked("John", "Doe");
-//
-//            verify(loginView).startMainActivity();
-//        }
-//
-//        @Test
-//        public void testOnLoginClickedNoLogin() throws Exception {
-//            loginPresenter.onLoginClicked("", "Doe");
-//
-//            verify(loginView).showUsernameError(R.string.username_error);
-//        }
-//
-//        @Test
-//        public void testOnLoginClickedNoPassword() throws Exception {
-//            loginPresenter.onLoginClicked("John", "");
-//
-//            verify(loginView).showPasswordError(R.string.password_error);
-//        }
-//
-//        @Test
-//        public void testOnLoginClickedWrongData() throws Exception {
-//            when(loginService.login("Jane", "Doe")).thenReturn(false);
-//            loginPresenter.onLoginClicked("Jane", "Doe");
-//
-//            verify(loginView).showLoginError(R.string.login_failed);
-//        }
+        @Mock
+        Context mMockContext;
+        @Mock
+        LoaderManager mLoaderManager;
+        @Mock
+        FilmsListFragment mFilmsListFragment;
+        @Mock
+        MainActivity mMainActivity;
+
+        private ListPresenter mListPresenter;
+
+        @Before
+        public void setUp() throws Exception {
+            this.mListPresenter = new ListPresenter(mMockContext, mLoaderManager, mFilmsListFragment, mMainActivity);
+                mLoaderManager.initLoader(1, null, new GenreCallback(mMockContext, mListPresenter));
+        }
+
+        @Test
+        public void testOnLoginClickedCorrectData() throws Exception {
+        this.mListPresenter.loadFilmsDb();
+            verify(this.mLoaderManager, times(1)).initLoader(Consts.LOADER_FILM_FIND_ALL_ID, null, new FilmsCallback(this.mMockContext, this.mFilmsListFragment));
+        }
+
+
 
 }
