@@ -42,38 +42,38 @@ public class FilmAdapter extends BaseAdapter {
     public FilmAdapter(List<Object> filmArrayList, Context context) {
         mAppContext = context.getApplicationContext();
         if(filmArrayList != null) {
-            mFilmArrayList = filmArrayList;
+            this.mFilmArrayList = filmArrayList;
         } else {
-            mFilmArrayList = new ArrayList<>();
+            this.mFilmArrayList = new ArrayList<>();
         }
     }
 
     public void addList(List<Object> list)
     {
         if(list !=  null ) {
-            mFilmArrayList.addAll(list);
+            this.mFilmArrayList.addAll(list);
         }
     }
 
     public void clearList()
     {
-        mFilmArrayList.clear();
+        this.mFilmArrayList.clear();
     }
 
 
     @Override
     public int getCount() {
-        return mFilmArrayList.size();
+        return this.mFilmArrayList.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return mFilmArrayList.get(i);
+        return this.mFilmArrayList.get(i);
     }
 
     @Override
     public long getItemId(int i) {
-        return i;
+        return getItem(i).hashCode();
     }
 
     @Override
@@ -83,12 +83,13 @@ public class FilmAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        return mFilmArrayList.get(position) instanceof Film ? FILM : CATEGORY;
+        return getItem(position) instanceof Film ? FILM : CATEGORY;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if(getCount() > 0) {
+        int a = getCount();
+        if(a > 0) {
             int rowType = getItemViewType(position);
             if (convertView == null) {
                 LayoutInflater inflater = (LayoutInflater) mAppContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -109,14 +110,14 @@ public class FilmAdapter extends BaseAdapter {
             switch (rowType) {
                 case CATEGORY:
                     CategoryViewHolder categoryViewHolder = (CategoryViewHolder) convertView.getTag(R.layout.view_holder_category);
-                    categoryViewHolder.setCategory(mFilmArrayList.get(position).toString());
+                    categoryViewHolder.setCategory(getItem(position).toString());
                     break;
                 case FILM:
                     final FilmViewHolder filmViewHolder = (FilmViewHolder) convertView.getTag(R.layout.view_holder_film);
-                    filmViewHolder.setTitle(((Film) mFilmArrayList.get(position)).getTitle());
-                    filmViewHolder.setVoteAverage(((Film) mFilmArrayList.get(position)).getVoteAverage());
-                    String imagePath = Consts.IMAGE_BASE_PATH + ((Film) mFilmArrayList.get(position)).getBackdropPath();
-                    if (((Film) mFilmArrayList.get(position)).getBackdropPath() != null) {
+                    filmViewHolder.setTitle(((Film) getItem(position)).getTitle());
+                    filmViewHolder.setVoteAverage(((Film) getItem(position)).getVoteAverage());
+                    String imagePath = Consts.IMAGE_BASE_PATH + ((Film) getItem(position)).getBackdropPath();
+                    if (((Film) getItem(position)).getBackdropPath() != null) {
                         filmViewHolder.setBackdrop(imagePath);
                     } else {
                         ImageLoader imageLoader = ImageLoader.getInstance();

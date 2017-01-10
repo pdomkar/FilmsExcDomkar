@@ -46,9 +46,9 @@ public class DetailPresenterTest {
     }
 
     @Test
-    public void testLoadFilmDetails() throws Exception {
-        this.mDetailPresenter.loadFilmDetails();
-        Credits credits = new Credits(new Cast[]{}, new Crew[]{});
+    public void testSetCredits() throws Exception {
+        Credits credits = new Credits(new Cast[]{new Cast("str", "name", "path")}, new Crew[]{});
+        this.mDetailPresenter.setCreditsFr(credits);
         verify(this.mFilmDetailFragment, times(1)).setFilmCredits(credits);
     }
 }

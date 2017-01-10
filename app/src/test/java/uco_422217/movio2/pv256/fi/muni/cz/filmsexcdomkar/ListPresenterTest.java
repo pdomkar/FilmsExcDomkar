@@ -10,6 +10,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmsContract;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.Detail.DetailPresenter;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.List.FilmsCallback;
@@ -27,7 +29,7 @@ import static org.mockito.Mockito.when;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ExampleUnitTest {
+public class ListPresenterTest {
 
         @Mock
         Context mMockContext;
@@ -47,9 +49,17 @@ public class ExampleUnitTest {
         }
 
         @Test
-        public void testOnLoginClickedCorrectData() throws Exception {
-        this.mListPresenter.loadFilmsDb();
-            verify(this.mLoaderManager, times(1)).initLoader(Consts.LOADER_FILM_FIND_ALL_ID, null, new FilmsCallback(this.mMockContext, this.mFilmsListFragment));
+        public void testSetAdapterEmpty() throws Exception {
+            this.mListPresenter.setAdapterFr(null);
+            verify(this.mFilmsListFragment, times(1)).setEmptyAdapter();
+        }
+
+        @Test
+        public void testSetAdapter() throws Exception {
+                ArrayList<Object> arr = new ArrayList<>();
+                arr.add("Populární");
+                this.mListPresenter.setAdapterFr(arr);
+                verify(this.mFilmsListFragment, times(1)).setAdapterList(arr);
         }
 
 

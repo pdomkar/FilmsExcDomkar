@@ -229,7 +229,8 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
 
     @Override
     public void updateFilmsList() {
-        filmAdapter.clearList();
+//        filmAdapter.clearList();
+        Log.i("updateLfilm list", "update");
         mListPresenter.onLoadFilms();
     }
 

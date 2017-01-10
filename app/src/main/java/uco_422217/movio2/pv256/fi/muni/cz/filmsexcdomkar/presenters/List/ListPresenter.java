@@ -74,7 +74,7 @@ public class ListPresenter {
         loaderManager.initLoader(Consts.LOADER_FILM_FIND_ALL_ID, null, new FilmsCallback(context, thisFr)).forceLoad();
     }
 
-    public void downloadFilms(final List<Genre> genres) {
+    void downloadFilms(final List<Genre> genres) {
         if (Connectivity.isConnected(context)) {
             mNotificationManager.notify(Consts.NOTIFICATION_DOWNLOAD, getDownloadRunningNotification().build());
 
@@ -110,7 +110,7 @@ public class ListPresenter {
                         }
                         filterFilmsByGenre(films, context.getString(R.string.in_theatre), genres);
                     } else {
-                        thisFr.setEmptyAdapter();
+                        ListPresenter.this.setAdapterFr(null);
                         if (response.code() == 404) {
                             mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
                             mNotificationManager.cancel(Consts.NOTIFICATION_DONE);
@@ -128,7 +128,7 @@ public class ListPresenter {
                 @Override
                 public void onFailure(Call<FilmResponse> call, Throwable t) {
                     Log.d(TAG, t.getMessage());
-                    thisFr.setEmptyAdapter();
+                    ListPresenter.this.setAdapterFr(null);
                     mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
                     mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(t.getMessage())).build());
                 }
@@ -149,7 +149,7 @@ public class ListPresenter {
                         }
                         filterFilmsByGenre(films, context.getString(R.string.popular_in) + " " + String.valueOf(Calendar.getInstance().get(Calendar.YEAR)), genres);
                     } else {
-                        thisFr.setEmptyAdapter();
+                        ListPresenter.this.setAdapterFr(null);
                         if (response.code() == 404) {
                             mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
                             mNotificationManager.cancel(Consts.NOTIFICATION_DONE);
@@ -167,14 +167,14 @@ public class ListPresenter {
                 @Override
                 public void onFailure(Call<FilmResponse> call, Throwable t) {
                     Log.d(TAG, t.getMessage());
-                    thisFr.setEmptyAdapter();
+                    ListPresenter.this.setAdapterFr(null);
                     mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
                     mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(t.getMessage())).build());
                 }
             });
 
         } else {
-            thisFr.setEmptyAdapter();
+            ListPresenter.this.setAdapterFr(null);
             mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(context.getString(R.string.no_conntection)).build());
         }
     }
@@ -193,13 +193,13 @@ public class ListPresenter {
                     filmsToShow.add(film);
                 }
             }
-            thisFr.setAdapterList(filmsToShow);
+            ListPresenter.this.setAdapterFr(filmsToShow);
         } else {
             filmsToShow.add(title);
             for (Film film : films) {
                 filmsToShow.add(film);
             }
-            thisFr.setAdapterList(filmsToShow);
+            ListPresenter.this.setAdapterFr(filmsToShow);
         }
     }
 
@@ -252,6 +252,13 @@ public class ListPresenter {
         loaderManager.initLoader(Consts.LOADER_GENRE_CREATE_ID, args, new GenresCallback(context, loaderManager, activity)).forceLoad();
     }
 
+    public void setAdapterFr(ArrayList<Object> data) {
+        if(data == null || data.size() == 0) {
+            thisFr.setEmptyAdapter();
+        } else {
+            thisFr.setAdapterList(data);
+        }
+    }
 
     private NotificationCompat.Builder getDownloadRunningNotification() {
         return new NotificationCompat.Builder(context)

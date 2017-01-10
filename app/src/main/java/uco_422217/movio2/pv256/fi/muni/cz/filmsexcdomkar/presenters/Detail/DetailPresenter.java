@@ -57,7 +57,7 @@ public class DetailPresenter implements FilmsContract.DetailListeners{
                 public void onResponse(retrofit2.Call<Credits> call, retrofit2.Response<Credits> response) {
                     if (response.isSuccessful()) {
                         Credits data = response.body();
-                        thisFr.setFilmCredits(data);
+                        DetailPresenter.this.setCreditsFr(data);
                     } else {
                         if(BuildConfig.logging) {
                             Log.i(TAG, response.code() + "");
@@ -73,6 +73,10 @@ public class DetailPresenter implements FilmsContract.DetailListeners{
                 }
             });
         }
+    }
+
+    public void setCreditsFr(Credits credits) {
+        thisFr.setFilmCredits(credits);
     }
 
     public void loadDirectorFromDb() {
