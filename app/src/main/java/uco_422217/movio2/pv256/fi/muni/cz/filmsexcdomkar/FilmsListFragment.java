@@ -220,7 +220,7 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Consts.ACTION_INTERNET_CHANGE)) {
-                filmAdapter.clearList();
+//                filmAdapter.clearList();
                 mListPresenter.onLoadFilms();
             }
         }
@@ -253,6 +253,18 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
                 mEmptyTV.setText(R.string.no_data);
             }
         } else {
+            Log.i("sdf", "enter");
+            int titles = 0;
+            for(Object o : filmAdapter.getList()) {
+                if (!(o instanceof Film)) {
+                    titles++;
+                    Log.i("sf", o+"");
+                }
+            }
+            if(titles >= 2) {
+                Log.i("titles", titles + "" );
+                filmAdapter.clearList();
+            }
             filmAdapter.addList(films);
             mFilmsLV.setAdapter(filmAdapter);
             filmAdapter.notifyDataSetChanged();

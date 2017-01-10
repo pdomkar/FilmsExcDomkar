@@ -60,6 +60,11 @@ public class FilmAdapter extends BaseAdapter {
         this.mFilmArrayList.clear();
     }
 
+    public List<Object> getList()
+    {
+        return this.mFilmArrayList;
+    }
+
 
     @Override
     public int getCount() {
