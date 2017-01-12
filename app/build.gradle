@@ -31,7 +31,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 24
 
-        resConfigs "cs", "ja", "en" //nechat resources jen pro vyjmenované jazyky
+        resConfigs "cs", "ja", "en"
 
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
@@ -51,8 +51,6 @@ android {
             signingConfig signingConfigs.release
         }
 
-        // mějte release a debug build rozlišitelné. takto můžete nahrát na 1 zařízení 2 buildy aplikace
-        // je vhodné také vizuálně odlišit ikonu debug verze
         debug {
             applicationIdSuffix '.debug'
         }
@@ -73,8 +71,8 @@ android {
     }
 
     lintOptions {
-        textReport true // když je true, vygeneruje se textový report problémů (default je false)
-        textOutput 'stdout' // kam zapsat výstup. buď do souboru - file nebo do 'stdout' (standardní výstup)
+        textReport true
+        textOutput 'stdout'
     }
 }
 
