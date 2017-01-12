@@ -22,8 +22,8 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Director;
 
 public class DirectorCallback implements LoaderManager.LoaderCallbacks<List<Director>> {
     public static final String TAG = DirectorCallback.class.getSimpleName();
-    Context mContext;
-    FilmDetailFragment thisFr;
+    private Context mContext;
+    private FilmDetailFragment thisFr;
 
     public DirectorCallback(Context context, FilmDetailFragment thisFr) {
         mContext = context;

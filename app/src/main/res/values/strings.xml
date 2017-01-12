@@ -26,4 +26,6 @@
     <string name="update_saved_films">Update saved films</string>
     <string name="actuals_films">Films are actual</string>
     <string name="films_db_updated">Films in db were updated</string>
+    <string name="saved_film">Film was saved.</string>
+    <string name="delete_film">Film was delete.</string>
 </resources>

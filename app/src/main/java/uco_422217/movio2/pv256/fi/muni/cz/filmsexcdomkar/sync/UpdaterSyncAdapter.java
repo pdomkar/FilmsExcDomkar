@@ -120,9 +120,6 @@ public class UpdaterSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        if(BuildConfig.logging) {
-            Log.i("perform", "sync");
-        }
         RefreshDataDb refreshDataDb = RefreshDataDb.getInstance();
         refreshDataDb.init(getContext());
         refreshDataDb.refreshFilmsInDb();

@@ -1,20 +1,14 @@
 package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.List;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.View;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -27,19 +21,15 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.BuildConfig;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.Consts;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmDetailFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmsListFragment;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.MainActivity;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.R;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmRetrofitInterface;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmsContract;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.FilmResponse;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.FilmsGenresBlock;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.GenreResponse;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.Detail.DirectorCallback;
 
 
 /**
@@ -116,7 +106,6 @@ public class ListPresenter {
                             mNotificationManager.cancel(Consts.NOTIFICATION_DONE);
                             mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(context.getString(R.string.no_found_resource)).build());
                         } else if(response.code() == 429) {
-
                         } else {
                             mNotificationManager.cancel(Consts.NOTIFICATION_DONE);
                             mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
@@ -127,7 +116,9 @@ public class ListPresenter {
 
                 @Override
                 public void onFailure(Call<FilmResponse> call, Throwable t) {
-                    Log.d(TAG, t.getMessage());
+                    if(BuildConfig.logging) {
+                        Log.d(TAG, t.getMessage());
+                    }
                     ListPresenter.this.setAdapterFr(null);
                     mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
                     mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(t.getMessage())).build());
@@ -155,7 +146,6 @@ public class ListPresenter {
                             mNotificationManager.cancel(Consts.NOTIFICATION_DONE);
                             mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(context.getString(R.string.no_found_resource)).build());
                         } else if(response.code() == 429) {
-
                         } else {
                             mNotificationManager.cancel(Consts.NOTIFICATION_DONE);
                             mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
@@ -166,7 +156,9 @@ public class ListPresenter {
 
                 @Override
                 public void onFailure(Call<FilmResponse> call, Throwable t) {
-                    Log.d(TAG, t.getMessage());
+                    if(BuildConfig.logging) {
+                        Log.d(TAG, t.getMessage());
+                    }
                     ListPresenter.this.setAdapterFr(null);
                     mNotificationManager.cancel(Consts.NOTIFICATION_DOWNLOAD);
                     mNotificationManager.notify(Consts.NOTIFICATION_ERROR, getDownloadErrorNotification(String.valueOf(t.getMessage())).build());

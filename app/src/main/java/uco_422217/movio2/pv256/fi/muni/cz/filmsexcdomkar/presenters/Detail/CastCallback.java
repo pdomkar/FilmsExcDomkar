@@ -20,12 +20,12 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Cast;
  * Created by Petr on 17. 12. 2016.
  */
 
-public class CastCallback implements LoaderManager.LoaderCallbacks<List<Cast>> {
+class CastCallback implements LoaderManager.LoaderCallbacks<List<Cast>> {
     public static final String TAG = CastCallback.class.getSimpleName();
-    Context mContext;
-    FilmDetailFragment thisFr;
+    private Context mContext;
+    private FilmDetailFragment thisFr;
 
-    public CastCallback(Context context, FilmDetailFragment thisFr) {
+    CastCallback(Context context, FilmDetailFragment thisFr) {
         mContext = context;
         this.thisFr = thisFr;
     }

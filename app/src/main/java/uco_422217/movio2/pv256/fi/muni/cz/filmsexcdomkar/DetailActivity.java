@@ -5,11 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.ImageButton;
 
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
 
@@ -44,6 +39,4 @@ public class DetailActivity extends AppCompatActivity {
             }
         }
     }
-
-
 }

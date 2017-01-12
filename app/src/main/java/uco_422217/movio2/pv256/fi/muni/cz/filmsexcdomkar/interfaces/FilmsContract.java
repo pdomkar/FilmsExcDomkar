@@ -22,6 +22,8 @@ public interface FilmsContract {
 
     interface ListView {
         void setFilmsDb(List<Film> data);
+        void setAdapterList(List<Object> data);
+        void setEmptyAdapter();
     }
 
     interface GenreView {

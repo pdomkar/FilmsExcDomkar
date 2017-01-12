@@ -1,11 +1,9 @@
 package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -13,23 +11,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
-
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters.DrawerNavigationAdapter;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmsContract;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.OnFilmSelectListener;
@@ -46,8 +35,6 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
     private TextView mEmptyGenresTV;
     private DrawerNavigationAdapter mDrawerNavigationAdapter;
     private LocalBroadcastManager mBroadcastManager;
-    public static final String ACTION_SEND_RESULTS_GENRES = "SEND_RESULTS_GENRES";
-    public static final String ACTION_INTERNET_CHANGE = "INTERNET_CHANGE";
     private Toolbar toolbar;
     private ListPresenter mListPresenter;
     public ArrayList<Genre> mGenreList;
@@ -62,9 +49,6 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
         mGenreList.add(new Genre(0L, getString(R.string.displayed_genres), false));
         UpdaterSyncAdapter.initializeSyncAdapter(this);
 
-        if(BuildConfig.logging) {
-            Log.i("init start log", "onCreate was called");
-        }
 
         ImageButton pupupMenuIB = (ImageButton)findViewById(R.id.popupMenuIB);
         pupupMenuIB.setOnClickListener(new View.OnClickListener() {
@@ -127,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
     @Override
     protected void onStart() {
         super.onStart();
-        mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(ACTION_INTERNET_CHANGE));
+        mBroadcastManager.registerReceiver(mBroadcastReceiver, new IntentFilter(Consts.ACTION_INTERNET_CHANGE));
     }
 
     @Override
@@ -206,5 +190,4 @@ public class MainActivity extends AppCompatActivity implements OnFilmSelectListe
             }
         }
     }
-
 }

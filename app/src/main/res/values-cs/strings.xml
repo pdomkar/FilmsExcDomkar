@@ -25,4 +25,6 @@
     <string name="update_saved_films">Aktualizovat uložené filmy</string>
     <string name="actuals_films">Filmy jsou aktuální</string>
     <string name="films_db_updated">Uložené filmy byly aktualizovány</string>
+    <string name="saved_film">Film byl uložen.</string>
+    <string name="delete_film">Film byl smazán.</string>
 </resources>

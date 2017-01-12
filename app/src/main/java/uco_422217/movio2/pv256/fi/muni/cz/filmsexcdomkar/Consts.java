@@ -28,20 +28,14 @@ public class Consts {
     public static final int NOTIFICATION_DOWNLOAD = 10;
     public static final int NOTIFICATION_DONE = 20;
     public static final int NOTIFICATION_ERROR = 30;
-    public static final String ARGS_FILM = "args_film";
-    public static final String ACTION_SEND_DETAIL_RESULTS = "SEND_DETAIL_RESULTS";
     public static final String IMAGE_BASE_PATH = "https://image.tmdb.org/t/p/w500";
     public static final String DETAIL_ID = "id";
     public static final String DETAIL_FILM = "film";
     public static final String DETAIL_DIRECTOR = "director";
     public static final String DETAIL_CAST = "cast";
-    public static final String ORDER = "order";
-    public static final String RESULT_CODE = "resultCode";
-    public static final String RESULT_VALUE = "resultValue";
-    public static final String RESULT_VALUE_TITLE = "resultValueTitle";
-    public static final String FILM_API_LIST = "film_api_list";
-    public static final String TITLE_FILMS = "title_films";
     public static final String GENRES_DB_LIST = "genres_db_list";
     public static final String GENRE_DETAIL = "genre_detail";
     public static final String ACTION_INTERNET_CHANGE = "INTERNET_CHANGE";
+    public static final String ARGS_FILM = "args_film";
+    public static final String SELECTED_KEY = "selected_position";
 }

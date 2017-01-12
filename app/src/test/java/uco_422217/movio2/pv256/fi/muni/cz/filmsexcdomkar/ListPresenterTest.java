@@ -12,6 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 
+import okhttp3.mockwebserver.MockWebServer;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmsContract;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.Detail.DetailPresenter;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.List.FilmsCallback;
@@ -30,7 +31,6 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ListPresenterTest {
-
         @Mock
         Context mMockContext;
         @Mock
@@ -44,6 +44,7 @@ public class ListPresenterTest {
 
         @Before
         public void setUp() throws Exception {
+
             this.mListPresenter = new ListPresenter(mMockContext, mLoaderManager, mFilmsListFragment, mMainActivity);
                 mLoaderManager.initLoader(1, null, new GenreCallback(mMockContext, mListPresenter));
         }

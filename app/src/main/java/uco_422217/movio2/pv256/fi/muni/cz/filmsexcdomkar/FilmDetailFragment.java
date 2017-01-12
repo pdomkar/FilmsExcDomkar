@@ -13,9 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,8 +33,6 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.Detail.Detai
 
 public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener, FilmsContract.DetailView {
     public static final String TAG = FilmDetailFragment.class.getSimpleName();
-    private static final String ARGS_FILM = "args_film";
-    public static final String ACTION_SEND_DETAIL_RESULTS = "SEND_DETAIL_RESULTS";
     private Context mContext;
     private Film mFilm;
     private LocalBroadcastManager mBroadcastManager;
@@ -57,7 +55,7 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
     public static FilmDetailFragment newInstance(Film film) {
         FilmDetailFragment fragment = new FilmDetailFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARGS_FILM, film);
+        args.putParcelable(Consts.ARGS_FILM, film);
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,7 +69,7 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
         super.onAttach(activity);
         Bundle args = getArguments();
         if (args != null) {
-            mFilm = args.getParcelable(ARGS_FILM);
+            mFilm = args.getParcelable(Consts.ARGS_FILM);
         }
         mBroadcastManager = LocalBroadcastManager.getInstance(getActivity());
         ins = FilmDetailFragment.this;
@@ -187,7 +185,6 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
                     if (directorTV != null) {
                         directorTV.setText(getDirectorNameFromCrew(filmCredits.getCrew()));
                     }
-
                     changeCasts(filmCredits.getCast());
                 }
             }
@@ -253,8 +250,12 @@ public class FilmDetailFragment extends Fragment implements AppBarLayout.OnOffse
     public void changeFab(Boolean showTrash) {
         if(showTrash) {
             plusFAB.setImageResource(R.drawable.ic_trash);
+            Toast.makeText(getActivity(), R.string.saved_film,
+                    Toast.LENGTH_SHORT).show();
         } else {
             plusFAB.setImageResource(R.drawable.ic_plus);
+            Toast.makeText(getActivity(), R.string.delete_film,
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

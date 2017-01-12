@@ -1,16 +1,12 @@
 package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,40 +15,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.adapters.FilmAdapter;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.FilmCotract;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.FilmManager;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.FilmProvider;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.MyGenreObserver;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmFindAllLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.FilmFindLoader;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.database.loaders.GenreFindByShowLoader;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.ContentObserverGenreCallback;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.FilmsContract;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.interfaces.OnFilmSelectListener;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Cast;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.FilmsGenresBlock;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Genre;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.networks.Connectivity;
-import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.List.GenreCallback;
 import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.List.ListPresenter;
-
-import static android.R.attr.focusable;
-import static android.R.attr.key;
 
 /**
  * Created by Petr on 6. 10. 2016.
@@ -60,8 +40,6 @@ import static android.R.attr.key;
 
 public class FilmsListFragment extends Fragment implements ContentObserverGenreCallback, FilmsContract.ListView {
     private static final String TAG = FilmsListFragment.class.getName();
-    private static final String SELECTED_KEY = "selected_position";
-    public static final String ACTION_SEND_RESULTS = "SEND_RESULTS";
     private int mPosition = ListView.INVALID_POSITION;
     private OnFilmSelectListener mListener;
     private Context mContext;
@@ -134,8 +112,8 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
         });
 
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
-            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        if (savedInstanceState != null && savedInstanceState.containsKey(Consts.SELECTED_KEY)) {
+            mPosition = savedInstanceState.getInt(Consts.SELECTED_KEY);
             if (mPosition != ListView.INVALID_POSITION) {
                 mFilmsLV.smoothScrollToPosition(mPosition);
             }
@@ -147,7 +125,6 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: ");
 
         Toolbar toolbar = ((MainActivity) getActivity()).getToolbar();
         if (toolbar != null) {
@@ -175,7 +152,6 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: ");
 
         if (myGenreObserver == null) {
             myGenreObserver = new MyGenreObserver(this);
@@ -194,7 +170,6 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause: ");
         getActivity().getContentResolver().unregisterContentObserver(myGenreObserver);
         mBroadcastManager.unregisterReceiver(mBroadcastReceiver);
     }
@@ -202,7 +177,6 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop: ");
     }
 
     @Override
@@ -220,7 +194,6 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Consts.ACTION_INTERNET_CHANGE)) {
-//                filmAdapter.clearList();
                 mListPresenter.onLoadFilms();
             }
         }
@@ -229,8 +202,6 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
 
     @Override
     public void updateFilmsList() {
-//        filmAdapter.clearList();
-        Log.i("updateLfilm list", "update");
         mListPresenter.onLoadFilms();
     }
 
@@ -244,8 +215,8 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
         mFilmsLV.setAdapter(filmAdapter);
     }
 
-
-    public void setAdapterList(ArrayList<Object> films) {
+    @Override
+    public void setAdapterList(List<Object> films) {
         if(films.size() == 0 && filmAdapter.getCount() == 0) {
             if (!Connectivity.isConnected(getActivity().getApplicationContext())) {
                 mEmptyTV.setText(R.string.no_conntection);
@@ -253,16 +224,13 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
                 mEmptyTV.setText(R.string.no_data);
             }
         } else {
-            Log.i("sdf", "enter");
             int titles = 0;
             for(Object o : filmAdapter.getList()) {
                 if (!(o instanceof Film)) {
                     titles++;
-                    Log.i("sf", o+"");
                 }
             }
             if(titles >= 2) {
-                Log.i("titles", titles + "" );
                 filmAdapter.clearList();
             }
             filmAdapter.addList(films);
@@ -271,6 +239,7 @@ public class FilmsListFragment extends Fragment implements ContentObserverGenreC
         }
     }
 
+    @Override
     public void setEmptyAdapter() {
         if(filmAdapter.getCount() == 0) {
             if (!Connectivity.isConnected(getActivity().getApplicationContext())) {

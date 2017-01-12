@@ -1,12 +1,10 @@
 package uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.presenters.Detail;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.util.Log;
-import android.view.View;
 
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -31,6 +29,7 @@ public class DetailPresenter implements FilmsContract.DetailListeners{
     private LoaderManager loaderManager;
     private Film mFilm;
     private FilmDetailFragment thisFr;
+
     public DetailPresenter(Context context, LoaderManager loaderManager, Film film, FilmDetailFragment thisFr) {
         this.context = context;
         this.loaderManager = loaderManager;
@@ -90,6 +89,5 @@ public class DetailPresenter implements FilmsContract.DetailListeners{
         args.putLong(Consts.DETAIL_ID, mFilm.getId());
         loaderManager.initLoader(Consts.LOADER_CAST_FIND_ID, args, new CastCallback(context, thisFr)).forceLoad();
     }
-
 
 }

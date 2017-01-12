@@ -22,18 +22,18 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.model.Film;
  * Created by Petr on 17. 12. 2016.
  */
 
-public class FilmCallback implements LoaderManager.LoaderCallbacks<List<Film>> {
+class FilmCallback implements LoaderManager.LoaderCallbacks<List<Film>> {
     public static final String TAG = FilmCallback.class.getSimpleName();
     private Context mContext;
     private FilmDetailFragment thisFr;
     private LoaderManager loaderManager;
     private Film mFilm;
-    public FilmCallback(Context context, LoaderManager loaderManager, Film film, FilmDetailFragment thisFr) {
+
+    FilmCallback(Context context, LoaderManager loaderManager, Film film, FilmDetailFragment thisFr) {
         mContext = context;
         this.loaderManager = loaderManager;
         this.mFilm = film;
         this.thisFr = thisFr;
-
     }
 
     @Override

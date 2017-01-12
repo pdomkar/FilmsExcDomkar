@@ -17,9 +17,6 @@ import uco_422217.movio2.pv256.fi.muni.cz.filmsexcdomkar.FilmsListFragment;
 public class ConnectionChangeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(BuildConfig.logging) {
-            Log.i("a", "a");
-        }
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Consts.ACTION_INTERNET_CHANGE));
 
     }

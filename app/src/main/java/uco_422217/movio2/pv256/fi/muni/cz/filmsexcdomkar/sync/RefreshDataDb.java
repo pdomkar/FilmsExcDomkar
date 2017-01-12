@@ -34,18 +34,19 @@ public class RefreshDataDb {
     private NotificationManager mNotificationManager;
 
     private RefreshDataDb() { }
-    public static RefreshDataDb getInstance( ) {
+
+    static RefreshDataDb getInstance( ) {
         if (instance == null) {
             instance = new RefreshDataDb();
         }
         return instance;
     }
-    public void init(Context context){
+    void init(Context context){
         this.context = context.getApplicationContext();
         mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    public void refreshFilmsInDb() {
+    void refreshFilmsInDb() {
 
         Thread thread = new Thread() {
             @Override
@@ -115,7 +116,7 @@ public class RefreshDataDb {
                 .setAutoCancel(true);
     }
 
-    public static boolean compareStrNull(String str1, String str2) {
+    private static boolean compareStrNull(String str1, String str2) {
         return (str1 == null ? str2 == null : str1.equals(str2));
     }
 
